@@ -53,10 +53,11 @@ try {
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.html">Home<br></a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="courses.html">Courses</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="index.php">Home<br></a></li>
+          <li><a href="about.php">About</a></li>
+          <li><a href="courses.php">Courses</a></li>
+          <li><a href="contact.php">Contact</a></li>
+          <li><a href="products.php">Products</a></li>
           <li><a href="cart.php" title="Shopping Cart" class="active"><i class="bi bi-bag"></i></a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>

@@ -1,5 +1,5 @@
 {
     "require": {
-        "phpmailer/phpmailer": "^7.0"
+        "cockpit-hq/cockpit": "2.10"
     }
 }

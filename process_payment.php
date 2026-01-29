@@ -1,20 +1,56 @@
 <?php
+/**
+ * FINAL PROCESS PAYMENT - SmartStudyPro
+ * Features: "Clean" receipt filtering & SQLite schema auto-fixes.
+ */
+
 if($_SERVER['REQUEST_METHOD'] != 'POST') die("Invalid access");
 
 $user_id = $_POST['user_id'] ?? '';
-$payment_method = $_POST['payment_method'] ?? '';
+$payment_method = $_POST['payment_method'] ?? 'Not Specified';
 $total = $_POST['total'] ?? 0;
 
 $db_file = __DIR__ . "/database/bookings.db";
-if(!file_exists($db_file)) die("Database not found");
+if(!file_exists($db_file)) die("Database not found.");
+
+$bookings = []; 
 
 try {
     $db = new PDO("sqlite:$db_file");
-    $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Mark unpaid bookings as paid
-    $stmt = $db->prepare("UPDATE bookings SET paid=1 WHERE user_id=:user_id AND paid=0");
-    $stmt->execute([':user_id'=>$user_id]);
+    // --- SCHEMA AUTO-FIX ---
+    $tableInfo = $db->query("PRAGMA table_info(bookings)")->fetchAll(PDO::FETCH_ASSOC);
+    $existingColumns = array_column($tableInfo, 'name');
+
+    if (!in_array('created_at', $existingColumns)) {
+        $db->exec("ALTER TABLE bookings ADD COLUMN created_at DATETIME");
+    }
+    if (!in_array('file_path', $existingColumns)) {
+        $db->exec("ALTER TABLE bookings ADD COLUMN file_path TEXT");
+    }
+
+    // --- TRANSACTION LOGIC ---
+    // 1. Capture the exact timestamp of this payment
+    $transactionTime = date('Y-m-d H:i:s');
+
+    // 2. Mark items as paid AND update their timestamp to "now"
+    $stmt = $db->prepare("UPDATE bookings SET paid=1, created_at=:now WHERE user_id=:user_id AND paid=0");
+    $stmt->execute([':user_id' => $user_id, ':now' => $transactionTime]);
+
+    // 3. Fetch ONLY items from THIS transaction (Clean Receipt)
+    // We look for items paid in the last minute to isolate this specific order
+    $recentLimit = date('Y-m-d H:i:s', strtotime('-60 seconds'));
+    $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=1 AND created_at >= :recent ORDER BY created_at DESC");
+    $stmt->execute([':user_id' => $user_id, ':recent' => $recentLimit]);
+    $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 4. If nothing is found (e.g. page refreshed), show all paid items as a fallback
+    if(empty($bookings)) {
+        $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=1 ORDER BY created_at DESC LIMIT 5");
+        $stmt->execute([':user_id' => $user_id]);
+        $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     $success = true;
 } catch(Exception $e){
@@ -24,136 +60,105 @@ try {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Payment Status - SmartStudyPro</title>
-<link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="icon">
-  <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="apple-touch-icon">
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,8599&family=Raleway:ital,wght@1.2.3.4.5.6.7.8.9&display=swap" rel="stylesheet">
-
-  <!-- Vendor CSS Files -->
+  <meta charset="utf-8">
+  <title>Payment Successful - SmartStudyPro</title>
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-  <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
+  <link rel="shortcut icon" href="Smart_Study_Logo_Fin-removebg-preview.png" type="image/x-icon">
+  <style>
+    .receipt-wrapper { max-width: 800px; margin: 40px auto; }
+    .receipt-card { background: #fff; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: none; }
+    .receipt-header { background: #5fcf80; color: white; border-radius: 15px 15px 0 0; padding: 30px; }
+    .btn-download { background: #5fcf80; border: none; color: white; }
+    .btn-download:hover { background: #3eb462; color: white; }
+    @media print { .no-print { display: none; } }
+  </style>
 </head>
-<body>
-<header id="header" class="header d-flex align-items-center sticky-top">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+<body class="bg-light">
 
-      <a href="index.html" class="logo d-flex align-items-center me-auto">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.png" alt=""> -->
-        <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="">
+  <header id="header" class="header d-flex align-items-center sticky-top no-print">
+    <div class="container-fluid container-xl d-flex align-items-center me-auto">
+      <a href="index.php" class="logo d-flex align-items-center me-auto">
+        <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="Logo">
       </a>
-
-      <nav id="navmenu" class="navmenu">
-        <ul>
-          <li><a href="index.html" class="active">Home<br></a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="courses.html">Courses</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-      </nav>
-
-      <a class="btn-getstarted" href="courses.html">Get Started</a>
-
     </div>
   </header>
 
-<main class="container py-5 text-center">
-<?php if(isset($success) && $success): ?>
-<div class="alert alert-success">
-<h2>Payment / Booking Confirmed!</h2>
-<p>Your bookings totaling $<?= number_format($total,2) ?> have been processed via <strong><?= htmlspecialchars($payment_method) ?></strong>.</p>
-<a href="index.html" class="btn btn-primary">Back to Home</a>
-</div>
-<?php elseif(isset($error)): ?>
-<div class="alert alert-danger">
-<h2>Payment Failed</h2>
-<p><?= htmlspecialchars($error) ?></p>
-<a href="checkout.php" class="btn btn-warning">Try Again</a>
-</div>
-<?php endif; ?>
-</main>
-
-<footer id="footer" class="footer position-relative light-background">
-
-    <div class="container footer-top">
-      <div class="row gy-4">
-        <div class="col-lg-4 col-md-6 footer-about">
-          <a href="index.html" class="logo d-flex align-items-center">
-            <span class="sitename">SmartStudyPro</span>
-          </a>
-          <div class="footer-contact pt-3">
-            <p>A108 Adam Street</p>
-            <p>New York, NY 535022</p>
-            <p class="mt-3"><strong>Phone:</strong> <span>+256 704 416250</span></p>
-            <p><strong>Email:</strong> <span>smartstudypro36@gmail.com</span></p>
+  <main class="container receipt-wrapper">
+    <?php if(isset($success) && $success): ?>
+      <div class="card receipt-card">
+        <div class="receipt-header text-center">
+          <i class="bi bi-check-circle-fill" style="font-size: 3.5rem;"></i>
+          <h2 class="fw-bold mt-2">Payment Confirmed</h2>
+          <p class="mb-0">Order completed successfully via <?= htmlspecialchars($payment_method) ?></p>
+        </div>
+        
+        <div class="card-body p-4 p-md-5">
+          <div class="d-flex justify-content-between mb-4 border-bottom pb-3">
+            <div>
+              <span class="text-muted small">TOTAL PAID</span>
+              <h4 class="fw-bold text-success">$<?= number_format($total, 2) ?></h4>
+            </div>
+            <div class="text-end">
+              <span class="text-muted small">ORDER DATE</span>
+              <p class="fw-semibold mb-0"><?= date('M d, Y') ?></p>
+            </div>
           </div>
-          <div class="social-links d-flex mt-4">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
+
+          <h5 class="fw-bold mb-3">Your Digital Resources</h5>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr class="text-muted small">
+                  <th>ITEM DESCRIPTION</th>
+                  <th class="text-end">ACTION</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach($bookings as $item): ?>
+                  <tr>
+                    <td>
+                      <div class="fw-semibold"><?= htmlspecialchars($item['service']) ?></div>
+                      <small class="text-muted">Transaction ID: #<?= $item['id'] ?></small>
+                    </td>
+                    <td class="text-end">
+                      <?php if(!empty($item['file_path'])): ?>
+                        <a href="download.php?file=<?= urlencode($item['file_path']) ?>" class="btn btn-download btn-sm rounded-pill px-4 shadow-sm">
+                          <i class="bi bi-cloud-arrow-down"></i> Download
+                        </a>
+                      <?php else: ?>
+                        <span class="badge bg-light text-secondary border">Service/Physical</span>
+                      <?php endif; ?>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="text-center mt-5 no-print">
+            <button onclick="window.print()" class="btn btn-outline-dark rounded-pill px-4 me-2">
+              <i class="bi bi-printer"></i> Print Receipt
+            </button>
+            <a href="products.php" class="btn btn-success rounded-pill px-4" style="background:#5fcf80; border:none;">Return to Shop</a>
           </div>
         </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Useful Links</h4>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About us</a></li>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#">Terms of service</a></li>
-            <li><a href="#">Privacy policy</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Our Courses</h4>
-          <ul>
-            <li>Private Tutoring</li>
-            <li>Holiday Package Guidance</li>
-            <li>Homework Assistance</li>
-            <li>Science Project Work Innovation</li>
-            <li>Computer Lessons (ICT)</li>
-          </ul>
-        </div>
-
-        <div class="col-lg-4 col-md-12 footer-newsletter">
-          <h4>Our Newsletter</h4>
-          <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
-          <form action="forms/newsletter.php" method="post" class="php-email-form">
-            <div class="newsletter-form"><input type="email" name="email" placeholder="Enter your email"><input type="submit" value="Subscribe"></div>
-            <div class="loading">Loading</div>
-            <div class="error-message"></div>
-            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-          </form>
-        </div>
-
       </div>
-    </div>
 
-   <!-- <div display="hidden">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-       <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed by <a href=“https://themewagon.com>ThemeWagon
+    <?php elseif(isset($error)): ?>
+      <div class="alert alert-danger p-5 rounded-4 text-center">
+        <i class="bi bi-exclamation-triangle" style="font-size: 3rem;"></i>
+        <h3 class="mt-3">Processing Error</h3>
+        <p><?= htmlspecialchars($error) ?></p>
+        <a href="checkout.php" class="btn btn-dark rounded-pill mt-3 px-5">Try Again</a>
       </div>
-    </div>
--->
+    <?php endif; ?>
+  </main>
+
+  <footer class="text-center py-4 text-muted small no-print">
+    <p>© 2026 SmartStudyPro - Matugga, Uganda</p>
   </footer>
+
 </body>
 </html>
