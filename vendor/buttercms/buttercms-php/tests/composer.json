@@ -1,0 +1,11 @@
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "../"
+        }
+    ],
+    "require": {
+        "buttercms/buttercms-php": "dev-master"
+    }
+}

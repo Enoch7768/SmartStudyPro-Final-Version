@@ -1,17 +1,30 @@
 <?php
-$db_file = __DIR__ . "/database/bookings.db";
-
-// Make sure directory exists
-if (!file_exists(dirname($db_file))) mkdir(dirname($db_file), 0777, true);
-
 try {
+    $db_file = __DIR__ . "/database/bookings.db";
     $db = new PDO("sqlite:$db_file");
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Add the 'paid' column if it doesn't exist
-    $db->exec("ALTER TABLE bookings ADD COLUMN paid INTEGER DEFAULT 0");
+    // 1. Add created_at to bookings table
+    $db->exec("ALTER TABLE bookings ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP");
+    echo "Added created_at to bookings table successfully!<br>";
 
-    echo "Column 'paid' added successfully!";
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
+    echo "Note: " . $e->getMessage() . " (This might mean the column already exists).<br>";
 }
+
+try {
+    // 2. Just in case, let's make sure the contact_messages table is also ready
+    $db->exec("CREATE TABLE IF NOT EXISTS contact_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        email TEXT,
+        subject TEXT,
+        message TEXT,
+        status TEXT DEFAULT 'unread',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
+    echo "Contact table verified/created successfully!";
+} catch (Exception $e) {
+    echo "Error with contact table: " . $e->getMessage();
+}
+?>
