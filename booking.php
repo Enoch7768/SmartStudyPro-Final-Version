@@ -96,6 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <title>Processing Order - SmartStudyPro</title>
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link rel="shortcut icon" href="Smart_Study_Logo_Fin-removebg-preview.png" type="image/x-icon">
+  <link rel="apple-touch-icon" href="Smart_Study_Logo_Fin-removebg-preview.png">
   <link href="assets/css/main.css" rel="stylesheet">
 </head>
 

@@ -33,16 +33,59 @@ $imgUrl = !empty($imgData['path'])
 
 // Digital File path
 $filePath = $product['ProductFile']['path'] ?? '';
+
+
+$seoTitle       = $product['SEO-Title'] ?? ($displayTitle . " | SmartStudyPro Store");
+$seoDescription = $product['SEO-Description'] ?? substr(strip_tags($displayDesc), 0, 160);
+$siteUrl        = "https://smartstudypro.com";
+$fullImgUrl     = $siteUrl . $imgUrl;
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title><?= htmlspecialchars($displayTitle) ?> - SmartStudyPro</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  
+  <title><?= htmlspecialchars($seoTitle) ?></title>
+  <meta name="description" content="<?= htmlspecialchars($seoDescription) ?>">
+
+  <meta property="og:type" content="product">
+  <meta property="og:url" content="<?= $siteUrl ?>/product-details.php?id=<?= $productId ?>">
+  <meta property="og:title" content="<?= htmlspecialchars($seoTitle) ?>">
+  <meta property="og:description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta property="og:image" content="<?= $fullImgUrl ?>">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="<?= htmlspecialchars($seoTitle) ?>">
+  <meta property="twitter:description" content="<?= htmlspecialchars($seoDescription) ?>">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": "<?= htmlspecialchars($displayTitle) ?>",
+    "image": "<?= $fullImgUrl ?>",
+    "description": "<?= htmlspecialchars(strip_tags($displayDesc)) ?>",
+    "brand": {
+      "@type": "Brand",
+      "name": "SmartStudyPro"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": "<?= $siteUrl ?>/product-details.php?id=<?= $productId ?>",
+      "priceCurrency": "UGX",
+      "price": "<?= $displayPrice ?>",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/main.css" rel="stylesheet">
+  <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="icon">
+  <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="apple-touch-icon">
 </head>
 
 <body class="course-details-page">
@@ -89,7 +132,7 @@ $filePath = $product['ProductFile']['path'] ?? '';
             <div class="p-4 border rounded shadow-sm bg-light">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="m-0">Price</h4>
-                <span class="h3 text-success m-0">$<?= htmlspecialchars($displayPrice) ?></span>
+                <span class="h3 text-success m-0">UGX <?= number_format(floatval($displayPrice ?? 0), 2) ?></span>
               </div>
               <p class="text-muted small"><i class="bi bi-info-circle"></i> Type: <?= htmlspecialchars($productType) ?></p>
               <hr>

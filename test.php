@@ -21,8 +21,8 @@ header('Content-Type: text/html; charset=utf-8');
 </head>
 <body>
 
-    <h1>SmartStudyPro CMS Connection Diagnostic</h1>
-
+        <h1>SmartStudyPro CMS Connection Diagnostic</h1>
+    <p>Current Date: <?= date('M d, Y') ?></p>
     <div class="card">
         <h2>1. Global Helper Check</h2>
         <?php if (function_exists('cockpit')): ?>

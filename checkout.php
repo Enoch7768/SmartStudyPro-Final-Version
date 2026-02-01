@@ -58,12 +58,12 @@ try {
 <?php foreach($bookings as $b): ?>
 <li class="list-group-item d-flex justify-content-between">
 <?= htmlspecialchars($b['service']) ?> - <?= htmlspecialchars($b['date']) ?>
-<span><?= $b['price'] ?></span>
+<span>UGX <?= $b['price'] ?></span>
 </li>
 <?php endforeach; ?>
 <li class="list-group-item d-flex justify-content-between fw-bold">
 Total
-<span>$<?= number_format($total,2) ?></span>
+<span>UGX <?= number_format($total,2) ?></span>
 </li>
 </ul>
 

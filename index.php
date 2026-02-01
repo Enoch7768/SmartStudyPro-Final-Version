@@ -22,6 +22,10 @@ try {
 $phone   = $contact['phone'] ?? '+256 704 416250';
 $email   = $contact['email'] ?? 'smartstudypro36@gmail.com';
 $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
+
+$seoTitle       = $home['SEO-Title'] ?? $home['Title'] ?? 'SmartStudyPro | Leading Online Learning Platform in Uganda';
+$seoDescription = $home['SEO-Description'] ?? 'Empowering students with innovative learning solutions, professional courses, and academic resources in Uganda.';
+$siteUrl        = "https://smartstudypro.com"; // Replace with your actual domain
 ?>
 
 <!DOCTYPE html>
@@ -30,14 +34,51 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>SmartStudyPro</title>
+  
+  <title><?= htmlspecialchars($seoTitle) ?></title>
+  <meta name="description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta name="keywords" content="online courses Uganda, e-learning, SmartStudyPro, education, professional training">
+  <meta name="author" content="SmartStudyPro">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?= $siteUrl ?>">
+  <meta property="og:title" content="<?= htmlspecialchars($seoTitle) ?>">
+  <meta property="og:description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta property="og:image" content="<?= $siteUrl ?>/Smart_Study_Logo_Fin-removebg-preview.png">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="<?= $siteUrl ?>">
+  <meta property="twitter:title" content="<?= htmlspecialchars($seoTitle) ?>">
+  <meta property="twitter:description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta property="twitter:image" content="<?= $siteUrl ?>/Smart_Study_Logo_Fin-removebg-preview.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "SmartStudyPro",
+    "url": "<?= $siteUrl ?>",
+    "logo": "<?= $siteUrl ?>/Smart_Study_Logo_Fin-removebg-preview.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "<?= $phone ?>",
+      "contactType": "customer service",
+      "email": "<?= $email ?>"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Kampala",
+      "addressCountry": "UG"
+    }
+  }
+  </script>
+
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="icon">
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="apple-touch-icon">
 
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
@@ -134,7 +175,7 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
                   <div class="course-content">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                       <p class="category"><?= htmlspecialchars($course['Category'] ?? 'General') ?></p>
-                      <p class="price">$<?= htmlspecialchars($course['Price'] ?? '0') ?></p>
+                      <p class="price">UGX <?= number_format(floatval($course['Price'] ?? 0), 2) ?></p>
                     </div>
                     <h3><a href="course-details.php?id=<?= $course['_id'] ?>"><?= htmlspecialchars($course['Title'] ?? 'Untitled') ?></a></h3>
                     <div class="description"><?= strip_tags($course['Description'] ?? $course['description'] ?? '') ?></div>
@@ -147,8 +188,7 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
       </div>
     </section>
   </main>
-
-  <footer id="footer" class="footer position-relative light-background">
+<footer id="footer" class="footer position-relative light-background">
     <div class="container footer-top">
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
@@ -160,33 +200,6 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
             <p class="mt-3"><strong>Phone:</strong> <span><?= htmlspecialchars($phone) ?></span></p>
             <p><strong>Email:</strong> <span><?= htmlspecialchars($email) ?></span></p>
           </div>
-        </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Useful Links</h4>
-          <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="about.php">About us</a></li>
-            <li><a href="courses.php">Courses</a></li>
-            <li><a href="contact.php">Contact</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Our Services</h4>
-          <ul>
-            <li>Private Tutoring</li>
-            <li>ICT Lessons</li>
-            <li>Homework Help</li>
-          </ul>
-        </div>
-
-        <div class="col-lg-4 col-md-12 footer-newsletter">
-          <h4>Our Newsletter</h4>
-          <p>Subscribe for the latest updates!</p>
-          <form action="forms/newsletter.php" method="post" class="php-email-form">
-            <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
-          </form>
         </div>
       </div>
     </div>

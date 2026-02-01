@@ -20,6 +20,10 @@ try {
 $phone   = $contact['phone'] ?? '+256 704 416250';
 $email   = $contact['email'] ?? 'smartstudypro36@gmail.com';
 $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
+
+$seoTitle       = 'Educational Resources & Kits | SmartStudyPro Store';
+$seoDescription = 'Shop science kits, ICT project tools, and online learning resources. Get the best educational materials delivered in Uganda or access instantly online.';
+$siteUrl        = "https://smartstudypro.com";
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +32,38 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Products - SmartStudyPro</title>
+  
+  <title><?= htmlspecialchars($seoTitle) ?></title>
+  <meta name="description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta name="keywords" content="science kits Uganda, educational tools, lab equipment, online study resources">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?= $siteUrl ?>/products.php">
+  <meta property="og:title" content="<?= htmlspecialchars($seoTitle) ?>">
+  <meta property="og:description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta property="og:image" content="<?= $siteUrl ?>/Smart_Study_Logo_Fin-removebg-preview.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "SmartStudyPro Educational Store",
+    "description": "High-quality educational tools and online resources for students.",
+    "itemListElement": [
+      <?php 
+      $pCount = 1;
+      foreach(array_slice($products, 0, 10) as $p): 
+      ?>
+      {
+        "@type": "ListItem",
+        "position": <?= $pCount ?>,
+        "url": "<?= $siteUrl ?>/product-details.php?id=<?= $p['_id'] ?>",
+        "name": "<?= htmlspecialchars($p['Title'] ?? 'Product') ?>"
+      }<?= ($pCount < count(array_slice($products, 0, 10))) ? ',' : '' ?>
+      <?php $pCount++; endforeach; ?>
+    ]
+  }
+  </script>
 
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="icon">
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="apple-touch-icon">
@@ -36,56 +71,21 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
   <link href="assets/css/main.css" rel="stylesheet">
 
   <style>
-    /* UI Fixes for card alignment */
-    .product-item {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        background: #fff;
-        border: 1px solid #eef0ef;
-        position: relative;
-        transition: 0.3s;
-    }
-    .product-item:hover {
-        box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
-    }
-    .type-badge {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        padding: 4px 12px;
-        border-radius: 50px;
-        font-size: 11px;
-        font-weight: 700;
-        color: white;
-        z-index: 5;
-    }
+    /* UI Fixes for card alignment (Maintained your exact style) */
+    .product-item { display: flex; flex-direction: column; height: 100%; background: #fff; border: 1px solid #eef0ef; position: relative; transition: 0.3s; }
+    .product-item:hover { box-shadow: 0px 5px 20px rgba(0,0,0,0.1); }
+    .type-badge { position: absolute; top: 15px; right: 15px; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 700; color: white; z-index: 5; }
     .badge-online { background-color: #5fcf80; }
     .badge-physical { background-color: #f39c12; }
-
-    .product-content {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        padding: 20px;
-    }
-    .product-description {
-        flex-grow: 1;
-        color: #777;
-        font-size: 14px;
-        margin-bottom: 15px;
-    }
-    .product-footer {
-        border-top: 1px solid #f1f1f1;
-        padding-top: 15px;
-    }
+    .product-content { display: flex; flex-direction: column; flex-grow: 1; padding: 20px; }
+    .product-description { flex-grow: 1; color: #777; font-size: 14px; margin-bottom: 15px; }
+    .product-footer { border-top: 1px solid #f1f1f1; padding-top: 15px; }
   </style>
 </head>
 
@@ -152,7 +152,7 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
                       <p class="category" style="background: #f1f1f1; padding: 4px 10px; border-radius: 5px; font-size: 12px; margin: 0;">
                         <?= htmlspecialchars($product['Category'] ?? 'General') ?>
                       </p>
-                      <p class="price" style="font-weight: 700; color: #37423b; margin: 0;">$<?= htmlspecialchars($product['Price'] ?? '0') ?></p>
+                      <p class="price" style="font-weight: 700; color: #37423b; margin: 0;">UGX <?= number_format(floatval($product['Price'] ?? 0), 2) ?></p>
                     </div>
 
                     <h3><a href="product-details.php?id=<?= $product['_id'] ?>"><?= htmlspecialchars($product['Title'] ?? 'Untitled Item') ?></a></h3>

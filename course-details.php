@@ -28,6 +28,16 @@ $displaySubtitle = $course['Subtitle'] ?? 'Master your skills with Expert Instru
 $phone   = $contact['phone'] ?? '+256 704 416250';
 $email   = $contact['email'] ?? 'smartstudypro36@gmail.com';
 $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
+
+$seoTitle       = $course['SEO-Title'] ?? ($displayTitle . " | Course at SmartStudyPro");
+$seoDescription = $course['SEO-Description'] ?? (strip_tags($course['Description'] ?? $displaySubtitle));
+$siteUrl        = "https://smartstudypro.com"; // Update to your domain
+
+// Image for Social Media (OG Image)
+$cImgData = $course['Image'] ?? $course['image'] ?? null;
+$ogImage  = !empty($cImgData['path']) 
+            ? $siteUrl . '/schoolprojectt/SmartStudyProV2.3/cms/storage/uploads' . $cImgData['path'] 
+            : $siteUrl . '/assets/img/course-1.jpg';
 ?>
 
 <!DOCTYPE html>
@@ -36,15 +46,49 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title><?= htmlspecialchars($displayTitle) ?> - SmartStudyPro</title>
   
+  <title><?= htmlspecialchars($seoTitle) ?></title>
+  <meta name="description" content="<?= htmlspecialchars($seoDescription) ?>">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?= $siteUrl ?>/course-details.php?id=<?= $courseId ?>">
+  <meta property="og:title" content="<?= htmlspecialchars($seoTitle) ?>">
+  <meta property="og:description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta property="og:image" content="<?= $ogImage ?>">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="<?= htmlspecialchars($seoTitle) ?>">
+  <meta property="twitter:description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta property="twitter:image" content="<?= $ogImage ?>">
+
+  <?php if ($course): ?>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "<?= htmlspecialchars($displayTitle) ?>",
+    "description": "<?= htmlspecialchars(strip_tags($course['Description'] ?? $displaySubtitle)) ?>",
+    "provider": {
+      "@type": "Organization",
+      "name": "SmartStudyPro",
+      "sameAs": "<?= $siteUrl ?>"
+    },
+    "offers": {
+      "@type": "Offer",
+      "category": "Paid",
+      "price": "<?= $displayPrice ?>",
+      "priceCurrency": "UGX"
+    }
+  }
+  </script>
+  <?php endif; ?>
+
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="icon">
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="apple-touch-icon">
 
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
@@ -108,7 +152,7 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
           <div class="col-lg-8">
             <h3 class="text-center mb-4">Reservation Form</h3>
             <form action="booking.php" method="post" class="php-email-form">
-                <input type="hidden" name="price" value="$<?= htmlspecialchars($displayPrice) ?>">
+                <input type="hidden" name="price" value="<?= htmlspecialchars($displayPrice) ?>">
                 <input type="hidden" name="service" value="<?= htmlspecialchars($displayTitle) ?>">
                 
                 <div class="row">
@@ -135,7 +179,7 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
                 </div>
                 <div class="form-group mt-3 text-center">
                     <div class="p-3 bg-light rounded">
-                        <p class="mb-0"><strong>Total Course Fee:</strong> <span class="text-success" style="font-size: 1.2rem;">$<?= htmlspecialchars($displayPrice) ?></span></p>
+                        <p class="mb-0"><strong>Total Course Fee:</strong> <span class="text-success" style="font-size: 1.2rem;">UGX <?= number_format(floatval($displayPrice ?? 0), 2) ?></span></p>
                     </div>
                 </div>
                 <div class="text-center mt-4">

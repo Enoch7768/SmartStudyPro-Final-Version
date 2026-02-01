@@ -18,6 +18,11 @@ try {
 $phone   = $contact['phone'] ?? '+256 704 416250';
 $email   = $contact['email'] ?? 'smartstudypro36@gmail.com';
 $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
+
+// SEO Variables
+$seoTitle       = 'Professional Courses in Uganda | SmartStudyPro';
+$seoDescription = 'Browse our catalog of expert-led courses. From ICT and Science to professional skill development, find the right path for your future at SmartStudyPro.';
+$siteUrl        = "https://smartstudypro.com"; // Replace with your actual domain
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +31,40 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Courses - SmartStudyPro</title>
+  
+  <title><?= htmlspecialchars($seoTitle) ?></title>
+  <meta name="description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta name="keywords" content="coding courses, science projects, ICT training Uganda, professional certificates">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?= $siteUrl ?>/courses.php">
+  <meta property="og:title" content="<?= htmlspecialchars($seoTitle) ?>">
+  <meta property="og:description" content="<?= htmlspecialchars($seoDescription) ?>">
+  <meta property="og:image" content="<?= $siteUrl ?>/Smart_Study_Logo_Fin-removebg-preview.png">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="<?= htmlspecialchars($seoTitle) ?>">
+  <meta property="twitter:description" content="<?= htmlspecialchars($seoDescription) ?>">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": [
+      <?php 
+      $i = 1;
+      foreach(array_slice($courses, 0, 5) as $course): // Lists top 5 for SEO snippet
+      ?>
+      {
+        "@type": "ListItem",
+        "position": <?= $i ?>,
+        "name": "<?= htmlspecialchars($course['Title'] ?? 'Course') ?>",
+        "url": "<?= $siteUrl ?>/course-details.php?id=<?= $course['_id'] ?>"
+      }<?= ($i < count(array_slice($courses, 0, 5))) ? ',' : '' ?>
+      <?php $i++; endforeach; ?>
+    ]
+  }
+  </script>
 
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="icon">
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="apple-touch-icon">
@@ -34,41 +72,18 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
   <link href="assets/css/main.css" rel="stylesheet">
 
   <style>
-    /* Fix for uneven card heights shown in your ICT screenshot */
-    .course-item {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        background: #fff;
-        border: 1px solid #eef0ef;
-    }
-    .course-content {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        padding: 15px;
-    }
-    .course-content h3 {
-        margin: 10px 0;
-    }
-    .description {
-        flex-grow: 1; /* Pushes the button to the bottom */
-        margin-bottom: 20px;
-        color: #777;
-        font-size: 14px;
-    }
-    .trainer {
-        margin-top: auto; /* Ensures button stays at bottom */
-        border-top: 1px solid #eef0ef;
-        padding-top: 15px;
-    }
+    /* Your existing CSS fixes for card heights */
+    .course-item { display: flex; flex-direction: column; height: 100%; background: #fff; border: 1px solid #eef0ef; }
+    .course-content { display: flex; flex-direction: column; flex-grow: 1; padding: 15px; }
+    .course-content h3 { margin: 10px 0; }
+    .description { flex-grow: 1; margin-bottom: 20px; color: #777; font-size: 14px; }
+    .trainer { margin-top: auto; border-top: 1px solid #eef0ef; padding-top: 15px; }
   </style>
 </head>
 
@@ -126,7 +141,7 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
                   <div class="course-content">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                       <p class="category" style="background: #5fcf80; color: #fff; padding: 4px 12px; border-radius: 50px; font-size: 12px;"><?= htmlspecialchars($course['Category'] ?? 'General') ?></p>
-                      <p class="price" style="font-weight: 700; font-size: 18px; color: #37423b;">$<?= htmlspecialchars($course['Price'] ?? '0') ?></p>
+                      <p class="price" style="font-weight: 700; font-size: 18px; color: #37423b;">UGX <?= number_format(floatval($course['Price'] ?? 0), 2) ?></p>
                     </div>
 
                     <h3><a href="course-details.php?id=<?= $course['_id'] ?>"><?= htmlspecialchars($course['Title'] ?? 'Untitled Course') ?></a></h3>

@@ -1,4 +1,6 @@
 <?php
+
+date_default_timezone_set('Africa/Kampala');
 // Define the fallback URL
 $fallback_url = "http://localhost/schoolprojectt/SmartStudyProV2.3/SmartStudyProV2/";
 

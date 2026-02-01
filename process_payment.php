@@ -98,7 +98,7 @@ try {
           <div class="d-flex justify-content-between mb-4 border-bottom pb-3">
             <div>
               <span class="text-muted small">TOTAL PAID</span>
-              <h4 class="fw-bold text-success">$<?= number_format($total, 2) ?></h4>
+              <h4 class="fw-bold text-success">UGX <?= number_format($total, 2) ?></h4>
             </div>
             <div class="text-end">
               <span class="text-muted small">ORDER DATE</span>
