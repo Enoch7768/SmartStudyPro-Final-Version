@@ -1,8 +1,11 @@
 <?php
 /**
  * FINAL PROCESS PAYMENT - SmartStudyPro
- * Features: "Clean" receipt filtering & SQLite schema auto-fixes.
+ * Features: Timezone sync, Course-aware receipts, and SQLite auto-fixes.
  */
+
+// 1. SET UGANDA TIMEZONE
+date_default_timezone_set('Africa/Kampala');
 
 if($_SERVER['REQUEST_METHOD'] != 'POST') die("Invalid access");
 
@@ -31,21 +34,20 @@ try {
     }
 
     // --- TRANSACTION LOGIC ---
-    // 1. Capture the exact timestamp of this payment
+    // Capture exact EAT time
     $transactionTime = date('Y-m-d H:i:s');
 
-    // 2. Mark items as paid AND update their timestamp to "now"
+    // Mark items as paid and stamp them with the transaction time
     $stmt = $db->prepare("UPDATE bookings SET paid=1, created_at=:now WHERE user_id=:user_id AND paid=0");
     $stmt->execute([':user_id' => $user_id, ':now' => $transactionTime]);
 
-    // 3. Fetch ONLY items from THIS transaction (Clean Receipt)
-    // We look for items paid in the last minute to isolate this specific order
+    // Fetch ONLY items from this specific transaction (last 60 seconds)
     $recentLimit = date('Y-m-d H:i:s', strtotime('-60 seconds'));
     $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=1 AND created_at >= :recent ORDER BY created_at DESC");
     $stmt->execute([':user_id' => $user_id, ':recent' => $recentLimit]);
     $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 4. If nothing is found (e.g. page refreshed), show all paid items as a fallback
+    // Fallback: If no recent items (e.g. refresh), show last 5 paid items
     if(empty($bookings)) {
         $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=1 ORDER BY created_at DESC LIMIT 5");
         $stmt->execute([':user_id' => $user_id]);
@@ -61,18 +63,18 @@ try {
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Payment Successful - SmartStudyPro</title>
+  <title>Receipt - SmartStudyPro</title>
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/main.css" rel="stylesheet">
   <link rel="shortcut icon" href="Smart_Study_Logo_Fin-removebg-preview.png" type="image/x-icon">
   <style>
     .receipt-wrapper { max-width: 800px; margin: 40px auto; }
-    .receipt-card { background: #fff; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: none; }
-    .receipt-header { background: #5fcf80; color: white; border-radius: 15px 15px 0 0; padding: 30px; }
-    .btn-download { background: #5fcf80; border: none; color: white; }
-    .btn-download:hover { background: #3eb462; color: white; }
-    @media print { .no-print { display: none; } }
+    .receipt-card { background: #fff; border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.1); border: none; overflow: hidden; }
+    .receipt-header { background: #5fcf80; color: white; padding: 40px; }
+    .btn-action { background: #5fcf80; border: none; color: white; transition: 0.3s; }
+    .btn-action:hover { background: #3eb462; transform: translateY(-2px); color: white; }
+    @media print { .no-print { display: none; } .receipt-card { box-shadow: none; border: 1px solid #eee; } }
   </style>
 </head>
 <body class="bg-light">
@@ -85,50 +87,59 @@ try {
     </div>
   </header>
 
-  <main class="container receipt-wrapper">
+  <main class="container receipt-wrapper px-3">
     <?php if(isset($success) && $success): ?>
       <div class="card receipt-card">
         <div class="receipt-header text-center">
-          <i class="bi bi-check-circle-fill" style="font-size: 3.5rem;"></i>
-          <h2 class="fw-bold mt-2">Payment Confirmed</h2>
-          <p class="mb-0">Order completed successfully via <?= htmlspecialchars($payment_method) ?></p>
+          <i class="bi bi-patch-check-fill" style="font-size: 4rem;"></i>
+          <h2 class="fw-bold mt-2">Payment Successful</h2>
+          <p class="mb-0">Thank you for your order via <?= htmlspecialchars($payment_method) ?></p>
         </div>
         
         <div class="card-body p-4 p-md-5">
-          <div class="d-flex justify-content-between mb-4 border-bottom pb-3">
-            <div>
-              <span class="text-muted small">TOTAL PAID</span>
-              <h4 class="fw-bold text-success">UGX <?= number_format($total, 2) ?></h4>
+          <div class="row mb-4 border-bottom pb-3">
+            <div class="col-6">
+              <span class="text-muted small text-uppercase fw-bold">Amount Paid</span>
+              <h3 class="fw-bold text-success">UGX <?= number_format($total) ?></h3>
             </div>
-            <div class="text-end">
-              <span class="text-muted small">ORDER DATE</span>
+            <div class="col-6 text-end">
+              <span class="text-muted small text-uppercase fw-bold">Date & Time</span>
               <p class="fw-semibold mb-0"><?= date('M d, Y') ?></p>
+              <small class="text-muted"><?= date('h:i A') ?> (EAT)</small>
             </div>
           </div>
 
-          <h5 class="fw-bold mb-3">Your Digital Resources</h5>
+          <h5 class="fw-bold mb-4">Your Purchased Resources</h5>
           <div class="table-responsive">
             <table class="table align-middle">
               <thead>
                 <tr class="text-muted small">
-                  <th>ITEM DESCRIPTION</th>
-                  <th class="text-end">ACTION</th>
+                  <th>DESCRIPTION</th>
+                  <th class="text-end">ACCESS</th>
                 </tr>
               </thead>
               <tbody>
                 <?php foreach($bookings as $item): ?>
                   <tr>
                     <td>
-                      <div class="fw-semibold"><?= htmlspecialchars($item['service']) ?></div>
-                      <small class="text-muted">Transaction ID: #<?= $item['id'] ?></small>
+                      <div class="fw-bold text-dark"><?= htmlspecialchars($item['service']) ?></div>
+                      <small class="text-muted">ID: #<?= str_pad($item['id'], 6, "0", STR_PAD_LEFT) ?></small>
                     </td>
                     <td class="text-end">
-                      <?php if(!empty($item['file_path'])): ?>
-                        <a href="download.php?file=<?= urlencode($item['file_path']) ?>" class="btn btn-download btn-sm rounded-pill px-4 shadow-sm">
-                          <i class="bi bi-cloud-arrow-down"></i> Download
+                      <?php 
+                      // Check if the item is a Course
+                      $isCourse = (stripos($item['service'], 'Course') !== false); 
+                      
+                      if($isCourse): ?>
+                        <a href="study.php?course_id=<?= $item['id'] ?>" class="btn btn-action btn-sm rounded-pill px-4 shadow-sm">
+                          <i class="bi bi-play-circle-fill me-1"></i> Start Learning
+                        </a>
+                      <?php elseif(!empty($item['file_path'])): ?>
+                        <a href="download.php?file=<?= urlencode($item['file_path']) ?>" class="btn btn-dark btn-sm rounded-pill px-4 shadow-sm">
+                          <i class="bi bi-cloud-arrow-down-fill me-1"></i> Download
                         </a>
                       <?php else: ?>
-                        <span class="badge bg-light text-secondary border">Service/Physical</span>
+                        <span class="badge bg-light text-secondary border px-3">Physical/Service</span>
                       <?php endif; ?>
                     </td>
                   </tr>
@@ -141,15 +152,15 @@ try {
             <button onclick="window.print()" class="btn btn-outline-dark rounded-pill px-4 me-2">
               <i class="bi bi-printer"></i> Print Receipt
             </button>
-            <a href="products.php" class="btn btn-success rounded-pill px-4" style="background:#5fcf80; border:none;">Return to Shop</a>
+            <a href="index.php" class="btn btn-success rounded-pill px-4" style="background:#5fcf80; border:none;">Back to Home</a>
           </div>
         </div>
       </div>
 
     <?php elseif(isset($error)): ?>
-      <div class="alert alert-danger p-5 rounded-4 text-center">
-        <i class="bi bi-exclamation-triangle" style="font-size: 3rem;"></i>
-        <h3 class="mt-3">Processing Error</h3>
+      <div class="alert alert-danger p-5 rounded-4 text-center shadow-sm">
+        <i class="bi bi-exclamation-octagon" style="font-size: 3rem;"></i>
+        <h3 class="mt-3">Error Processing Order</h3>
         <p><?= htmlspecialchars($error) ?></p>
         <a href="checkout.php" class="btn btn-dark rounded-pill mt-3 px-5">Try Again</a>
       </div>

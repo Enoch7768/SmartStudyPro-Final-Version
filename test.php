@@ -3,6 +3,12 @@
 require_once 'cms-init.php';
 
 header('Content-Type: text/html; charset=utf-8');
+
+
+// Temporary test: Fetch ALL chapters regardless of name
+$chapters = cockpit('content')->items('Chapters', [
+    'sort'   => ['Order' => 1]
+]);
 ?>
 
 <!DOCTYPE html>

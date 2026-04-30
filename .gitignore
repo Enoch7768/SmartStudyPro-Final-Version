@@ -1,0 +1,14 @@
+/vendor
+/useless
+*.log
+*.tmp
+.DS_Store
+.idea/
+*.iml
+*.swp
+node_modules/
+dist/
+.env
+*.env
+coverage/
+*.bak

@@ -240,6 +240,26 @@ class Cockpit {
             include($custombootfile);
         }
 
+        // Register event handler for Lessons content
+        $app->on('content.items.save.after.Lessons', function($collection, $item) {
+            if (isset($item['VIDEO FILE']['path'])) {
+                // Build the absolute path for XAMPP
+                $videoFile = __DIR__ . '/../' . ltrim($item['VIDEO FILE']['path'], '/');
+                
+                if (file_exists($videoFile)) {
+                    require_once(__DIR__ . '/../gemini-process.php');
+                    
+                    // Get AI output
+                    $aiOutput = processVideoWithGemini($videoFile, $item['TITLE']);
+                    
+                    // Update the CONTENT field in the database
+                    cockpit('content')->update('Lessons', $item['_id'], [
+                        'CONTENT' => $aiOutput
+                    ]);
+                }
+            }
+        });
+
         $app->trigger('bootstrap');
 
         return $app;
@@ -290,3 +310,4 @@ class Cockpit {
     }
 
 }
+
