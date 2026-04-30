@@ -1,14 +1,42 @@
-/vendor
-/useless
-*.log
-*.tmp
-.DS_Store
-.idea/
-*.iml
-*.swp
+# --- Dependencies ---
 node_modules/
-dist/
+/vendor/
+bower_components/
+
+# --- Environment & Security ---
 .env
 *.env
-coverage/
+.env.*
+!.env.example
 *.bak
+*.swp
+
+# --- OS & IDE Files ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# --- Build & Output ---
+dist/
+build/
+out/
+.next/
+bin/
+obj/
+coverage/
+
+# --- Logs & Temps ---
+*.log
+logs/
+*.tmp
+temp/
+tmp/
+
+# --- Project Specific Bloat ---
+/useless/
