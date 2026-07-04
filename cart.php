@@ -1,21 +1,24 @@
 <?php
-if (!isset($_COOKIE['user_id'])) {
-    die("No user identified. Make a booking first.");
-}
-$user_id = $_COOKIE['user_id'];
 
-$db_file = __DIR__ . "/database/bookings.db";
-if (!file_exists($db_file)) die("Database not found");
+$bookings = [];
 
-try {
-    $db = new PDO("sqlite:$db_file");
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+if (isset($_COOKIE['user_id'])) {
+    $user_id = $_COOKIE['user_id'];
+    $db_file = __DIR__ . "/database/bookings.db";
 
-    $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=0");
-    $stmt->execute([':user_id'=>$user_id]);
-    $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch(Exception $e){
-    die("DB Error: ".$e->getMessage());
+    if (file_exists($db_file)) {
+        try {
+            $db = new PDO("sqlite:$db_file");
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=0");
+            $stmt->execute([':user_id'=>$user_id]);
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("cart.php DB error: " . $e->getMessage());
+            $bookings = [];
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -30,14 +33,12 @@ try {
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,8599&family=Raleway:ital,wght@1.2.3.4.5.6.7.8.9&display=swap" rel="stylesheet">
 
-  <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
-  <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
 </head>
 <body>
@@ -46,7 +47,6 @@ try {
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
       <a href="index.html" class="logo d-flex align-items-center me-auto">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
         <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo">
       </a>
 
@@ -70,7 +70,7 @@ try {
 <h1 class="text-center mb-4">Your Cart</h1>
 
 <?php if(empty($bookings)): ?>
-<p class="text-center">Your cart is empty. <a href="courses.html">Book a session</a>.</p>
+<p class="text-center">Your cart is empty. <a href="courses.php">Book a session</a>.</p>
 <?php else: ?>
 <table class="table table-striped">
 <thead>
@@ -87,7 +87,7 @@ $total += $price;
 <td><?= htmlspecialchars($b['service']) ?></td>
 <td><?= htmlspecialchars($b['date']) ?></td>
 <td>UGX <?= number_format($price,2) ?></td>
-<td><a href="remove_from_cart.php?id=<?= $b['id'] ?>" class="btn btn-sm btn-danger">Remove</a></td>
+<td><a href="remove_from_cart.php?id=<?= (int) $b['id'] ?>" class="btn btn-sm btn-danger">Remove</a></td>
 </tr>
 <?php endforeach; ?>
 <tr>

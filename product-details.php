@@ -130,6 +130,9 @@ $fullImgUrl     = $siteUrl . $imgUrl;
               <hr>
               
               <form action="booking.php" method="post">
+                <input type="hidden" name="product_id" value="<?= htmlspecialchars($productId) ?>">
+                <!-- item_name/item_price/product_file are looked up server-side in
+                     booking.php from product_id; kept here only as a display fallback -->
                 <input type="hidden" name="item_name" value="<?= htmlspecialchars($displayTitle) ?>">
                 <input type="hidden" name="item_price" value="<?= htmlspecialchars($displayPrice) ?>">
                 <input type="hidden" name="product_file" value="<?= htmlspecialchars($filePath) ?>">

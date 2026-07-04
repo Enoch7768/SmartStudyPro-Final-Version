@@ -21,8 +21,6 @@ function is_cms_connected() {
     return function_exists('cockpit');
 }
 
-require_once __DIR__ . '/cms/bootstrap.php';
-
 $cockpit = Cockpit::instance();
 
 if (!function_exists('cockpit')) {

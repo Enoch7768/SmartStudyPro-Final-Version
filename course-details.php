@@ -7,11 +7,9 @@ $courseId = $_GET['id'] ?? null;
 
 try {
     if (function_exists('cockpit')) {
-        // Fetch specific course data
         if ($courseId) {
             $course = cockpit('content')->item('Courses', ['_id' => $courseId]);
         }
-        // Fetch contact details for the footer
         $contact = cockpit('content')->item('ContactDetails');
     }
 } catch (Exception $e) {
@@ -19,12 +17,10 @@ try {
     $contact = null;
 }
 
-// Fallback logic for Course Data
 $displayTitle    = $course['Title'] ?? 'Course Details';
 $displayPrice    = $course['Price'] ?? '0';
 $displaySubtitle = $course['Subtitle'] ?? 'Master your skills with Expert Instructors | Comprehensive Training for All Levels';
 
-// Dynamic Footer Fallbacks
 $phone   = $contact['phone'] ?? '+256 704 416250';
 $email   = $contact['email'] ?? 'smartstudypro36@gmail.com';
 $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
@@ -152,6 +148,7 @@ $ogImage  = !empty($cImgData['path'])
           <div class="col-lg-8">
             <h3 class="text-center mb-4">Reservation Form</h3>
             <form action="booking.php" method="post" class="php-email-form">
+                <input type="hidden" name="course_id" value="<?= htmlspecialchars($courseId) ?>">
                 <input type="hidden" name="price" value="<?= htmlspecialchars($displayPrice) ?>">
                 <input type="hidden" name="service" value="<?= htmlspecialchars($displayTitle) ?>">
                 

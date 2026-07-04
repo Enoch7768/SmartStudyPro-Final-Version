@@ -1,4 +1,6 @@
 <?php
+require_once 'auth.php';
+require_login(); // Must be signed in to pay — redirects to login.php otherwise
 
 date_default_timezone_set('Africa/Kampala');
 
@@ -6,7 +8,8 @@ if($_SERVER['REQUEST_METHOD'] != 'POST') die("Invalid access");
 
 $user_id = $_POST['user_id'] ?? '';
 $payment_method = $_POST['payment_method'] ?? 'Not Specified';
-$total = $_POST['total'] ?? 0;
+$submitted_total = (float) preg_replace('/[^0-9.]/', '', (string) ($_POST['total'] ?? 0));
+$accountId = current_user()['id'];
 
 $db_file = __DIR__ . "/database/bookings.db";
 if(!file_exists($db_file)) die("Database not found.");
@@ -17,35 +20,45 @@ try {
     $db = new PDO("sqlite:$db_file");
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $tableInfo = $db->query("PRAGMA table_info(bookings)")->fetchAll(PDO::FETCH_ASSOC);
-    $existingColumns = array_column($tableInfo, 'name');
-
-    if (!in_array('created_at', $existingColumns)) {
-        $db->exec("ALTER TABLE bookings ADD COLUMN created_at DATETIME");
-    }
-    if (!in_array('file_path', $existingColumns)) {
-        $db->exec("ALTER TABLE bookings ADD COLUMN file_path TEXT");
-    }
+    ensure_bookings_columns($db);
 
     $transactionTime = date('Y-m-d H:i:s');
 
+    // Compute the authoritative total from the DB rather than trusting the
+    // client-submitted 'total' field, and use it instead of the posted value
+    // before marking anything as paid. This does not replace a real payment
+    // gateway integration (no money actually changes hands here), but it
+    // prevents a tampered/low total posted to this endpoint from being
+    // accepted at face value for display or record-keeping.
+    // Matches by cart cookie OR logged-in account, same as checkout.php.
+    $stmt = $db->prepare("SELECT COALESCE(SUM(CAST(REPLACE(REPLACE(price,'UGX',''),',','') AS REAL)),0) AS total FROM bookings WHERE paid=0 AND (user_id=:user_id OR account_id=:account_id)");
+    $stmt->execute([':user_id' => $user_id, ':account_id' => $accountId]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $server_total = round((float) ($row['total'] ?? 0), 2);
 
-    $stmt = $db->prepare("UPDATE bookings SET paid=1, created_at=:now WHERE user_id=:user_id AND paid=0");
-    $stmt->execute([':user_id' => $user_id, ':now' => $transactionTime]);
+    if ($server_total <= 0) {
+        die("No unpaid bookings found for this user.");
+    }
+    // Use the amount actually owed on the server, regardless of what the client posted
+    $total = $server_total;
+
+    $stmt = $db->prepare("UPDATE bookings SET paid=1, created_at=:now, account_id=:account_id WHERE paid=0 AND (user_id=:user_id OR account_id=:account_id2)");
+    $stmt->execute([':user_id' => $user_id, ':now' => $transactionTime, ':account_id' => $accountId, ':account_id2' => $accountId]);
 
     $recentLimit = date('Y-m-d H:i:s', strtotime('-60 seconds'));
-    $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=1 AND created_at >= :recent ORDER BY created_at DESC");
-    $stmt->execute([':user_id' => $user_id, ':recent' => $recentLimit]);
+    $stmt = $db->prepare("SELECT * FROM bookings WHERE paid=1 AND created_at >= :recent AND (user_id=:user_id OR account_id=:account_id) ORDER BY created_at DESC");
+    $stmt->execute([':user_id' => $user_id, ':account_id' => $accountId, ':recent' => $recentLimit]);
     $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if(empty($bookings)) {
-        $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=1 ORDER BY created_at DESC LIMIT 5");
-        $stmt->execute([':user_id' => $user_id]);
+        $stmt = $db->prepare("SELECT * FROM bookings WHERE paid=1 AND (user_id=:user_id OR account_id=:account_id) ORDER BY created_at DESC LIMIT 5");
+        $stmt->execute([':user_id' => $user_id, ':account_id' => $accountId]);
         $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     $success = true;
 } catch(Exception $e){
-    $error = $e->getMessage();
+    error_log("process_payment.php error: " . $e->getMessage());
+    $error = "We couldn't process your payment. Please try again or contact support.";
 }
 ?>
 <!DOCTYPE html>

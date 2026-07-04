@@ -4,7 +4,11 @@
 =======
 >>>>>>> dabe44dcea665a2a138291a462ccd22d40c88014
 
-require_once 'cms-init.php'; 
+require_once 'cms-init.php';
+require_once 'auth.php';
+require_login(); 
+
+$user = current_user();
 
 $course_id = isset($_GET['course_id']) ? intval($_GET['course_id']) : 0;
 $course_name = '';
@@ -18,9 +22,10 @@ try {
 
     $db = new PDO("sqlite:$db_file");
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
-    $stmt = $db->prepare("SELECT service FROM bookings WHERE id = ? AND paid = 1");
-    $stmt->execute([$course_id]);
+    ensure_bookings_columns($db);
+
+    $stmt = $db->prepare("SELECT service FROM bookings WHERE id = ? AND paid = 1 AND (account_id = ? OR email = ?)");
+    $stmt->execute([$course_id, $user['id'], $user['email']]);
     $booking = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$booking) {
@@ -44,7 +49,10 @@ try {
             }
         }
     }
-} catch (Exception $e) { $error_message = $e->getMessage(); }
+} catch (Exception $e) {
+    error_log("study.php error: " . $e->getMessage());
+    $error_message = "Access Denied: Payment not verified.";
+}
 
 $active_video_path = isset($_GET['v']) ? $_GET['v'] : null;
 ?>
@@ -77,7 +85,7 @@ $active_video_path = isset($_GET['v']) ? $_GET['v'] : null;
   </header>
 
   <?php if ($error_message): ?>
-    <div class="alert alert-danger m-5 text-center"><?= $error_message ?></div>
+    <div class="alert alert-danger m-5 text-center"><?= htmlspecialchars($error_message) ?></div>
   <?php else: ?>
     <div class="study-layout">
       <nav class="sidebar">
@@ -117,10 +125,13 @@ $active_video_path = isset($_GET['v']) ? $_GET['v'] : null;
         <?php if ($active_video_path && $active_lesson_data): ?>
           <div class="video-container" style="background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             <?php 
-                $final_url = "http://localhost/schoolprojectt/SmartStudyProV2.3/cms/storage/uploads/" . ltrim($active_video_path, '/');
+                $token = sign_video_token($active_video_path, $user['id'], 6 * 3600); 
+                $final_url = "stream.php?path=" . rawurlencode($active_video_path)
+                           . "&exp=" . $token['exp']
+                           . "&sig=" . $token['sig'];
             ?>
-            <video id="mainPlayer" controls autoplay controlsList="nodownload" oncontextmenu="return false;" style="width: 100%; display: block; max-height: 75vh;">
-                <source src="<?= $final_url ?>" type="video/mp4">
+            <video id="mainPlayer" controls autoplay controlsList="nodownload noremoteplayback" disablePictureInPicture oncontextmenu="return false;" style="width: 100%; display: block; max-height: 75vh;">
+                <source src="<?= htmlspecialchars($final_url) ?>" type="video/mp4">
             </video>
           </div>
 
@@ -139,7 +150,7 @@ $active_video_path = isset($_GET['v']) ? $_GET['v'] : null;
             <h4 class="fw-bold mb-4 text-success"><i class="bi bi-patch-check-fill me-2"></i>Knowledge Check</h4>
             <form id="quizForm">
                 <?php foreach ($quizzes as $index => $q): ?>
-                <div class="quiz-card p-4 shadow-sm border">
+                <div class="quiz-card p-4 shadow-sm border" data-quiz-id="<?= htmlspecialchars($q['_id']) ?>">
                     <p class="fw-bold mb-3"><?= ($index + 1) ?>. <?= htmlspecialchars($q['Question']) ?></p>
                     <?php 
                       $options = explode(',', $q['Options']); 
@@ -150,7 +161,6 @@ $active_video_path = isset($_GET['v']) ? $_GET['v'] : null;
                         <label class="form-check-label" for="opt_<?= md5($opt.$q['_id']) ?>"><?= htmlspecialchars($opt) ?></label>
                     </div>
                     <?php endforeach; ?>
-                    <input type="hidden" id="correct_<?= $q['_id'] ?>" value="<?= htmlspecialchars($q['Correct Answer']) ?>">
                 </div>
                 <?php endforeach; ?>
                 <button type="button" onclick="gradeQuiz()" class="btn btn-success px-5 py-2 fw-bold shadow-sm">Grade My Answers</button>
@@ -172,18 +182,37 @@ $active_video_path = isset($_GET['v']) ? $_GET['v'] : null;
 
   <script>
     function gradeQuiz() {
-        let score = 0, total = 0;
-        document.querySelectorAll('input[type="hidden"][id^="correct_"]').forEach(input => {
-            total++;
-            const qId = input.id.replace('correct_', '');
-            const selected = document.querySelector(`input[name="q_${qId}"]:checked`);
-            if (selected && selected.value.trim() === input.value.trim()) score++;
+        const answers = {};
+        document.querySelectorAll('.quiz-card').forEach(card => {
+            const quizId = card.dataset.quizId;
+            const selected = card.querySelector('input[type="radio"]:checked');
+            if (selected) answers[quizId] = selected.value;
         });
-        const fb = document.getElementById('quizFeedback');
-        fb.className = "mt-4 alert " + (score === total ? "alert-success" : "alert-danger");
-        fb.innerHTML = `<strong>Result: ${score}/${total}</strong> — ` + (score === total ? "Perfect score!" : "Check the video and try again.");
-        fb.classList.remove('d-none');
-        fb.scrollIntoView({ behavior: 'smooth' });
+
+        if (Object.keys(answers).length === 0) {
+            alert("Please answer at least one question.");
+            return;
+        }
+
+        fetch('grade-quiz.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answers })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            const fb = document.getElementById('quizFeedback');
+            fb.className = "mt-4 alert " + (data.score === data.total ? "alert-success" : "alert-danger");
+            fb.innerHTML = `<strong>Result: ${data.score}/${data.total}</strong> — ` +
+                           (data.score === data.total ? "Perfect score!" : "Check the video and try again.");
+            fb.classList.remove('d-none');
+            fb.scrollIntoView({ behavior: 'smooth' });
+        })
+        .catch(() => alert('Could not grade your answers right now. Please try again.'));
     }
   </script>
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

@@ -1,4 +1,7 @@
 <?php
+require_once 'auth.php';
+require_login(); // Must be signed in to check out — redirects to login.php otherwise
+
 if (!isset($_COOKIE['user_id'])) die("No user identified.");
 $user_id = $_COOKIE['user_id'];
 
@@ -9,18 +12,25 @@ try {
     $db = new PDO("sqlite:$db_file");
     $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 
-    $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=0");
-    $stmt->execute([':user_id'=>$user_id]);
+    ensure_bookings_columns($db);
+
+    // Match by this browser's cart cookie, or by account if logged in — so
+    // items added before/after signing in are all included.
+    $user = current_user();
+    $stmt = $db->prepare("SELECT * FROM bookings WHERE paid=0 AND (user_id=:user_id OR account_id=:account_id)");
+    $stmt->execute([':user_id' => $user_id, ':account_id' => $user['id'] ?? 0]);
     $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if(empty($bookings)) die("No unpaid bookings found.");
 
     $total = 0;
     foreach($bookings as $b){
-        $total += floatval(str_replace('$','',$b['price']));
+        // Prices are stored/displayed in UGX, not $ — strip any non-numeric characters
+        $total += (float) preg_replace('/[^0-9.]/', '', (string) $b['price']);
     }
 } catch(Exception $e){
-    die("DB Error: ".$e->getMessage());
+    error_log("checkout.php DB error: " . $e->getMessage());
+    die("Sorry, we couldn't load your checkout right now. Please try again later.");
 }
 ?>
 <!DOCTYPE html>
@@ -31,24 +41,20 @@ try {
 <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="icon">
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="apple-touch-icon">
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,8599&family=Raleway:ital,wght@1.2.3.4.5.6.7.8.9&display=swap" rel="stylesheet">
 
-  <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
-  <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
 </head>
 <body>
 
-<header><!-- header code --></header>
 
 <main class="container py-5">
 <h1 class="text-center mb-4">Checkout</h1>
@@ -58,7 +64,7 @@ try {
 <?php foreach($bookings as $b): ?>
 <li class="list-group-item d-flex justify-content-between">
 <?= htmlspecialchars($b['service']) ?> - <?= htmlspecialchars($b['date']) ?>
-<span>UGX <?= $b['price'] ?></span>
+<span>UGX <?= htmlspecialchars((string) $b['price']) ?></span>
 </li>
 <?php endforeach; ?>
 <li class="list-group-item d-flex justify-content-between fw-bold">
@@ -129,31 +135,6 @@ Total
           </ul>
         </div>
 
-        <div class="col-lg-4 col-md-12 footer-newsletter">
-          <h4>Our Newsletter</h4>
-          <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
-          <form action="forms/newsletter.php" method="post" class="php-email-form">
-            <div class="newsletter-form"><input type="email" name="email" placeholder="Enter your email"><input type="submit" value="Subscribe"></div>
-            <div class="loading">Loading</div>
-            <div class="error-message"></div>
-            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-          </form>
-        </div>
-
-      </div>
-    </div>
-
-   <!-- <div display="hidden">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-       <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed by <a href=“https://themewagon.com>ThemeWagon
-      </div>
-    </div>
--->
   </footer>
 </body>
 </html>
