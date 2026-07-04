@@ -1,8 +1,5 @@
 <?php
-/**
- * SmartStudyPro V2.7 - FINAL PRODUCTION BUILD
- * Fixes: Line 128 Null Error, "Untitled" Lesson Bug, Local MP4 Routing
- */
+
 
 require_once 'cms-init.php'; 
 
