@@ -1,8 +1,4 @@
 <?php
-/**
- * SmartStudyPro V2.7 - FINAL PRODUCTION BUILD
- * Fixes: Line 128 Null Error, "Untitled" Lesson Bug, Local MP4 Routing
- */
 
 require_once 'cms-init.php'; 
 
@@ -86,13 +82,10 @@ $active_video_path = isset($_GET['v']) ? $_GET['v'] : null;
           <?php 
             $lessons = cockpit('content')->items('Lessons', ['filter' => ['Chapter' => $chapter['_id']], 'sort' => ['Order' => 1]]);
             foreach ($lessons as $lesson): 
-              
-              // --- 1. SMART TITLE DETECTION ---
               $l_title = 'Untitled Lesson';
               if (!empty($lesson['Title'])) $l_title = $lesson['Title'];
               elseif (!empty($lesson['title'])) $l_title = $lesson['title'];
               else {
-                  // Fallback: Use the first string field that isn't ID or Chapter
                   foreach($lesson as $k => $v) {
                       if (is_string($v) && strlen($v) > 2 && !in_array($k, ['_id', 'Chapter', 'VIDEO FILE'])) {
                           $l_title = $v; break;
@@ -100,7 +93,6 @@ $active_video_path = isset($_GET['v']) ? $_GET['v'] : null;
                   }
               }
 
-              // --- 2. NULL-SAFE VIDEO DETECTION ---
               $video_asset = !empty($lesson['VIDEO FILE']) ? $lesson['VIDEO FILE'] : null;
               $l_video_path = '';
               if ($video_asset) {
@@ -129,9 +121,10 @@ $active_video_path = isset($_GET['v']) ? $_GET['v'] : null;
           </div>
 
           <div class="mt-4 p-4 bg-white rounded shadow-sm border">
-              <h4 class="fw-bold mb-3"><?= htmlspecialchars($active_lesson_data['Title'] ?? $active_lesson_data['title'] ?? 'Lesson Details') ?></h4>
+              <h4 class="fw-bold mb-3"><?= htmlspecialchars($active_lesson_data['Title '] ?? $active_lesson_data['Title '] ?? 'Lesson Details') ?></h4>
               <div class="text-secondary" style="line-height: 1.6;">
-                  <?= $active_lesson_data['CONTENT'] ?? $active_lesson_data['content'] ?? 'No notes available.' ?>
+                  <?= $active_lesson_data['Content'] ?? $active_lesson_data['content'] ?? 'No notes availables.' ?>
+                  
               </div>
 
           <?php 

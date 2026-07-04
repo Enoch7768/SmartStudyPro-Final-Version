@@ -1,10 +1,5 @@
 <?php
-/**
- * FINAL PROCESS PAYMENT - SmartStudyPro
- * Features: Timezone sync, Course-aware receipts, and SQLite auto-fixes.
- */
 
-// 1. SET UGANDA TIMEZONE
 date_default_timezone_set('Africa/Kampala');
 
 if($_SERVER['REQUEST_METHOD'] != 'POST') die("Invalid access");
@@ -22,7 +17,6 @@ try {
     $db = new PDO("sqlite:$db_file");
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // --- SCHEMA AUTO-FIX ---
     $tableInfo = $db->query("PRAGMA table_info(bookings)")->fetchAll(PDO::FETCH_ASSOC);
     $existingColumns = array_column($tableInfo, 'name');
 
@@ -33,21 +27,16 @@ try {
         $db->exec("ALTER TABLE bookings ADD COLUMN file_path TEXT");
     }
 
-    // --- TRANSACTION LOGIC ---
-    // Capture exact EAT time
     $transactionTime = date('Y-m-d H:i:s');
 
-    // Mark items as paid and stamp them with the transaction time
+
     $stmt = $db->prepare("UPDATE bookings SET paid=1, created_at=:now WHERE user_id=:user_id AND paid=0");
     $stmt->execute([':user_id' => $user_id, ':now' => $transactionTime]);
 
-    // Fetch ONLY items from this specific transaction (last 60 seconds)
     $recentLimit = date('Y-m-d H:i:s', strtotime('-60 seconds'));
     $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=1 AND created_at >= :recent ORDER BY created_at DESC");
     $stmt->execute([':user_id' => $user_id, ':recent' => $recentLimit]);
     $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Fallback: If no recent items (e.g. refresh), show last 5 paid items
     if(empty($bookings)) {
         $stmt = $db->prepare("SELECT * FROM bookings WHERE user_id=:user_id AND paid=1 ORDER BY created_at DESC LIMIT 5");
         $stmt->execute([':user_id' => $user_id]);
@@ -127,7 +116,6 @@ try {
                     </td>
                     <td class="text-end">
                       <?php 
-                      // Check if the item is a Course
                       $isCourse = (stripos($item['service'], 'Course') !== false); 
                       
                       if($isCourse): ?>

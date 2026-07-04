@@ -9,7 +9,6 @@ try {
     if (function_exists('cockpit')) {
         $home = cockpit('content')->item('HomePage'); 
         $courses = cockpit('content')->items('Courses');
-        // Fetch contact details so the footer is dynamic too
         $contact = cockpit('content')->item('ContactDetails');
     }
 } catch (Exception $e) {
@@ -18,7 +17,6 @@ try {
     $contact = null;
 }
 
-// Global Contact Fallbacks
 $phone   = $contact['phone'] ?? '+256 704 416250';
 $email   = $contact['email'] ?? 'smartstudypro36@gmail.com';
 $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');

@@ -6,9 +6,7 @@ $contact = null;
 
 try {
     if (function_exists('cockpit')) {
-        // Fetch products from the new collection
         $products = cockpit('content')->items('Products');
-        // Fetch contact details for the footer
         $contact = cockpit('content')->item('ContactDetails');
     }
 } catch (Exception $e) {
@@ -16,7 +14,6 @@ try {
     $contact = null;
 }
 
-// Fallbacks for Footer
 $phone   = $contact['phone'] ?? '+256 704 416250';
 $email   = $contact['email'] ?? 'smartstudypro36@gmail.com';
 $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
@@ -77,7 +74,6 @@ $siteUrl        = "https://smartstudypro.com";
   <link href="assets/css/main.css" rel="stylesheet">
 
   <style>
-    /* UI Fixes for card alignment (Maintained your exact style) */
     .product-item { display: flex; flex-direction: column; height: 100%; background: #fff; border: 1px solid #eef0ef; position: relative; transition: 0.3s; }
     .product-item:hover { box-shadow: 0px 5px 20px rgba(0,0,0,0.1); }
     .type-badge { position: absolute; top: 15px; right: 15px; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 700; color: white; z-index: 5; }
