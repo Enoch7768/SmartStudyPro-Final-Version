@@ -5,33 +5,25 @@ $product = null;
 $productId = $_GET['id'] ?? null;
 
 if (function_exists('cockpit') && $productId) {
-    // Fetch the product from the 'Products' collection
     $product = cockpit('content')->item('Products', ['_id' => $productId]);
 }
 
-// If no product is found, redirect back to products.php to avoid a broken UI
 if (!$product) {
     header("Location: products.php");
     exit;
 }
 
-/** * DATA MAPPING 
- * Based on your diagnostic, we ensure these match your Cockpit field names exactly.
- * We use capital letters as they are standard in Cockpit.
- */
 $displayTitle = $product['Title'] ?? 'Product Details';
 $displayPrice = $product['Price'] ?? '0';
 $displayDesc  = $product['Description'] ?? 'No description available.';
 $productType  = $product['ProductType'] ?? 'Online'; 
 $category     = $product['Category'] ?? 'General';
 
-// Image Pathing
 $imgData = $product['Image'] ?? null;
 $imgUrl = !empty($imgData['path']) 
           ? '/schoolprojectt/SmartStudyProV2.3/cms/storage/uploads' . $imgData['path'] 
           : 'assets/img/course-details-tab-1.png';
 
-// Digital File path
 $filePath = $product['ProductFile']['path'] ?? '';
 
 

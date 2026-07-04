@@ -1,8 +1,4 @@
 <?php
-/**
- * SmartStudyPro - Quiz Center
- * Sidebar-based navigation for all quizzes
- */
 
 require_once 'cms-init.php'; 
 
@@ -17,17 +13,14 @@ try {
     $db = new PDO("sqlite:$db_file");
     $db = new PDO("sqlite:$db_file");
     
-    // 1. Get Course Name
     $stmt = $db->prepare("SELECT service FROM bookings WHERE id = ? AND paid = 1");
     $stmt->execute([$course_id]);
     $booking = $stmt->fetch(PDO::FETCH_ASSOC);
     $course_name = $booking ? trim($booking['service']) : "Course";
 
     if (function_exists('cockpit')) {
-        // 2. Fetch ALL available quizzes for the sidebar
         $all_quizzes = cockpit('content')->items('Quizzes');
 
-        // 3. Fetch specific questions if one is selected
         if ($active_quiz_id) {
             $active_quiz_questions = cockpit('content')->items('Quizzes', [
                 'filter' => ['_id' => $active_quiz_id]

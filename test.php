@@ -55,7 +55,7 @@ $chapters = cockpit('content')->items('Chapters', [
     <div class="card">
         <h2>3. Data Retrieval (Models)</h2>
         <?php
-        $models = ['HomePage', 'Courses', 'AboutPage', 'ContactDetails','Products'];
+        $models = ['HomePage', 'Courses', 'AboutPage', 'ContactDetails','Products','Lessons','Quizzes'];
         
         foreach ($models as $m) {
             echo "<strong>Testing Model [$m]: </strong>";
