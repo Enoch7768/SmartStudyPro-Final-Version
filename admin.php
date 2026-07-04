@@ -1,31 +1,51 @@
 <?php
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => '/',
+    'httponly' => true,
+    'samesite' => 'Lax',
+    'secure'   => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+]);
 session_start();
 
-// 1. Simple Password Protection
-$admin_password = "test"; // Change this for deployment
+
+$admin_password_hash = password_hash("test", PASSWORD_DEFAULT); 
 
 if (isset($_GET['logout'])) {
+    $_SESSION = [];
     session_destroy();
     header("Location: admin.php");
     exit;
 }
 
+$maxAttempts = 5;
+$lockoutSeconds = 60;
+if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
+if (!isset($_SESSION['login_locked_until'])) $_SESSION['login_locked_until'] = 0;
+
 if (isset($_POST['login'])) {
-    if ($_POST['password'] === $admin_password) {
+    if (time() < $_SESSION['login_locked_until']) {
+        $login_error = "Too many attempts. Please try again in a minute.";
+    } elseif (password_verify($_POST['password'] ?? '', $admin_password_hash)) {
+        session_regenerate_id(true);
         $_SESSION['admin_logged_in'] = true;
+        $_SESSION['login_attempts'] = 0;
     } else {
+        $_SESSION['login_attempts']++;
+        if ($_SESSION['login_attempts'] >= $maxAttempts) {
+            $_SESSION['login_locked_until'] = time() + $lockoutSeconds;
+            $_SESSION['login_attempts'] = 0;
+        }
         $login_error = "Invalid Password";
     }
 }
 
-// 2. Fetch Data if Logged In
 $bookings = [];
 if (isset($_SESSION['admin_logged_in'])) {
     try {
-        $db = new PDO("sqlite:database/bookings.db");
+        $db = new PDO("sqlite:" . __DIR__ . "/database/bookings.db");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        // Fetch latest bookings first
         $stmt = $db->query("SELECT * FROM bookings ORDER BY created_at DESC");
         $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
@@ -43,6 +63,7 @@ if (isset($_SESSION['admin_logged_in'])) {
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/main.css" rel="stylesheet">
+  <link rel="shortcut icon" href="Smart_Study_Logo_Fin-removebg-preview.png" type="image/x-icon">
 </head>
 <body class="bg-light">
 

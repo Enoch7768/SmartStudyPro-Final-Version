@@ -1,10 +1,8 @@
 <?php
-/**
- * UNIVERSAL BOOKING HANDLER - SmartStudyPro
- * Handles Courses, Physical Products, and Digital Downloads.
- */
 
-// 1. Identification Logic
+require_once 'cms-init.php';
+require_once 'auth.php';
+
 if(!isset($_COOKIE['user_id'])) {
     $user_id = bin2hex(random_bytes(16));
     setcookie('user_id', $user_id, time() + (86400*30), "/"); 
@@ -16,17 +14,55 @@ $success = false;
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 2. Capture Data (Universal Mapping)
-    $name     = $_POST['name']    ?? '';
-    $email    = $_POST['email']   ?? '';
-    $phone    = $_POST['phone']   ?? 'N/A';
+    $name     = trim($_POST['name']    ?? '');
+    $email    = trim($_POST['email']   ?? '');
+    $phone    = trim($_POST['phone']   ?? 'N/A');
     $date     = $_POST['date']    ?? date('Y-m-d');
-    $service  = $_POST['service'] ?? $_POST['item_name'] ?? 'Unknown Item';
-    $message  = $_POST['message'] ?? $_POST['address'] ?? ''; 
+    $service  = trim($_POST['service'] ?? $_POST['item_name'] ?? 'Unknown Item');
+    $message  = trim($_POST['message'] ?? $_POST['address'] ?? '');
     $price    = $_POST['price']   ?? $_POST['item_price'] ?? '0';
-    $filePath = $_POST['product_file'] ?? ''; 
+    $filePath = $_POST['product_file'] ?? '';
+    if ($name === '' || $email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Please provide a valid name and email address.";
+    }
+    $price = number_format((float) preg_replace('/[^0-9.]/', '', (string) $price), 2, '.', '');
+    $filePath = ltrim(str_replace(['..', '\\'], '', (string) $filePath), '/');
+
+    $courseId  = $_POST['course_id']  ?? null;
+    $productId = $_POST['product_id'] ?? null;
+
+    if (!isset($error) && $courseId && function_exists('cockpit')) {
+        $course = cockpit('content')->item('Courses', ['_id' => $courseId]);
+        if ($course) {
+            $service  = $course['Title'] ?? $service;
+            $price    = number_format((float) ($course['Price'] ?? 0), 2, '.', '');
+            $filePath = ''; 
+        } else {
+            $error = "The selected course could not be found.";
+        }
+    } elseif (!isset($error) && $productId && function_exists('cockpit')) {
+        $product = cockpit('content')->item('Products', ['_id' => $productId]);
+        if ($product) {
+            $service  = $product['Title'] ?? $service;
+            $price    = number_format((float) ($product['Price'] ?? 0), 2, '.', '');
+            $realFile = $product['ProductFile']['path'] ?? '';
+            $filePath = $realFile ? ltrim(str_replace(['..', '\\'], '', (string) $realFile), '/') : '';
+        } else {
+            $error = "The selected product could not be found.";
+        }
+    }
+    $accountId = null;
+    if (function_exists('current_user') && ($user = current_user())) {
+        $accountId = $user['id'];
+        $name  = $user['name'];
+        $email = $user['email'];
+    }
 
     try {
+        if (isset($error)) {
+            throw new Exception($error);
+        }
+
         $db_dir = __DIR__ . "/database";
         $db_file = $db_dir . "/bookings.db";
         
@@ -34,53 +70,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $db = new PDO("sqlite:$db_file");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        // 3. Create Table if not exists
-        $db->exec("CREATE TABLE IF NOT EXISTS bookings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT,
-            name TEXT,
-            email TEXT,
-            phone TEXT,
-            date TEXT,
-            service TEXT,
-            message TEXT,
-            price TEXT,
-            paid INTEGER DEFAULT 0,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )");
-
-        // 4. SELF-HEALING: Check for 'file_path' column (Fixes the "No Column" Error)
-        $tableInfo = $db->query("PRAGMA table_info(bookings)")->fetchAll(PDO::FETCH_ASSOC);
-        $hasFilePath = false;
-        foreach ($tableInfo as $column) {
-            if ($column['name'] === 'file_path') {
-                $hasFilePath = true;
-                break;
-            }
-        }
-        if (!$hasFilePath) {
-            $db->exec("ALTER TABLE bookings ADD COLUMN file_path TEXT");
-        }
-
-        // 5. Insert the Data
-        $stmt = $db->prepare("INSERT INTO bookings (user_id, name, email, phone, date, service, message, price, file_path) 
-                              VALUES (:user_id, :name, :email, :phone, :date, :service, :message, :price, :file_path)");
+        ensure_bookings_columns($db);
+        $stmt = $db->prepare("INSERT INTO bookings (user_id, name, email, phone, date, service, message, price, file_path, account_id) 
+                              VALUES (:user_id, :name, :email, :phone, :date, :service, :message, :price, :file_path, :account_id)");
         $stmt->execute([
-            ':user_id'   => $user_id,
-            ':name'      => $name,
-            ':email'     => $email,
-            ':phone'     => $phone,
-            ':date'      => $date,
-            ':service'   => $service,
-            ':message'   => $message,
-            ':price'     => $price,
-            ':file_path' => $filePath
+            ':user_id'    => $user_id,
+            ':name'       => $name,
+            ':email'      => $email,
+            ':phone'      => $phone,
+            ':date'       => $date,
+            ':service'    => $service,
+            ':message'    => $message,
+            ':price'      => $price,
+            ':file_path'  => $filePath,
+            ':account_id' => $accountId
         ]);
 
         $success = true;
     } catch (Exception $e) {
-        $error = "System Error: " . $e->getMessage();
+        if (!isset($error)) {
+            error_log("booking.php error: " . $e->getMessage());
+            $error = "Sorry, we couldn't process your order. Please try again.";
+        }
     }
 } else {
     header("Location: products.php");
@@ -132,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php else: ?>
           <div class="card shadow-lg border-0 p-5 rounded-4 border-start border-danger border-5">
             <h3 class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill"></i> Database Sync Required</h3>
-            <p class="mt-3"><?= $error ?></p>
+            <p class="mt-3"><?= htmlspecialchars($error) ?></p>
             <p class="small text-muted">Technical Tip: If this error persists, try deleting <code>database/bookings.db</code> to reset the schema.</p>
             <a href="javascript:history.back()" class="btn btn-dark rounded-pill mt-3">Go Back</a>
           </div>

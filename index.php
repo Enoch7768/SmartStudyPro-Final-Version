@@ -23,7 +23,7 @@ $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
 
 $seoTitle       = $home['SEO-Title'] ?? $home['Title'] ?? 'SmartStudyPro | Leading Online Learning Platform in Uganda';
 $seoDescription = $home['SEO-Description'] ?? 'Empowering students with innovative learning solutions, professional courses, and academic resources in Uganda.';
-$siteUrl        = "https://smartstudypro.com"; // Replace with your actual domain
+$siteUrl        = "https://smartstudypro.com"; 
 ?>
 
 <!DOCTYPE html>
@@ -100,6 +100,7 @@ $siteUrl        = "https://smartstudypro.com"; // Replace with your actual domai
           <li><a href="contact.php">Contact</a></li>
           <li><a href="products.php">Products</a></li>
           <li><a href="cart.php" title="Shopping Cart"><i class="bi bi-bag"></i></a></li>
+          <li><a href="profile.php" title="My Profile"><i class="bi bi-person-circle"></i></a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -186,22 +187,53 @@ $siteUrl        = "https://smartstudypro.com"; // Replace with your actual domai
       </div>
     </section>
   </main>
-<footer id="footer" class="footer position-relative light-background">
+  <footer id="footer" class="footer position-relative light-background">
+
     <div class="container footer-top">
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
-          <a href="index.php" class="logo d-flex align-items-center">
+          <a href="index.html" class="logo d-flex align-items-center">
             <span class="sitename">SmartStudyPro</span>
           </a>
-          <div class="footer-contact pt-3">
+            <div class="footer-contact pt-3">
             <p><?= htmlspecialchars($address) ?></p>
             <p class="mt-3"><strong>Phone:</strong> <span><?= htmlspecialchars($phone) ?></span></p>
             <p><strong>Email:</strong> <span><?= htmlspecialchars($email) ?></span></p>
           </div>
+          <div class="social-links d-flex mt-4">
+            <a href=""><i class="bi bi-twitter-x"></i></a>
+            <a href=""><i class="bi bi-facebook"></i></a>
+            <a href=""><i class="bi bi-instagram"></i></a>
+            <a href=""><i class="bi bi-linkedin"></i></a>
+          </div>
         </div>
-      </div>
-    </div>
-  </footer>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><a href="index.php">Home</a></li>
+            <li><a href="about.php">About us</a></li>
+            <li><a href="courses.php">Courses</a></li>
+            <li><a href="contact.php">Contact</a></li>
+            <li><a href="products.php">Product</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Our Courses</h4>
+          <ul>
+            <li>Private Tutoring</li>
+            <li>Holiday Package Guidance</li>
+            <li>Homework Assistance</li>
+            <li>Science Project Work Innovation</li>
+            <li>Computer Lessons (ICT)</li>
+          </ul>
+        </div>
+
+         <div class="container text-center">
+        <p>© 2026 SmartStudyPro. Empowering Education in Uganda.</p>
+     </div>
+
 
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
   <div id="preloader"></div>
