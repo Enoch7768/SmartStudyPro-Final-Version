@@ -1,4 +1,8 @@
 <?php
+<<<<<<< HEAD
+
+=======
+>>>>>>> dabe44dcea665a2a138291a462ccd22d40c88014
 
 require_once 'cms-init.php';
 require_once 'auth.php';
