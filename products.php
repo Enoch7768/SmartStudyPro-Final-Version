@@ -18,21 +18,21 @@ $phone   = $contact['phone'] ?? '+256 704 416250';
 $email   = $contact['email'] ?? 'smartstudypro36@gmail.com';
 $address = strip_tags($contact['address'] ?? 'Kampala, Uganda');
 
-$seoTitle       = 'Educational Resources & Kits | SmartStudyPro Store';
-$seoDescription = 'Shop science kits, ICT project tools, and online learning resources. Get the best educational materials delivered in Uganda or access instantly online.';
+$seoTitle       = 'Educational Products & Learning Materials | SmartStudyPro';
+$seoDescription = 'Browse physical and digital learning materials, holiday packages, and study resources from SmartStudyPro in Uganda.';
 $siteUrl        = "https://smartstudypro.com";
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title><?= htmlspecialchars($seoTitle) ?></title>
   <meta name="description" content="<?= htmlspecialchars($seoDescription) ?>">
-  <meta name="keywords" content="science kits Uganda, educational tools, lab equipment, online study resources">
+  <meta name="keywords" content="smartstudypro products, educational resources Uganda, study materials, holiday packages">
+  <meta name="author" content="SmartStudyPro">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="<?= $siteUrl ?>/products.php">
@@ -40,143 +40,285 @@ $siteUrl        = "https://smartstudypro.com";
   <meta property="og:description" content="<?= htmlspecialchars($seoDescription) ?>">
   <meta property="og:image" content="<?= $siteUrl ?>/Smart_Study_Logo_Fin-removebg-preview.png">
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": "SmartStudyPro Educational Store",
-    "description": "High-quality educational tools and online resources for students.",
-    "itemListElement": [
-      <?php 
-      $pCount = 1;
-      foreach(array_slice($products, 0, 10) as $p): 
-      ?>
-      {
-        "@type": "ListItem",
-        "position": <?= $pCount ?>,
-        "url": "<?= $siteUrl ?>/product-details.php?id=<?= $p['_id'] ?>",
-        "name": "<?= htmlspecialchars($p['Title'] ?? 'Product') ?>"
-      }<?= ($pCount < count(array_slice($products, 0, 10))) ? ',' : '' ?>
-      <?php $pCount++; endforeach; ?>
-    ]
-  }
-  </script>
-
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="icon">
   <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="apple-touch-icon">
 
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <style>
-    .product-item { display: flex; flex-direction: column; height: 100%; background: #fff; border: 1px solid #eef0ef; position: relative; transition: 0.3s; }
-    .product-item:hover { box-shadow: 0px 5px 20px rgba(0,0,0,0.1); }
-    .type-badge { position: absolute; top: 15px; right: 15px; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 700; color: white; z-index: 5; }
-    .badge-online { background-color: #5fcf80; }
-    .badge-physical { background-color: #f39c12; }
-    .product-content { display: flex; flex-direction: column; flex-grow: 1; padding: 20px; }
-    .product-description { flex-grow: 1; color: #777; font-size: 14px; margin-bottom: 15px; }
-    .product-footer { border-top: 1px solid #f1f1f1; padding-top: 15px; }
+    :root {
+      --ssp-navy: #0C086B;
+      --ssp-navy-dark: #070443;
+      --ssp-orange: #FF7A00;
+      --ssp-orange-hover: #E06B00;
+      --ssp-bg-soft: #F8FAFC;
+      --ssp-text-main: #1E293B;
+      --ssp-text-muted: #64748B;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--ssp-text-main);
+      background-color: #FFFFFF;
+    }
+
+    h1, h2, h3, h4, h5, .brand-font {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .ssp-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(12, 8, 107, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .navmenu ul {
+      list-style: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 24px;
+    }
+
+    .navmenu ul li {
+      list-style: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .navmenu ul li a {
+      color: var(--ssp-navy);
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none !important;
+      display: inline-block;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+
+    .navmenu ul li a:hover,
+    .navmenu ul li a.active {
+      color: var(--ssp-orange) !important;
+      font-weight: 700;
+    }
+
+    .dropdown-toggle-no-caret::after {
+      display: none !important;
+    }
+
+    .dropdown-menu .dropdown-item:hover {
+      background-color: var(--ssp-bg-soft);
+      color: var(--ssp-orange);
+    }
+
+    .btn-ssp-primary {
+      background-color: var(--ssp-orange);
+      color: #FFFFFF;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 10px 24px;
+      border: none;
+      box-shadow: 0 4px 14px rgba(255, 122, 0, 0.35);
+      transition: all 0.25s ease;
+    }
+
+    .btn-ssp-primary:hover {
+      background-color: var(--ssp-orange-hover);
+      color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.45);
+    }
+
+    .page-title-ssp {
+      background: linear-gradient(135deg, var(--ssp-navy) 0%, var(--ssp-navy-dark) 100%);
+      color: #FFFFFF;
+      padding: 60px 0;
+    }
+
+    .ssp-course-card {
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #FFFFFF;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ssp-course-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 122, 0, 0.4);
+      box-shadow: 0 20px 25px -5px rgba(12, 8, 107, 0.1);
+    }
+
+    /* Badge Truncation & Overlap Fix */
+    .ssp-card-badge {
+      background: #EFF6FF;
+      color: var(--ssp-navy);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      max-width: 60%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+    }
+
+    .ssp-price-tag {
+      color: var(--ssp-orange);
+      font-weight: 800;
+      font-size: 1.15rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .ssp-footer {
+      background-color: var(--ssp-navy-dark);
+      color: #94A3B8;
+    }
+
+    .ssp-footer-brand {
+      color: #FFFFFF;
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .ssp-footer-brand span {
+      color: var(--ssp-orange);
+    }
+
+    .social-icon-btn {
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .social-icon-btn:hover {
+      background: var(--ssp-orange);
+      color: #FFFFFF;
+    }
   </style>
 </head>
 
-<body class="courses-page">
+<body class="products-page">
 
-  <header id="header" class="header d-flex align-items-center sticky-top">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center">
-      <a href="index.php" class="logo d-flex align-items-center me-auto">
-        <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro">
+  <header id="header" class="header ssp-header d-flex align-items-center sticky-top py-2">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      
+      <a href="index.php" class="logo d-flex align-items-center me-auto me-xl-0 text-decoration-none">
+        <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo" height="48">
       </a>
+
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.php">Home</a></li>
-          <li><a href="about.php">About</a></li>
-          <li><a href="courses.php">Courses</a></li>
-          <li><a href="products.php" class="active">Products</a></li>
-          <li><a href="contact.php">Contact</a></li>
-          <li><a href="cart.php" title="Shopping Cart"><i class="bi bi-bag"></i></a></li>
+          <li><a href="index.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : '' ?>">Home</a></li>
+          <li><a href="about.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : '' ?>">About Us</a></li>
+          <li><a href="courses.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'courses.php') ? 'active' : '' ?>">Courses</a></li>
+          <li><a href="products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : '' ?>">Products</a></li>
+          <li><a href="contact.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : '' ?>">Contact</a></li>
         </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3"></i>
       </nav>
+
+      <div class="d-flex align-items-center gap-3">
+        <a href="cart.php" class="text-dark fs-5 position-relative text-decoration-none" title="Shopping Cart">
+          <i class="bi bi-bag"></i>
+        </a>
+
+        <div class="dropdown">
+          <a href="#" class="text-dark fs-5 text-decoration-none dropdown-toggle-no-caret" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account">
+            <i class="bi bi-person-circle"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
+            <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
+            <li><a class="dropdown-item py-2" href="cart.php"><i class="bi bi-bag me-2" style="color: var(--ssp-navy);"></i>My Cart</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item py-2 text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Log Out</a></li>
+          </ul>
+        </div>
+
+        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none ms-2" href="courses.php">Explore Courses</a>
+      </div>
+
     </div>
   </header>
 
   <main class="main">
 
-    <div class="page-title" data-aos="fade">
-      <div class="heading">
-        <div class="container">
-          <div class="row d-flex justify-content-center text-center">
-            <div class="col-lg-8">
-              <h1>Store & Resources</h1>
-              <p class="mb-0">Find the right tools and kits to boost your learning journey.</p>
-            </div>
-          </div>
-        </div>
+    <div class="page-title-ssp text-center">
+      <div class="container" data-aos="fade-up">
+        <h1 class="fw-bold mb-2">Products & Learning Resources</h1>
+        <p class="mb-0 opacity-75">Quality Educational Materials, Guides, and Kits for Effective Learning</p>
       </div>
     </div>
 
-    <section id="products" class="courses section">
+    <section id="products" class="products section py-5" style="background-color: var(--ssp-bg-soft);">
       <div class="container">
-        <div class="row gy-4">
+        <div class="row g-4">
           <?php if (!empty($products)): ?>
             <?php foreach($products as $product): ?>
-              <?php 
-                $type = $product['ProductType'] ?? 'Online';
-                $isPhysical = ($type === 'Physical');
-                $imgData = $product['Image'] ?? null;
-                $img = !empty($imgData['path']) 
-                       ? '/schoolprojectt/SmartStudyProV2.3/cms/storage/uploads'.$imgData['path'] 
-                       : 'assets/img/placeholder.jpg';
-              ?>
               <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
-                <div class="product-item">
-                  
-                  <span class="type-badge <?= $isPhysical ? 'badge-physical' : 'badge-online' ?>">
-                    <?= strtoupper($type) ?>
-                  </span>
+                <div class="ssp-course-card w-100 d-flex flex-column">
+                  <?php 
+                    $pImgData = $product['Image'] ?? $product['image'] ?? null;
+                    $pImg = !empty($pImgData['path']) 
+                            ? '/schoolprojectt/SmartStudyProV2.3/cms/storage/uploads'.$pImgData['path'] 
+                            : 'assets/img/course-1.jpg'; 
+                  ?>
+                  <div class="position-relative">
+                    <img src="<?= $pImg ?>" class="img-fluid w-100" style="height: 210px; object-fit: cover;" alt="<?= htmlspecialchars($product['Title'] ?? $product['title'] ?? 'Product') ?>">
+                  </div>
 
-                  <img src="<?= $img ?>" class="img-fluid" alt="<?= htmlspecialchars($product['Title'] ?? 'Product') ?>">
-                  
-                  <div class="product-content">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                      <p class="category" style="background: #f1f1f1; padding: 4px 10px; border-radius: 5px; font-size: 12px; margin: 0;">
-                        <?= htmlspecialchars($product['Category'] ?? 'General') ?>
-                      </p>
-                      <p class="price" style="font-weight: 700; color: #37423b; margin: 0;">UGX <?= number_format(floatval($product['Price'] ?? 0), 2) ?></p>
+                  <div class="p-4 d-flex flex-column flex-grow-1">
+                    <!-- Fixed Header Container with Gap & Flex Bounds -->
+                    <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                      <span class="ssp-card-badge" title="<?= htmlspecialchars($product['Category'] ?? $product['category'] ?? 'Resource') ?>">
+                        <?= htmlspecialchars($product['Category'] ?? $product['category'] ?? 'Resource') ?>
+                      </span>
+                      <span class="ssp-price-tag">
+                        UGX <?= number_format(floatval($product['Price'] ?? $product['price'] ?? 0)) ?>
+                      </span>
                     </div>
 
-                    <h3><a href="product-details.php?id=<?= $product['_id'] ?>"><?= htmlspecialchars($product['Title'] ?? 'Untitled Item') ?></a></h3>
-                    
-                    <div class="product-description">
-                        <?= strip_tags($product['Description'] ?? '') ?>
-                    </div>
-                    
-                    <div class="product-footer">
-                        <?php if($isPhysical): ?>
-                            <small class="text-warning d-block mb-2"><i class="bi bi-truck"></i> Home Delivery</small>
-                        <?php else: ?>
-                            <small class="text-success d-block mb-2"><i class="bi bi-cloud-download"></i> Instant Access</small>
-                        <?php endif; ?>
-                        
-                        <a href="product-details.php?id=<?= $product['_id'] ?>" class="w-100">
-                            <button type="button" class="btn btn-success w-100" style="background-color: <?= $isPhysical ? '#f39c12' : '#5fcf80' ?>; border: none; border-radius: 50px; font-weight: 600;">
-                                <?= $isPhysical ? 'Order Now' : 'Enroll Now' ?>
-                            </button>
-                        </a>
-                    </div>
+                    <h3 class="h5 fw-bold mb-2">
+                      <a href="product-details.php?id=<?= $product['_id'] ?>" class="text-decoration-none" style="color: var(--ssp-navy);">
+                        <?= htmlspecialchars($product['Title'] ?? $product['title'] ?? 'Untitled Product') ?>
+                      </a>
+                    </h3>
+
+                    <p class="text-muted small mb-4 flex-grow-1">
+                      <?= htmlspecialchars(substr(strip_tags($product['Description'] ?? $product['description'] ?? ''), 0, 110)) ?>...
+                    </p>
+
+                    <a href="product-details.php?id=<?= $product['_id'] ?>" class="btn btn-outline-primary w-100 mt-auto rounded-3 text-decoration-none" style="color: var(--ssp-navy); border-color: var(--ssp-navy);">
+                      View Details
+                    </a>
                   </div>
                 </div>
               </div>
             <?php endforeach; ?>
           <?php else: ?>
-            <div class="col-12 text-center">
-              <p>No products available at the moment.</p>
+            <div class="text-center text-muted py-5">
+              <p>No products currently available. Please check back shortly!</p>
             </div>
           <?php endif; ?>
         </div>
@@ -185,54 +327,62 @@ $siteUrl        = "https://smartstudypro.com";
 
   </main>
 
-  <footer id="footer" class="footer position-relative light-background">
-
-    <div class="container footer-top">
+  <footer id="footer" class="ssp-footer pt-5 pb-3">
+    <div class="container footer-top mb-4">
       <div class="row gy-4">
-        <div class="col-lg-4 col-md-6 footer-about">
-          <a href="index.html" class="logo d-flex align-items-center">
-            <span class="sitename">SmartStudyPro</span>
+        
+        <div class="col-lg-4 col-md-6">
+          <a href="index.php" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
+            SmartStudy<span>Pro</span>
           </a>
-            <div class="footer-contact pt-3">
-            <p><?= htmlspecialchars($address) ?></p>
-            <p class="mt-3"><strong>Phone:</strong> <span><?= htmlspecialchars($phone) ?></span></p>
-            <p><strong>Email:</strong> <span><?= htmlspecialchars($email) ?></span></p>
+          <p class="small text-light opacity-75 mb-3">Study Made Simple, Success Made Sure.</p>
+          
+          <div class="small mb-3">
+            <p class="mb-1"><i class="bi bi-geo-alt-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($address) ?></p>
+            <p class="mb-1"><i class="bi bi-telephone-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($phone) ?></p>
+            <p class="mb-1"><i class="bi bi-envelope-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($email) ?></p>
           </div>
-          <div class="social-links d-flex mt-4">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
+
+          <div class="d-flex gap-2">
+            <a href="#" class="social-icon-btn"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" class="social-icon-btn"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="social-icon-btn"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="social-icon-btn"><i class="bi bi-linkedin"></i></a>
           </div>
         </div>
 
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Useful Links</h4>
-          <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="about.php">About us</a></li>
-            <li><a href="courses.php">Courses</a></li>
-            <li><a href="contact.php">Contact</a></li>
-            <li><a href="products.php">Product</a></li>
+        <div class="col-lg-3 col-md-3">
+          <h5 class="text-white fw-bold mb-3">Quick Navigation</h5>
+          <ul class="list-unstyled small">
+            <li class="mb-2"><a href="index.php" class="text-decoration-none text-light opacity-75">Home</a></li>
+            <li class="mb-2"><a href="about.php" class="text-decoration-none text-light opacity-75">About Us</a></li>
+            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-light opacity-75">Courses</a></li>
+            <li class="mb-2"><a href="products.php" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
+            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
           </ul>
         </div>
 
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Our Courses</h4>
-          <ul>
-            <li>Private Tutoring</li>
-            <li>Holiday Package Guidance</li>
-            <li>Homework Assistance</li>
-            <li>Science Project Work Innovation</li>
-            <li>Computer Lessons (ICT)</li>
+        <div class="col-lg-5 col-md-3">
+          <h5 class="text-white fw-bold mb-3">Core Educational Offerings</h5>
+          <ul class="list-unstyled small opacity-75">
+            <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Private & Customized Tutoring</li>
+            <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Holiday Package & Guided Learning</li>
+            <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Homework & Assignment Support</li>
+            <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Science Project & STEM Innovation</li>
+            <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Applied Computer & ICT Lessons</li>
           </ul>
         </div>
 
-         <div class="container text-center">
-        <p>© 2026 SmartStudyPro. Empowering Education in Uganda.</p>
-     </div>
+      </div>
+    </div>
 
-  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <div class="container text-center border-top border-secondary pt-3 mt-3 opacity-75 small">
+      <p class="mb-0">&copy; <?= date('Y') ?> <strong>SmartStudyPro</strong>. All Rights Reserved. Empowering Education in Uganda.</p>
+    </div>
+  </footer>
+
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center text-decoration-none"><i class="bi bi-arrow-up-short"></i></a>
+  <div id="preloader"></div>
 
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
