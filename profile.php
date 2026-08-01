@@ -333,11 +333,6 @@ $siteUrl        = "https://smartstudypro.com";
         <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3"></i>
       </nav>
 
-      <div class="d-flex align-items-center gap-3">
-        <a href="cart.php" class="text-dark fs-5 position-relative text-decoration-none" title="Shopping Cart">
-          <i class="bi bi-bag"></i>
-        </a>
-
         <div class="dropdown">
           <a href="#" class="text-dark fs-5 text-decoration-none dropdown-toggle-no-caret" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account">
             <i class="bi bi-person-circle" style="color: var(--ssp-orange);"></i>

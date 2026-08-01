@@ -245,7 +245,6 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
           <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
           <li><a class="dropdown-item py-2" href="cart.php"><i class="bi bi-bag me-2" style="color: var(--ssp-navy);"></i>My Cart</a></li>
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item py-2 text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Log Out</a></li>
         </ul>
       </div>
     </div>

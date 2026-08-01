@@ -223,10 +223,6 @@ $siteUrl        = "https://smartstudypro.com";
         <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3"></i>
       </nav>
 
-      <div class="d-flex align-items-center gap-3">
-        <a href="cart.php" class="text-dark fs-5 position-relative text-decoration-none" title="Shopping Cart">
-          <i class="bi bi-bag" style="color: var(--ssp-orange);"></i>
-        </a>
 
         <div class="dropdown">
           <a href="#" class="text-dark fs-5 text-decoration-none dropdown-toggle-no-caret" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account">
@@ -234,9 +230,7 @@ $siteUrl        = "https://smartstudypro.com";
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
             <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
-            <li><a class="dropdown-item py-2" href="cart.php"><i class="bi bi-bag me-2" style="color: var(--ssp-navy);"></i>My Cart</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item py-2 text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Log Out</a></li>
           </ul>
         </div>
 

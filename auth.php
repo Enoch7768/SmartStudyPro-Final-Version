@@ -112,4 +112,16 @@ function logout_user(): void {
     $_SESSION = [];
     session_destroy();
 }
+
+function ensure_user_verification_columns($db) {
+    try {
+        $db->exec("ALTER TABLE users ADD COLUMN verification_token VARCHAR(255) NULL");
+    } catch (Exception $e) {
+    }
+
+    try {
+        $db->exec("ALTER TABLE users ADD COLUMN email_verified TINYINT(1) DEFAULT 0");
+    } catch (Exception $e) {
+    }
+}
 define('GOOGLE_CLIENT_ID', '1027530089710-c3phjdkk43btj44v7gaeaoah6ldi1m43.apps.googleusercontent.com');
