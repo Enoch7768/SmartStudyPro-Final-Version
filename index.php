@@ -93,6 +93,7 @@ $siteUrl        = "https://smartstudypro.com";
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
       background-color: #FFFFFF;
+      overflow-x: hidden;
     }
 
     h1, h2, h3, h4, h5, .brand-font {
@@ -100,19 +101,17 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .ssp-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(12px);
       border-bottom: 2px solid rgba(12, 8, 107, 0.08);
       transition: all 0.3s ease;
     }
 
+    /* Base Navigation Styling */
     .navmenu ul {
       list-style: none !important;
       margin: 0 !important;
       padding: 0 !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 24px;
     }
 
     .navmenu ul li {
@@ -137,13 +136,76 @@ $siteUrl        = "https://smartstudypro.com";
       font-weight: 700;
     }
 
-    .dropdown-toggle-no-caret::after {
-      display: none !important;
+    /* Desktop Navigation (XL screens and above) */
+    @media (min-width: 1200px) {
+      .navmenu ul {
+        display: flex !important;
+        align-items: center !important;
+        gap: 24px;
+      }
     }
 
-    .dropdown-menu .dropdown-item:hover {
-      background-color: var(--ssp-bg-soft);
+    /* Keyframes for Mobile Menu Open Animation */
+    @keyframes mobileNavSlideDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-18px) scale(0.97);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Mobile / Tablet Navigation Drawer with Opening Animation */
+    @media (max-width: 1199.98px) {
+      .navmenu ul {
+        display: none;
+        position: fixed;
+        top: 70px;
+        right: 15px;
+        left: 15px;
+        padding: 24px !important;
+        background: #FFFFFF;
+        border-radius: 16px;
+        box-shadow: 0 12px 32px rgba(12, 8, 107, 0.16);
+        border: 1px solid rgba(12, 8, 107, 0.08);
+        z-index: 9999;
+      }
+
+      .mobile-nav-active .navmenu ul {
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        animation: mobileNavSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      .mobile-nav-toggle {
+        cursor: pointer;
+        color: var(--ssp-navy);
+        transition: transform 0.25s ease, color 0.25s ease;
+      }
+
+      .mobile-nav-active .mobile-nav-toggle {
+        transform: rotate(90deg);
+        color: var(--ssp-orange);
+      }
+    }
+
+    .header-icon-link {
+      color: var(--ssp-navy);
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-icon-link:hover {
       color: var(--ssp-orange);
+      background-color: var(--ssp-bg-soft);
     }
 
     .btn-ssp-primary {
@@ -155,6 +217,8 @@ $siteUrl        = "https://smartstudypro.com";
       border: none;
       box-shadow: 0 4px 14px rgba(255, 122, 0, 0.35);
       transition: all 0.25s ease;
+      display: inline-block;
+      text-align: center;
     }
 
     .btn-ssp-primary:hover {
@@ -172,6 +236,8 @@ $siteUrl        = "https://smartstudypro.com";
       padding: 10px 24px;
       border: none;
       transition: all 0.25s ease;
+      display: inline-block;
+      text-align: center;
     }
 
     .btn-ssp-navy:hover {
@@ -212,6 +278,8 @@ $siteUrl        = "https://smartstudypro.com";
       padding: 6px 16px;
       border-radius: 30px;
       border: 1px solid rgba(255, 122, 0, 0.3);
+      max-width: 100%;
+      word-wrap: break-word;
     }
 
     .pixel-decor {
@@ -293,6 +361,33 @@ $siteUrl        = "https://smartstudypro.com";
       background: var(--ssp-orange);
       color: #FFFFFF;
     }
+
+    /* Media Queries for Fine-Tuned Responsiveness */
+    @media (max-width: 991.98px) {
+      .ssp-hero {
+        padding: 100px 0 70px;
+      }
+      .display-4 {
+        font-size: calc(1.475rem + 2.7vw);
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      .ssp-hero {
+        padding: 80px 0 50px;
+      }
+      .display-4 {
+        font-size: 1.85rem;
+      }
+      .hero-tagline {
+        font-size: 0.75rem;
+        padding: 5px 12px;
+      }
+      .btn-ssp-primary, 
+      .ssp-hero .btn-outline-light {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 
@@ -302,7 +397,7 @@ $siteUrl        = "https://smartstudypro.com";
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
       
       <a href="index.php" class="logo d-flex align-items-center me-auto me-xl-0 text-decoration-none">
-        <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo" height="48">
+        <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo" height="48" class="img-fluid" style="max-height: 48px;">
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -313,21 +408,19 @@ $siteUrl        = "https://smartstudypro.com";
           <li><a href="products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : '' ?>">Products</a></li>
           <li><a href="contact.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : '' ?>">Contact</a></li>
         </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3"></i>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3 ms-sm-4 p-1"></i>
       </nav>
 
-        <div class="dropdown">
-          <a href="#" class="text-dark fs-5 text-decoration-none dropdown-toggle-no-caret" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account">
-            <i class="bi bi-person-circle"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
-            <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
-            <li><a class="dropdown-item py-2" href="cart.php"><i class="bi bi-bag me-2" style="color: var(--ssp-navy);"></i>My Cart</a></li>
-            <li><hr class="dropdown-divider"></li>
-          </ul>
-        </div>
+      <div class="d-flex align-items-center gap-2 gap-sm-3">
+        <a href="cart.php" class="header-icon-link fs-5 text-decoration-none" title="Shopping Cart">
+          <i class="bi bi-bag"></i>
+        </a>
 
-        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none ms-2" href="courses.php">Explore Courses</a>
+        <a href="profile.php" class="header-icon-link fs-5 text-decoration-none" title="My Profile">
+          <i class="bi bi-person-circle"></i>
+        </a>
+
+        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none ms-1 ms-sm-2" href="courses.php">Explore Courses</a>
       </div>
 
     </div>
@@ -357,14 +450,14 @@ $siteUrl        = "https://smartstudypro.com";
             </div>
 
             <h1 class="display-4 fw-bold text-white mb-3" data-aos="fade-up" data-aos-delay="100">
-              <?= $home['Hero-Title'] ?? $home['Title'] ?? 'Learning Today,<br>Leading Tomorrow' ?>
+              <?= $home['Hero-Title'] ?? $home['Title'] ?? 'Learning Today,<br class="d-none d-sm-inline">Leading Tomorrow' ?>
             </h1>
 
             <p class="lead text-light opacity-90 mb-4" data-aos="fade-up" data-aos-delay="200">
               <?= $home['Hero-Subtitle'] ?? $home['Description'] ?? 'Empowering students with innovative learning solutions, professional tutoring, and academic excellence in Uganda.' ?>
             </p>
 
-            <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start" data-aos="fade-up" data-aos-delay="300">
+            <div class="d-flex flex-column flex-sm-row flex-wrap gap-3 justify-content-center justify-content-lg-start" data-aos="fade-up" data-aos-delay="300">
               <a href="courses.php" class="btn-ssp-primary text-decoration-none">Start Learning Today</a>
               <a href="about.php" class="btn btn-outline-light rounded-3 px-4 py-2 fw-semibold text-decoration-none">Discover SmartStudyPro</a>
             </div>
@@ -374,12 +467,12 @@ $siteUrl        = "https://smartstudypro.com";
       </div>
     </section>
 
-    <section id="about" class="about section py-5">
+    <section id="about" class="about section py-4 py-md-5">
       <div class="container" data-aos="fade-up">
         <div class="row gy-4 align-items-center">
           <div class="col-lg-6 order-1 order-lg-2">
             <div class="position-relative">
-              <img src="assets/img/20240102_164438.jpg" class="img-fluid rounded-4 shadow-lg" alt="SmartStudyPro Learning Environment">
+              <img src="assets/img/20240102_164438.jpg" class="img-fluid rounded-4 shadow-lg w-100" alt="SmartStudyPro Learning Environment">
             </div>
           </div>
 
@@ -392,7 +485,7 @@ $siteUrl        = "https://smartstudypro.com";
 
             <div class="my-4">
               <div class="d-flex gap-3 mb-3">
-                <div class="text-warning fs-4"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
+                <div class="text-warning fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
                 <div>
                   <h6 class="fw-bold mb-1" style="color: var(--ssp-navy);">Distraction-Free Platform</h6>
                   <p class="text-muted small mb-0">Clean, intuitive layout structured specifically to keep students focused on academic success.</p>
@@ -400,7 +493,7 @@ $siteUrl        = "https://smartstudypro.com";
               </div>
 
               <div class="d-flex gap-3 mb-3">
-                <div class="text-warning fs-4"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
+                <div class="text-warning fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
                 <div>
                   <h6 class="fw-bold mb-1" style="color: var(--ssp-navy);">Unified Learning Ecosystem</h6>
                   <p class="text-muted small mb-0">Seamless access to course content, holiday guidance packages, and specialized ICT lessons.</p>
@@ -408,7 +501,7 @@ $siteUrl        = "https://smartstudypro.com";
               </div>
 
               <div class="d-flex gap-3">
-                <div class="text-warning fs-4"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
+                <div class="text-warning fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
                 <div>
                   <h6 class="fw-bold mb-1" style="color: var(--ssp-navy);">Reliable & Secured Infrastructure</h6>
                   <p class="text-muted small mb-0">Built on modern, fast web standards to ensure student data safety and fast dynamic loading.</p>
@@ -422,8 +515,8 @@ $siteUrl        = "https://smartstudypro.com";
       </div>
     </section>
 
-    <section id="courses" class="courses section py-5" style="background-color: var(--ssp-bg-soft);">
-      <div class="container text-center mb-5" data-aos="fade-up">
+    <section id="courses" class="courses section py-4 py-md-5" style="background-color: var(--ssp-bg-soft);">
+      <div class="container text-center mb-4 mb-md-5" data-aos="fade-up">
         <span class="badge px-3 py-2 mb-2" style="background-color: rgba(12,8,107,0.1); color: var(--ssp-navy);">Featured Content</span>
         <h2 class="fw-bold" style="color: var(--ssp-navy);">Explore Popular Courses</h2>
         <p class="text-muted">Explore structured learning programs designed to boost academic growth.</p>
@@ -433,7 +526,7 @@ $siteUrl        = "https://smartstudypro.com";
         <div class="row g-4">
           <?php if (!empty($courses)): ?>
             <?php foreach(array_slice($courses, 0, 3) as $course): ?>
-              <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
+              <div class="col-12 col-md-6 col-lg-4 d-flex align-items-stretch" data-aos="zoom-in">
                 <div class="ssp-course-card w-100 d-flex flex-column">
                   <?php 
                     $cImgData = $course['Image'] ?? $course['image'] ?? null;
@@ -445,8 +538,8 @@ $siteUrl        = "https://smartstudypro.com";
                     <img src="<?= $cImg ?>" class="img-fluid w-100" style="height: 210px; object-fit: cover;" alt="<?= htmlspecialchars($course['Title'] ?? 'Course') ?>">
                   </div>
 
-                  <div class="p-4 d-flex flex-column flex-grow-1">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="p-3 p-sm-4 d-flex flex-column flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
                       <span class="ssp-card-badge"><?= htmlspecialchars($course['Category'] ?? 'General') ?></span>
                       <span class="ssp-price-tag">UGX <?= number_format(floatval($course['Price'] ?? 0)) ?></span>
                     </div>
@@ -483,7 +576,7 @@ $siteUrl        = "https://smartstudypro.com";
     <div class="container footer-top mb-4">
       <div class="row gy-4">
         
-        <div class="col-lg-4 col-md-6">
+        <div class="col-12 col-md-6 col-lg-4">
           <a href="index.php" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
             SmartStudy<span>Pro</span>
           </a>
@@ -503,7 +596,7 @@ $siteUrl        = "https://smartstudypro.com";
           </div>
         </div>
 
-        <div class="col-lg-3 col-md-3">
+        <div class="col-12 col-sm-6 col-md-6 col-lg-3">
           <h5 class="text-white fw-bold mb-3">Quick Navigation</h5>
           <ul class="list-unstyled small">
             <li class="mb-2"><a href="index.php" class="text-decoration-none text-light opacity-75">Home</a></li>
@@ -514,7 +607,7 @@ $siteUrl        = "https://smartstudypro.com";
           </ul>
         </div>
 
-        <div class="col-lg-5 col-md-3">
+        <div class="col-12 col-sm-6 col-md-12 col-lg-5">
           <h5 class="text-white fw-bold mb-3">Core Educational Offerings</h5>
           <ul class="list-unstyled small opacity-75">
             <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Private & Customized Tutoring</li>

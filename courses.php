@@ -234,41 +234,7 @@ $siteUrl        = "https://smartstudypro.com";
 
 <body class="courses-page">
 
-  <header id="header" class="header ssp-header d-flex align-items-center sticky-top py-2">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-      
-      <a href="index.php" class="logo d-flex align-items-center me-auto me-xl-0 text-decoration-none">
-        <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo" height="48">
-      </a>
-
-      <nav id="navmenu" class="navmenu">
-        <ul>
-          <li><a href="index.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : '' ?>">Home</a></li>
-          <li><a href="about.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : '' ?>">About Us</a></li>
-          <li><a href="courses.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'courses.php') ? 'active' : '' ?>">Courses</a></li>
-          <li><a href="products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : '' ?>">Products</a></li>
-          <li><a href="contact.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : '' ?>">Contact</a></li>
-        </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3"></i>
-      </nav>
-
-        <div class="dropdown">
-          <a href="#" class="text-dark fs-5 text-decoration-none dropdown-toggle-no-caret" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account">
-            <i class="bi bi-person-circle"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
-            <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
-            <li><a class="dropdown-item py-2" href="cart.php"><i class="bi bi-bag me-2" style="color: var(--ssp-navy);"></i>My Cart</a></li>
-            <li><hr class="dropdown-divider"></li>
-          </ul>
-        </div>
-
-        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none ms-2" href="courses.php">Explore Courses</a>
-      </div>
-
-    </div>
-  </header>
-
+ <?php include 'nav.php'; ?>
   <main class="main">
 
     <div class="ssp-page-title text-center">
