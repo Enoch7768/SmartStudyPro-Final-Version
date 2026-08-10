@@ -74,6 +74,18 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
+  <script>
+    // Inline Theme Init to prevent white flash before DOM renders
+    (function() {
+      const savedTheme = localStorage.getItem('ssp-theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark-theme');
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
   <style>
     :root {
       --ssp-navy: #0C086B;
@@ -83,12 +95,32 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
       --ssp-bg-soft: #F8FAFC;
       --ssp-text-main: #1E293B;
       --ssp-text-muted: #64748B;
+      --ssp-sidebar-bg: #FFFFFF;
+      --ssp-border-color: #E2E8F0;
+      --ssp-card-bg: #FFFFFF;
+    }
+
+    /* Dark Mode Theme Engine */
+    html.dark-theme,
+    body.dark-theme, 
+    [data-bs-theme="dark"] body, 
+    html[data-theme="dark"] body, 
+    body[data-theme="dark"] {
+      --ssp-bg-soft: #0F172A;
+      --ssp-text-main: #F1F5F9;
+      --ssp-text-muted: #94A3B8;
+      --ssp-sidebar-bg: #1E293B;
+      --ssp-border-color: #334155;
+      --ssp-card-bg: #1E293B;
+      background-color: #0F172A !important;
+      color: #F1F5F9 !important;
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
       background-color: var(--ssp-bg-soft);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1, h2, h3, h4, h5, h6, .brand-font {
@@ -100,14 +132,90 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
       backdrop-filter: blur(12px);
       border-bottom: 2px solid rgba(12, 8, 107, 0.08);
       height: 70px;
+      transition: all 0.3s ease;
+    }
+
+    html.dark-theme .ssp-header,
+    body.dark-theme .ssp-header, 
+    [data-bs-theme="dark"] .ssp-header,
+    html[data-theme="dark"] .ssp-header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    html.dark-theme .brand-font,
+    body.dark-theme .brand-font, 
+    [data-bs-theme="dark"] .brand-font,
+    html[data-theme="dark"] .brand-font {
+      color: #F1F5F9 !important;
+    }
+
+    /* Theme Switcher Toggle Style */
+    .theme-toggle-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--ssp-navy);
+      padding: 4px 8px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .theme-toggle-btn:hover {
+      color: var(--ssp-orange);
+      transform: scale(1.1);
+    }
+
+    html.dark-theme .theme-toggle-btn,
+    body.dark-theme .theme-toggle-btn,
+    [data-bs-theme="dark"] .theme-toggle-btn,
+    html[data-theme="dark"] .theme-toggle-btn {
+      color: #F1F5F9;
     }
 
     .dropdown-toggle-no-caret::after {
       display: none !important;
     }
 
+    .dropdown-menu {
+      background-color: var(--ssp-card-bg);
+      border-color: var(--ssp-border-color);
+    }
+
+    .dropdown-menu .dropdown-item {
+      color: var(--ssp-text-main);
+    }
+
     .dropdown-menu .dropdown-item:hover {
       background-color: var(--ssp-bg-soft);
+      color: var(--ssp-orange);
+    }
+
+    html.dark-theme .dropdown-menu,
+    body.dark-theme .dropdown-menu, 
+    [data-bs-theme="dark"] .dropdown-menu,
+    html[data-theme="dark"] .dropdown-menu {
+      background-color: #1E293B;
+      border-color: #334155;
+      color: #F1F5F9;
+    }
+
+    html.dark-theme .dropdown-item,
+    body.dark-theme .dropdown-item, 
+    [data-bs-theme="dark"] .dropdown-item,
+    html[data-theme="dark"] .dropdown-item {
+      color: #F1F5F9;
+    }
+
+    html.dark-theme .dropdown-item:hover,
+    body.dark-theme .dropdown-item:hover, 
+    [data-bs-theme="dark"] .dropdown-item:hover,
+    html[data-theme="dark"] .dropdown-item:hover {
+      background-color: #334155;
       color: var(--ssp-orange);
     }
 
@@ -136,18 +244,20 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
 
     .sidebar {
       width: 340px;
-      background: #FFFFFF;
-      border-right: 1px solid #E2E8F0;
+      background: var(--ssp-sidebar-bg);
+      border-right: 1px solid var(--ssp-border-color);
       height: calc(100vh - 70px);
       position: sticky;
       top: 70px;
       overflow-y: auto;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
     .main-video-area {
       flex: 1;
       padding: 35px;
       background: var(--ssp-bg-soft);
+      transition: background-color 0.3s ease;
     }
 
     .chapter-label {
@@ -155,9 +265,17 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
       padding: 14px 20px;
       font-weight: 700;
       font-family: 'Outfit', sans-serif;
-      border-bottom: 1px solid #E2E8F0;
+      border-bottom: 1px solid var(--ssp-border-color);
       color: var(--ssp-navy);
       font-size: 0.95rem;
+    }
+
+    html.dark-theme .chapter-label,
+    body.dark-theme .chapter-label, 
+    [data-bs-theme="dark"] .chapter-label,
+    html[data-theme="dark"] .chapter-label {
+      background: rgba(255, 255, 255, 0.05);
+      color: #F1F5F9 !important;
     }
 
     .lesson-link {
@@ -166,11 +284,18 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
       padding: 12px 20px;
       color: var(--ssp-text-main);
       text-decoration: none !important;
-      border-bottom: 1px solid #F1F5F9;
+      border-bottom: 1px solid var(--ssp-border-color);
       font-size: 0.9rem;
       font-weight: 500;
       border-left: 4px solid transparent;
       transition: all 0.2s ease;
+    }
+
+    html.dark-theme .lesson-link,
+    body.dark-theme .lesson-link,
+    [data-bs-theme="dark"] .lesson-link,
+    html[data-theme="dark"] .lesson-link {
+      color: #CBD5E1;
     }
 
     .lesson-link:hover {
@@ -192,12 +317,64 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
       box-shadow: 0 10px 30px rgba(12, 8, 107, 0.12);
     }
 
+    .lesson-notes-card {
+      background: var(--ssp-card-bg);
+      border: 1px solid var(--ssp-border-color) !important;
+      color: var(--ssp-text-main);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .lesson-notes-card h4 {
+      color: var(--ssp-navy);
+    }
+
+    html.dark-theme .lesson-notes-card h4,
+    body.dark-theme .lesson-notes-card h4, 
+    [data-bs-theme="dark"] .lesson-notes-card h4,
+    html[data-theme="dark"] .lesson-notes-card h4 {
+      color: #F1F5F9 !important;
+    }
+
+    html.dark-theme .lesson-notes-card .text-secondary,
+    body.dark-theme .lesson-notes-card .text-secondary, 
+    [data-bs-theme="dark"] .lesson-notes-card .text-secondary,
+    html[data-theme="dark"] .lesson-notes-card .text-secondary {
+      color: #94A3B8 !important;
+    }
+
     .quiz-card {
-      background: #FFFFFF;
+      background: var(--ssp-card-bg);
       border-radius: 14px;
-      border: 1px solid #E2E8F0;
+      border: 1px solid var(--ssp-border-color);
       box-shadow: 0 4px 12px rgba(0,0,0,0.03);
       margin-bottom: 20px;
+      color: var(--ssp-text-main);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .quiz-card p {
+      color: var(--ssp-navy);
+    }
+
+    html.dark-theme .quiz-card p,
+    body.dark-theme .quiz-card p, 
+    [data-bs-theme="dark"] .quiz-card p,
+    html[data-theme="dark"] .quiz-card p {
+      color: #F1F5F9 !important;
+    }
+
+    html.dark-theme .quiz-section h4,
+    body.dark-theme .quiz-section h4, 
+    [data-bs-theme="dark"] .quiz-section h4,
+    html[data-theme="dark"] .quiz-section h4 {
+      color: #F1F5F9 !important;
+    }
+
+    html.dark-theme .user-icon-link,
+    body.dark-theme .user-icon-link, 
+    [data-bs-theme="dark"] .user-icon-link,
+    html[data-theme="dark"] .user-icon-link {
+      color: #F1F5F9 !important;
     }
 
     .form-check-input:checked {
@@ -233,13 +410,18 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
     </div>
 
     <div class="d-flex align-items-center gap-3">
+      <!-- Dark Mode Trigger Icon -->
+      <button type="button" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+        <i class="bi bi-moon-stars-fill" id="themeToggleIcon"></i>
+      </button>
+
       <a href="courses.php" class="btn btn-outline-secondary btn-sm rounded-pill px-3 d-none d-sm-inline-block">
         <i class="bi bi-arrow-left me-1"></i> Back to Courses
       </a>
 
       <div class="dropdown">
-        <a href="#" class="text-dark fs-5 text-decoration-none dropdown-toggle-no-caret" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account">
-          <i class="bi bi-person-circle" style="color: var(--ssp-navy);"></i>
+        <a href="#" class="fs-5 text-decoration-none dropdown-toggle-no-caret user-icon-link" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account" style="color: var(--ssp-navy);">
+          <i class="bi bi-person-circle"></i>
         </a>
         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
           <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
@@ -252,9 +434,9 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
 
   <?php if ($error_message): ?>
     <div class="container py-5">
-      <div class="card shadow-sm border-0 rounded-4 p-5 text-center mx-auto" style="max-width: 550px; background: #FFF;">
+      <div class="card shadow-sm border-0 rounded-4 p-5 text-center mx-auto lesson-notes-card" style="max-width: 550px;">
         <i class="bi bi-shield-lock-fill text-danger mb-3" style="font-size: 3.5rem;"></i>
-        <h3 class="fw-bold mb-2" style="color: var(--ssp-navy);"><?= htmlspecialchars($error_message) ?></h3>
+        <h3 class="fw-bold mb-2 brand-font"><?= htmlspecialchars($error_message) ?></h3>
         <p class="text-muted mb-4">You must have an active and verified purchase to access this study portal.</p>
         <a href="courses.php" class="btn-ssp-primary text-decoration-none d-inline-block">Browse Available Courses</a>
       </div>
@@ -264,7 +446,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
       
       <nav class="sidebar">
         <div class="p-3 border-bottom d-md-none bg-light">
-          <h6 class="fw-bold mb-0" style="color: var(--ssp-navy);"><?= htmlspecialchars($course_name) ?></h6>
+          <h6 class="fw-bold mb-0 brand-font"><?= htmlspecialchars($course_name) ?></h6>
         </div>
 
         <?php foreach ($chapters as $chapter): ?>
@@ -316,8 +498,8 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
             </video>
           </div>
 
-          <div class="p-4 bg-white rounded-4 shadow-sm border mb-4">
-              <h4 class="fw-bold mb-3" style="color: var(--ssp-navy);">
+          <div class="p-4 rounded-4 shadow-sm mb-4 lesson-notes-card">
+              <h4 class="fw-bold mb-3">
                 <?= htmlspecialchars($active_lesson_data['Title '] ?? $active_lesson_data['Title'] ?? 'Lesson Details') ?>
               </h4>
               <div class="text-secondary" style="line-height: 1.7;">
@@ -336,7 +518,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
             <form id="quizForm">
                 <?php foreach ($quizzes as $index => $q): ?>
                 <div class="quiz-card p-4" data-quiz-id="<?= htmlspecialchars($q['_id']) ?>">
-                    <p class="fw-bold mb-3" style="color: var(--ssp-navy);"><?= ($index + 1) ?>. <?= htmlspecialchars($q['Question']) ?></p>
+                    <p class="fw-bold mb-3"><?= ($index + 1) ?>. <?= htmlspecialchars($q['Question']) ?></p>
                     <?php 
                       $options = explode(',', $q['Options']); 
                       foreach ($options as $opt): $opt = trim($opt);
@@ -357,7 +539,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
         <?php else: ?>
           <div class="text-center py-5 my-5">
             <i class="bi bi-play-btn text-muted opacity-25" style="font-size: 6rem;"></i>
-            <h3 class="mt-4 fw-bold" style="color: var(--ssp-navy);">Ready to Learn?</h3>
+            <h3 class="mt-4 fw-bold brand-font" style="color: var(--ssp-navy);">Ready to Learn?</h3>
             <p class="text-muted">Select a lesson from the sidebar menu to begin watching your course content.</p>
           </div>
         <?php endif; ?>
@@ -370,6 +552,46 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
   <script src="assets/js/main.js"></script>
 
   <script>
+    // Theme Switcher Logic
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeToggleIcon');
+
+    function updateThemeUI(isDark) {
+      if (isDark) {
+        document.documentElement.classList.add('dark-theme');
+        document.body.classList.add('dark-theme');
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (themeIcon) {
+          themeIcon.className = 'bi bi-sun-fill';
+          themeIcon.style.color = '#FF7A00';
+        }
+      } else {
+        document.documentElement.classList.remove('dark-theme');
+        document.body.classList.remove('dark-theme');
+        document.documentElement.removeAttribute('data-bs-theme');
+        document.documentElement.removeAttribute('data-theme');
+        if (themeIcon) {
+          themeIcon.className = 'bi bi-moon-stars-fill';
+          themeIcon.style.color = '';
+        }
+      }
+    }
+
+    // Initialize UI State
+    const isCurrentlyDark = document.documentElement.classList.contains('dark-theme');
+    updateThemeUI(isCurrentlyDark);
+
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const isDarkNow = document.documentElement.classList.contains('dark-theme');
+        const nextState = !isDarkNow;
+        localStorage.setItem('ssp-theme', nextState ? 'dark' : 'light');
+        updateThemeUI(nextState);
+      });
+    }
+
+    // Quiz Handler
     function gradeQuiz() {
         const answers = {};
         document.querySelectorAll('.quiz-card').forEach(card => {

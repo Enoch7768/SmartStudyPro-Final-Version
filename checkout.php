@@ -1,6 +1,6 @@
 <?php
 require_once 'auth.php';
-require_login(); // Must be signed in to check out — redirects to login.php otherwise
+require_login();
 
 if (!isset($_COOKIE['user_id'])) die("No user identified.");
 $user_id = $_COOKIE['user_id'];
@@ -14,8 +14,6 @@ try {
 
     ensure_bookings_columns($db);
 
-    // Match by this browser's cart cookie, or by account if logged in — so
-    // items added before/after signing in are all included.
     $user = current_user();
     $stmt = $db->prepare("SELECT * FROM bookings WHERE paid=0 AND (user_id=:user_id OR account_id=:account_id)");
     $stmt->execute([':user_id' => $user_id, ':account_id' => $user['id'] ?? 0]);
@@ -25,7 +23,6 @@ try {
 
     $total = 0;
     foreach ($bookings as $b) {
-        // Prices are stored/displayed in UGX, not $ — strip any non-numeric characters
         $total += (float) preg_replace('/[^0-9.]/', '', (string) $b['price']);
     }
 } catch (Exception $e) {
@@ -39,6 +36,15 @@ $siteUrl = "https://smartstudypro.com";
 <html lang="en">
 
 <head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ssp-theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout - SmartStudyPro</title>
@@ -62,15 +68,40 @@ $siteUrl = "https://smartstudypro.com";
       --ssp-navy-dark: #070443;
       --ssp-orange: #FF7A00;
       --ssp-orange-hover: #E06B00;
+      --ssp-bg-main: #FFFFFF;
       --ssp-bg-soft: #F8FAFC;
+      --ssp-card-bg: #FFFFFF;
+      --ssp-card-border: #E2E8F0;
+      --ssp-border-color: #E2E8F0;
       --ssp-text-main: #1E293B;
       --ssp-text-muted: #64748B;
+      --ssp-input-bg: #FFFFFF;
+      --ssp-header-bg: rgba(255, 255, 255, 0.95);
+      --ssp-badge-bg: rgba(12, 8, 107, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --ssp-navy: #C7D2FE;
+      --ssp-navy-dark: #0B0F17;
+      --ssp-orange: #FF8A1D;
+      --ssp-orange-hover: #FF9E3B;
+      --ssp-bg-main: #0B0F17;
+      --ssp-bg-soft: #1E293B;
+      --ssp-card-bg: #151C2C;
+      --ssp-card-border: #2E3A52;
+      --ssp-border-color: #334155;
+      --ssp-text-main: #F8FAFC;
+      --ssp-text-muted: #CBD5E1;
+      --ssp-input-bg: #0F172A;
+      --ssp-header-bg: rgba(11, 15, 23, 0.95);
+      --ssp-badge-bg: rgba(199, 210, 254, 0.15);
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
-      background-color: #FFFFFF;
+      background-color: var(--ssp-bg-main);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1, h2, h3, h4, h5, .brand-font {
@@ -78,10 +109,14 @@ $siteUrl = "https://smartstudypro.com";
     }
 
     .ssp-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--ssp-header-bg);
       backdrop-filter: blur(12px);
       border-bottom: 2px solid rgba(12, 8, 107, 0.08);
       transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .ssp-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
     }
 
     .navmenu ul {
@@ -109,6 +144,10 @@ $siteUrl = "https://smartstudypro.com";
       transition: color 0.2s ease;
     }
 
+    [data-theme="dark"] .navmenu ul li a {
+      color: #F1F5F9;
+    }
+
     .navmenu ul li a:hover,
     .navmenu ul li a.active {
       color: var(--ssp-orange) !important;
@@ -122,6 +161,15 @@ $siteUrl = "https://smartstudypro.com";
     .dropdown-menu .dropdown-item:hover {
       background-color: var(--ssp-bg-soft);
       color: var(--ssp-orange);
+    }
+    
+    [data-theme="dark"] .dropdown-menu {
+      background-color: var(--ssp-card-bg);
+      border-color: var(--ssp-card-border);
+    }
+    
+    [data-theme="dark"] .dropdown-item {
+      color: var(--ssp-text-main);
     }
 
     .btn-ssp-primary {
@@ -143,15 +191,29 @@ $siteUrl = "https://smartstudypro.com";
     }
 
     .ssp-card {
-      border: 1px solid #E2E8F0;
+      border: 1px solid var(--ssp-card-border);
       border-radius: 16px;
-      background: #FFFFFF;
+      background: var(--ssp-card-bg);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .text-muted {
+      color: var(--ssp-text-muted) !important;
+    }
+
+    .ssp-badge {
+      background-color: var(--ssp-badge-bg);
+      color: var(--ssp-navy);
     }
 
     .ssp-footer {
-      background-color: var(--ssp-navy-dark);
+      background-color: #070443;
       color: #94A3B8;
+    }
+
+    [data-theme="dark"] .ssp-footer {
+      background-color: #060911;
     }
 
     .ssp-footer-brand {
@@ -181,6 +243,49 @@ $siteUrl = "https://smartstudypro.com";
       background: var(--ssp-orange);
       color: #FFFFFF;
     }
+
+    .form-select {
+      background-color: var(--ssp-input-bg);
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-border-color);
+    }
+
+    [data-theme="dark"] .form-select {
+      background-color: var(--ssp-input-bg);
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-border-color) !important;
+    }
+
+    [data-theme="dark"] .form-select option {
+      background-color: var(--ssp-card-bg);
+      color: var(--ssp-text-main);
+    }
+
+    .list-group-item {
+      background-color: var(--ssp-card-bg);
+      border-color: var(--ssp-card-border);
+      color: var(--ssp-text-main);
+    }
+
+    [data-theme="dark"] .list-group-item {
+      background-color: var(--ssp-card-bg);
+      border-color: var(--ssp-card-border);
+      color: var(--ssp-text-main);
+    }
+    
+    .list-group-item.bg-light {
+      background-color: var(--ssp-bg-soft) !important;
+      color: var(--ssp-text-main) !important;
+    }
+
+    [data-theme="dark"] .bg-light {
+      background-color: var(--ssp-bg-soft) !important;
+      color: var(--ssp-text-main) !important;
+    }
+    
+    [data-theme="dark"] .text-dark {
+      color: var(--ssp-text-main) !important;
+    }
   </style>
 </head>
 
@@ -204,8 +309,8 @@ $siteUrl = "https://smartstudypro.com";
         <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3"></i>
       </nav>
 
-
-        <div class="dropdown">
+      <div class="d-flex align-items-center">
+        <div class="dropdown me-2">
           <a href="#" class="text-dark fs-5 text-decoration-none dropdown-toggle-no-caret" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account">
             <i class="bi bi-person-circle"></i>
           </a>
@@ -216,7 +321,7 @@ $siteUrl = "https://smartstudypro.com";
           </ul>
         </div>
 
-        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none ms-2" href="courses.php">Explore Courses</a>
+        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none" href="courses.php">Explore Courses</a>
       </div>
 
     </div>
@@ -228,7 +333,7 @@ $siteUrl = "https://smartstudypro.com";
         <div class="col-lg-8">
           
           <div class="text-center mb-4">
-            <span class="badge px-3 py-2 mb-2" style="background-color: rgba(12,8,107,0.1); color: var(--ssp-navy);">Secure Checkout</span>
+            <span class="badge ssp-badge px-3 py-2 mb-2">Secure Checkout</span>
             <h1 class="fw-bold" style="color: var(--ssp-navy);">Review & Complete Order</h1>
           </div>
 
@@ -256,7 +361,7 @@ $siteUrl = "https://smartstudypro.com";
               <input type="hidden" name="total" value="<?= $total ?>">
               
               <div class="mb-4">
-                <select name="payment_method" class="form-select form-select-lg rounded-3 fs-6" required style="border-color: #E2E8F0;">
+                <select name="payment_method" class="form-select form-select-lg rounded-3 fs-6" required>
                   <option value="">-- Choose Payment Method --</option>
                   <option value="paypal">PayPal</option>
                   <option value="dpo">DPO Pay</option>

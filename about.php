@@ -68,29 +68,55 @@ $siteUrl        = "https://smartstudypro.com";
   <style>
     :root {
       --ssp-navy: #0C086B;
-      --ssp-navy-dark: #070443;
-      --ssp-orange: #FF7A00;
-      --ssp-orange-hover: #E06B00;
-      --ssp-bg-soft: #F8FAFC;
-      --ssp-text-main: #1E293B;
-      --ssp-text-muted: #64748B;
+      --ssp-navy-dark: #050338;
+      --ssp-orange: #E66A00;
+      --ssp-orange-hover: #C65B00;
+      --ssp-bg-soft: #F1F5F9;
+      --ssp-text-main: #0F172A;
+      --ssp-text-muted: #334155;
+      --ssp-bg-page: #FFFFFF;
+      --ssp-card-bg: #FFFFFF;
+      --ssp-card-border: #CBD5E1;
+    }
+
+    /* Enhanced Dark Mode High Contrast Variables */
+    [data-theme="dark"] {
+      --ssp-navy: #C7D2FE;
+      --ssp-navy-dark: #03021D;
+      --ssp-orange: #FF8A1A;
+      --ssp-orange-hover: #FF9B3B;
+      --ssp-bg-soft: #0F172A;
+      --ssp-text-main: #F8FAFC;
+      --ssp-text-muted: #E2E8F0;
+      --ssp-bg-page: #0B0F17;
+      --ssp-card-bg: #111827;
+      --ssp-card-border: #475569;
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
-      background-color: #FFFFFF;
+      background-color: var(--ssp-bg-page);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1, h2, h3, h4, h5, .brand-font {
       font-family: 'Outfit', sans-serif;
     }
 
+    .text-muted {
+      color: var(--ssp-text-muted) !important;
+    }
+
     .ssp-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(12px);
-      border-bottom: 2px solid rgba(12, 8, 107, 0.08);
+      border-bottom: 2px solid rgba(12, 8, 107, 0.12);
       transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .ssp-header {
+      background: rgba(11, 15, 23, 0.98);
     }
 
     .navmenu ul {
@@ -110,7 +136,7 @@ $siteUrl        = "https://smartstudypro.com";
 
     .navmenu ul li a {
       color: var(--ssp-navy);
-      font-weight: 600;
+      font-weight: 700;
       font-size: 0.95rem;
       text-decoration: none !important;
       display: inline-block;
@@ -121,7 +147,7 @@ $siteUrl        = "https://smartstudypro.com";
     .navmenu ul li a:hover,
     .navmenu ul li a.active {
       color: var(--ssp-orange) !important;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .dropdown-toggle-no-caret::after {
@@ -140,7 +166,7 @@ $siteUrl        = "https://smartstudypro.com";
       border-radius: 10px;
       padding: 10px 24px;
       border: none;
-      box-shadow: 0 4px 14px rgba(255, 122, 0, 0.35);
+      box-shadow: 0 4px 14px rgba(230, 106, 0, 0.35);
       transition: all 0.25s ease;
     }
 
@@ -148,17 +174,22 @@ $siteUrl        = "https://smartstudypro.com";
       background-color: var(--ssp-orange-hover);
       color: #FFFFFF;
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.45);
+      box-shadow: 0 6px 20px rgba(230, 106, 0, 0.45);
     }
 
     .btn-ssp-navy {
-      background-color: var(--ssp-navy);
+      background-color: #0C086B;
       color: #FFFFFF;
-      font-weight: 600;
+      font-weight: 700;
       border-radius: 10px;
       padding: 10px 24px;
       border: none;
       transition: all 0.25s ease;
+    }
+
+    [data-theme="dark"] .btn-ssp-navy {
+      background-color: #3730A3;
+      color: #FFFFFF;
     }
 
     .btn-ssp-navy:hover {
@@ -168,7 +199,7 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .ssp-page-title {
-      background: linear-gradient(135deg, var(--ssp-navy) 0%, var(--ssp-navy-dark) 100%);
+      background: linear-gradient(135deg, #070443 0%, #03021D 100%);
       padding: 80px 0 60px;
       color: #FFFFFF;
       position: relative;
@@ -182,19 +213,20 @@ $siteUrl        = "https://smartstudypro.com";
 
     .ssp-page-title .breadcrumb-item, 
     .ssp-page-title .breadcrumb-item a {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.9rem;
+      color: #E2E8F0;
+      font-weight: 600;
+      font-size: 0.95rem;
       text-decoration: none;
     }
 
     .ssp-page-title .breadcrumb-item.active {
-      color: var(--ssp-orange);
-      font-weight: 600;
+      color: #FF9B3B;
+      font-weight: 800;
     }
 
     .ssp-footer {
       background-color: var(--ssp-navy-dark);
-      color: #94A3B8;
+      color: #CBD5E1;
     }
 
     .ssp-footer-brand {
@@ -214,7 +246,7 @@ $siteUrl        = "https://smartstudypro.com";
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.12);
       color: #FFFFFF;
       transition: all 0.2s ease;
       text-decoration: none;
@@ -225,6 +257,14 @@ $siteUrl        = "https://smartstudypro.com";
       color: #FFFFFF;
     }
   </style>
+  <script>
+    // Immediate inline theme detection to prevent screen flicker
+    const savedTheme = localStorage.getItem('ssp-theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  </script>
 </head>
 
 <body class="about-page">
@@ -241,8 +281,8 @@ $siteUrl        = "https://smartstudypro.com";
             <li class="breadcrumb-item active" aria-current="page">About Us</li>
           </ol>
         </nav>
-        <h1 class="fw-bold mb-2">About SmartStudyPro</h1>
-        <p class="text-light opacity-75 mb-0">Study Made Simple, Success Made Sure</p>
+        <h1 class="fw-bold mb-2 text-white">About SmartStudyPro</h1>
+        <p class="text-white opacity-90 mb-0 fw-medium">Study Made Simple, Success Made Sure</p>
       </div>
     </div>
 
@@ -252,7 +292,7 @@ $siteUrl        = "https://smartstudypro.com";
           
           <div class="col-lg-6 order-1 order-lg-2">
             <div class="position-relative">
-              <img src="<?= $aboutImg ?>" class="img-fluid rounded-4 shadow-lg" alt="About SmartStudyPro">
+              <img src="<?= $aboutImg ?>" class="img-fluid rounded-4 shadow-lg w-100" alt="About SmartStudyPro">
             </div>
           </div>
 
@@ -260,13 +300,13 @@ $siteUrl        = "https://smartstudypro.com";
             <span class="text-uppercase fw-bold text-primary fs-7 tracking-wider">Our Purpose & Vision</span>
             <h2 class="fw-bold mt-1 mb-3" style="color: var(--ssp-navy);"><?= htmlspecialchars($displayTitle) ?></h2>
             
-            <div class="text-muted leading-relaxed mb-4">
+            <div class="text-muted leading-relaxed mb-4 fs-6 fw-normal">
               <?= $displayDesc ?>
             </div>
 
             <div class="my-4">
               <div class="d-flex gap-3 mb-3">
-                <div class="fs-4"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
+                <div class="fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
                 <div>
                   <h6 class="fw-bold mb-1" style="color: var(--ssp-navy);">Expert & Dedicated Instructors</h6>
                   <p class="text-muted small mb-0">Professional educators providing targeted guidance across multiple disciplines.</p>
@@ -274,7 +314,7 @@ $siteUrl        = "https://smartstudypro.com";
               </div>
 
               <div class="d-flex gap-3 mb-3">
-                <div class="fs-4"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
+                <div class="fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
                 <div>
                   <h6 class="fw-bold mb-1" style="color: var(--ssp-navy);">Tailored Academic Packages</h6>
                   <p class="text-muted small mb-0">Customized learning solutions built around individual student schedules and needs.</p>
@@ -282,7 +322,7 @@ $siteUrl        = "https://smartstudypro.com";
               </div>
 
               <div class="d-flex gap-3">
-                <div class="fs-4"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
+                <div class="fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
                 <div>
                   <h6 class="fw-bold mb-1" style="color: var(--ssp-navy);">Innovative STEM & ICT Guidance</h6>
                   <p class="text-muted small mb-0">Hands-on assistance for modern science projects and digital computer literacy.</p>
@@ -307,12 +347,12 @@ $siteUrl        = "https://smartstudypro.com";
           <a href="index.php" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
             SmartStudy<span>Pro</span>
           </a>
-          <p class="small text-light opacity-75 mb-3">Study Made Simple, Success Made Sure.</p>
+          <p class="small text-white opacity-90 mb-3">Study Made Simple, Success Made Sure.</p>
           
           <div class="small mb-3">
-            <p class="mb-1"><i class="bi bi-geo-alt-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($address) ?></p>
-            <p class="mb-1"><i class="bi bi-telephone-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($phone) ?></p>
-            <p class="mb-1"><i class="bi bi-envelope-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($email) ?></p>
+            <p class="mb-1 text-white"><i class="bi bi-geo-alt-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($address) ?></p>
+            <p class="mb-1 text-white"><i class="bi bi-telephone-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($phone) ?></p>
+            <p class="mb-1 text-white"><i class="bi bi-envelope-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($email) ?></p>
           </div>
 
           <div class="d-flex gap-2">
@@ -326,17 +366,17 @@ $siteUrl        = "https://smartstudypro.com";
         <div class="col-lg-3 col-md-3">
           <h5 class="text-white fw-bold mb-3">Quick Navigation</h5>
           <ul class="list-unstyled small">
-            <li class="mb-2"><a href="index.php" class="text-decoration-none text-light opacity-75">Home</a></li>
-            <li class="mb-2"><a href="about.php" class="text-decoration-none text-light opacity-75">About Us</a></li>
-            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-light opacity-75">Courses</a></li>
-            <li class="mb-2"><a href="products.php" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
-            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
+            <li class="mb-2"><a href="index.php" class="text-decoration-none text-white opacity-90">Home</a></li>
+            <li class="mb-2"><a href="about.php" class="text-decoration-none text-white opacity-90">About Us</a></li>
+            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-white opacity-90">Courses</a></li>
+            <li class="mb-2"><a href="products.php" class="text-decoration-none text-white opacity-90">Products & Materials</a></li>
+            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-white opacity-90">Contact Us</a></li>
           </ul>
         </div>
 
         <div class="col-lg-5 col-md-3">
           <h5 class="text-white fw-bold mb-3">Core Educational Offerings</h5>
-          <ul class="list-unstyled small opacity-75">
+          <ul class="list-unstyled small text-white opacity-90">
             <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Private & Customized Tutoring</li>
             <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Holiday Package & Guided Learning</li>
             <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Homework & Assignment Support</li>
@@ -348,7 +388,7 @@ $siteUrl        = "https://smartstudypro.com";
       </div>
     </div>
 
-    <div class="container text-center border-top border-secondary pt-3 mt-3 opacity-75 small">
+    <div class="container text-center border-top border-secondary pt-3 mt-3 text-white opacity-90 small">
       <p class="mb-0">&copy; <?= date('Y') ?> <strong>SmartStudyPro</strong>. All Rights Reserved. Empowering Education in Uganda.</p>
     </div>
   </footer>

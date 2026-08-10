@@ -65,6 +65,15 @@ $ogImage  = !empty($cImgData['path'])
 <html lang="en">
 
 <head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ssp-theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -124,66 +133,41 @@ $ogImage  = !empty($cImgData['path'])
       --ssp-navy-dark: #070443;
       --ssp-orange: #FF7A00;
       --ssp-orange-hover: #E06B00;
+      --ssp-bg-main: #FFFFFF;
       --ssp-bg-soft: #F8FAFC;
+      --ssp-card-bg: #FFFFFF;
+      --ssp-card-border: #E2E8F0;
       --ssp-text-main: #1E293B;
       --ssp-text-muted: #64748B;
+      --ssp-input-bg: #FFFFFF;
+      --ssp-input-border: #CBD5E1;
+      --ssp-header-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    [data-theme="dark"] {
+      --ssp-navy: #C7D2FE;
+      --ssp-navy-dark: #0B0F17;
+      --ssp-orange: #FF8A1D;
+      --ssp-orange-hover: #FF9E3B;
+      --ssp-bg-main: #0B0F17;
+      --ssp-bg-soft: #1E293B;
+      --ssp-card-bg: #151C2C;
+      --ssp-card-border: #2E3A52;
+      --ssp-text-main: #F8FAFC;
+      --ssp-text-muted: #94A3B8;
+      --ssp-input-bg: #1E293B;
+      --ssp-input-border: #334155;
+      --ssp-header-bg: rgba(11, 15, 23, 0.95);
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
-      background-color: #FFFFFF;
+      background-color: var(--ssp-bg-main);
     }
 
     h1, h2, h3, h4, h5, .brand-font {
       font-family: 'Outfit', sans-serif;
-    }
-
-    .ssp-header {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 2px solid rgba(12, 8, 107, 0.08);
-      transition: all 0.3s ease;
-    }
-
-    .navmenu ul {
-      list-style: none !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 24px;
-    }
-
-    .navmenu ul li {
-      list-style: none !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-
-    .navmenu ul li a {
-      color: var(--ssp-navy);
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-decoration: none !important;
-      display: inline-block;
-      white-space: nowrap;
-      transition: color 0.2s ease;
-    }
-
-    .navmenu ul li a:hover,
-    .navmenu ul li a.active {
-      color: var(--ssp-orange) !important;
-      font-weight: 700;
-    }
-
-    .dropdown-toggle-no-caret::after {
-      display: none !important;
-    }
-
-    .dropdown-menu .dropdown-item:hover {
-      background-color: var(--ssp-bg-soft);
-      color: var(--ssp-orange);
     }
 
     .btn-ssp-primary {
@@ -205,21 +189,47 @@ $ogImage  = !empty($cImgData['path'])
     }
 
     .page-title-ssp {
-      background: linear-gradient(135deg, var(--ssp-navy) 0%, var(--ssp-navy-dark) 100%);
+      background: linear-gradient(135deg, #0C086B 0%, #070443 100%);
       color: #FFFFFF;
       padding: 60px 0;
     }
 
     .ssp-card-box {
-      border: 1px solid #E2E8F0;
+      border: 1px solid var(--ssp-card-border);
       border-radius: 16px;
-      background: #FFFFFF;
+      background: var(--ssp-card-bg);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
+    .form-control {
+      background-color: var(--ssp-input-bg);
+      border-color: var(--ssp-input-border);
+      color: var(--ssp-text-main);
+    }
+
+    .form-control:focus {
+      background-color: var(--ssp-input-bg);
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-orange);
+    }
+
+    .form-label {
+      color: var(--ssp-text-main);
+    }
+
+    .price-box {
+      background-color: var(--ssp-bg-soft) !important;
+      border-color: var(--ssp-card-border) !important;
+      color: var(--ssp-text-main);
+    }
+
     .ssp-footer {
-      background-color: var(--ssp-navy-dark);
+      background-color: #070443;
       color: #94A3B8;
+    }
+
+    [data-theme="dark"] .ssp-footer {
+      background-color: #060911;
     }
 
     .ssp-footer-brand {
@@ -254,40 +264,7 @@ $ogImage  = !empty($cImgData['path'])
 
 <body>
 
-  <header id="header" class="header ssp-header d-flex align-items-center sticky-top py-2">
-    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-      
-      <a href="index.php" class="logo d-flex align-items-center me-auto me-xl-0 text-decoration-none">
-        <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo" height="48">
-      </a>
-
-      <nav id="navmenu" class="navmenu">
-        <ul>
-          <li><a href="index.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : '' ?>">Home</a></li>
-          <li><a href="about.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : '' ?>">About Us</a></li>
-          <li><a href="courses.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'courses.php') ? 'active' : '' ?>">Courses</a></li>
-          <li><a href="products.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : '' ?>">Products</a></li>
-          <li><a href="contact.php" class="<?= (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : '' ?>">Contact</a></li>
-        </ul>
-        <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3"></i>
-      </nav>
-
-        <div class="dropdown">
-          <a href="#" class="text-dark fs-5 text-decoration-none dropdown-toggle-no-caret" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account">
-            <i class="bi bi-person-circle"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
-            <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
-            <li><a class="dropdown-item py-2" href="cart.php"><i class="bi bi-bag me-2" style="color: var(--ssp-navy);"></i>My Cart</a></li>
-            <li><hr class="dropdown-divider"></li>
-          </ul>
-        </div>
-
-        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none ms-2" href="courses.php">Explore Courses</a>
-      </div>
-
-    </div>
-  </header>
+  <?php include 'nav.php'; ?>
 
   <main class="main">
 
@@ -301,7 +278,7 @@ $ogImage  = !empty($cImgData['path'])
     <section id="starter-section" class="starter-section section py-5">
       <div class="container section-title text-center mb-4" data-aos="fade-up">
         <h2 class="fw-bold" style="color: var(--ssp-navy);"><?= htmlspecialchars($displayTitle) ?></h2>
-        <p class="text-muted">Book Your Session</p>
+        <p style="color: var(--ssp-text-muted);">Book Your Session</p>
       </div>
 
       <div class="container" data-aos="fade-up">
@@ -338,7 +315,7 @@ $ogImage  = !empty($cImgData['path'])
                       <textarea name="message" class="form-control rounded-3" id="message" rows="4" placeholder="Tell us about your learning goals..."></textarea>
                   </div>
                   <div class="form-group my-4 text-center">
-                      <div class="p-3 bg-light rounded-3 border">
+                      <div class="p-3 price-box rounded-3 border">
                           <p class="mb-0"><strong>Total Course Fee:</strong> <span class="fw-bold fs-5 ms-2" style="color: var(--ssp-orange);">UGX <?= number_format(floatval($displayPrice ?? 0)) ?></span></p>
                       </div>
                   </div>

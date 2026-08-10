@@ -26,6 +26,15 @@ $siteUrl        = "https://smartstudypro.com";
 <html lang="en">
 
 <head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ssp-theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -59,15 +68,35 @@ $siteUrl        = "https://smartstudypro.com";
       --ssp-navy-dark: #070443;
       --ssp-orange: #FF7A00;
       --ssp-orange-hover: #E06B00;
+      --ssp-bg-main: #FFFFFF;
       --ssp-bg-soft: #F8FAFC;
+      --ssp-card-bg: #FFFFFF;
+      --ssp-card-border: #E2E8F0;
       --ssp-text-main: #1E293B;
       --ssp-text-muted: #64748B;
+      --ssp-badge-bg: #EFF6FF;
+      --ssp-header-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    [data-theme="dark"] {
+      --ssp-navy: #C7D2FE;
+      --ssp-navy-dark: #0B0F17;
+      --ssp-orange: #FF8A1D;
+      --ssp-orange-hover: #FF9E3B;
+      --ssp-bg-main: #0B0F17;
+      --ssp-bg-soft: #1E293B;
+      --ssp-card-bg: #151C2C;
+      --ssp-card-border: #2E3A52;
+      --ssp-text-main: #F8FAFC;
+      --ssp-text-muted: #94A3B8;
+      --ssp-badge-bg: #1E293B;
+      --ssp-header-bg: rgba(11, 15, 23, 0.95);
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
-      background-color: #FFFFFF;
+      background-color: var(--ssp-bg-main);
     }
 
     h1, h2, h3, h4, h5, .brand-font {
@@ -75,7 +104,7 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .ssp-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--ssp-header-bg);
       backdrop-filter: blur(12px);
       border-bottom: 2px solid rgba(12, 8, 107, 0.08);
       transition: all 0.3s ease;
@@ -140,16 +169,16 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .page-title-ssp {
-      background: linear-gradient(135deg, var(--ssp-navy) 0%, var(--ssp-navy-dark) 100%);
+      background: linear-gradient(135deg, #0C086B 0%, #070443 100%);
       color: #FFFFFF;
       padding: 60px 0;
     }
 
     .ssp-course-card {
-      border: 1px solid #E2E8F0;
+      border: 1px solid var(--ssp-card-border);
       border-radius: 16px;
       overflow: hidden;
-      background: #FFFFFF;
+      background: var(--ssp-card-bg);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -157,12 +186,12 @@ $siteUrl        = "https://smartstudypro.com";
     .ssp-course-card:hover {
       transform: translateY(-8px);
       border-color: rgba(255, 122, 0, 0.4);
-      box-shadow: 0 20px 25px -5px rgba(12, 8, 107, 0.1);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);
     }
 
     /* Badge Truncation & Overlap Fix */
     .ssp-card-badge {
-      background: #EFF6FF;
+      background: var(--ssp-badge-bg);
       color: var(--ssp-navy);
       font-size: 0.75rem;
       font-weight: 700;
@@ -177,16 +206,45 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .ssp-price-tag {
-      color: var(--ssp-orange);
+      color: var(--ssp-navy);
       font-weight: 800;
       font-size: 1.15rem;
       white-space: nowrap;
       flex-shrink: 0;
     }
 
+    .product-title-link {
+      color: var(--ssp-text-main);
+      transition: color 0.2s ease;
+    }
+
+    .product-title-link:hover {
+      color: var(--ssp-orange);
+    }
+
+    .btn-outline-custom {
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-card-border);
+      transition: all 0.2s ease;
+    }
+
+    .btn-outline-custom:hover {
+      background-color: var(--ssp-orange);
+      border-color: var(--ssp-orange);
+      color: #FFFFFF;
+    }
+
+    .text-muted {
+      color: var(--ssp-text-muted) !important;
+    }
+
     .ssp-footer {
-      background-color: var(--ssp-navy-dark);
+      background-color: #070443;
       color: #94A3B8;
+    }
+
+    [data-theme="dark"] .ssp-footer {
+      background-color: #060911;
     }
 
     .ssp-footer-brand {
@@ -232,7 +290,7 @@ $siteUrl        = "https://smartstudypro.com";
       </div>
     </div>
 
-    <section id="products" class="products section py-5" style="background-color: var(--ssp-bg-soft);">
+    <section id="products" class="products section py-5" style="background-color: var(--ssp-bg-main);">
       <div class="container">
         <div class="row g-4">
           <?php if (!empty($products)): ?>
@@ -261,7 +319,7 @@ $siteUrl        = "https://smartstudypro.com";
                     </div>
 
                     <h3 class="h5 fw-bold mb-2">
-                      <a href="product-details.php?id=<?= $product['_id'] ?>" class="text-decoration-none" style="color: var(--ssp-navy);">
+                      <a href="product-details.php?id=<?= $product['_id'] ?>" class="text-decoration-none product-title-link">
                         <?= htmlspecialchars($product['Title'] ?? $product['title'] ?? 'Untitled Product') ?>
                       </a>
                     </h3>
@@ -270,7 +328,7 @@ $siteUrl        = "https://smartstudypro.com";
                       <?= htmlspecialchars(substr(strip_tags($product['Description'] ?? $product['description'] ?? ''), 0, 110)) ?>...
                     </p>
 
-                    <a href="product-details.php?id=<?= $product['_id'] ?>" class="btn btn-outline-primary w-100 mt-auto rounded-3 text-decoration-none" style="color: var(--ssp-navy); border-color: var(--ssp-navy);">
+                    <a href="product-details.php?id=<?= $product['_id'] ?>" class="btn btn-outline-custom w-100 mt-auto rounded-3 text-decoration-none">
                       View Details
                     </a>
                   </div>

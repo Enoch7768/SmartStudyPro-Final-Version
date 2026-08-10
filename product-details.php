@@ -66,6 +66,15 @@ $fullImgUrl     = $siteUrl . $imgUrl;
 <html lang="en">
 
 <head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ssp-theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -126,15 +135,37 @@ $fullImgUrl     = $siteUrl . $imgUrl;
       --ssp-navy-dark: #070443;
       --ssp-orange: #FF7A00;
       --ssp-orange-hover: #E06B00;
+      --ssp-bg-main: #FFFFFF;
       --ssp-bg-soft: #F8FAFC;
+      --ssp-card-bg: #FFFFFF;
+      --ssp-card-border: #E2E8F0;
       --ssp-text-main: #1E293B;
       --ssp-text-muted: #64748B;
+      --ssp-input-bg: #FFFFFF;
+      --ssp-input-border: #CBD5E1;
+      --ssp-header-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    [data-theme="dark"] {
+      --ssp-navy: #C7D2FE;
+      --ssp-navy-dark: #0B0F17;
+      --ssp-orange: #FF8A1D;
+      --ssp-orange-hover: #FF9E3B;
+      --ssp-bg-main: #0B0F17;
+      --ssp-bg-soft: #1E293B;
+      --ssp-card-bg: #151C2C;
+      --ssp-card-border: #2E3A52;
+      --ssp-text-main: #F8FAFC;
+      --ssp-text-muted: #94A3B8;
+      --ssp-input-bg: #1E293B;
+      --ssp-input-border: #334155;
+      --ssp-header-bg: rgba(11, 15, 23, 0.95);
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
-      background-color: #FFFFFF;
+      background-color: var(--ssp-bg-main);
     }
 
     h1, h2, h3, h4, h5, .brand-font {
@@ -142,7 +173,7 @@ $fullImgUrl     = $siteUrl . $imgUrl;
     }
 
     .ssp-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--ssp-header-bg);
       backdrop-filter: blur(12px);
       border-bottom: 2px solid rgba(12, 8, 107, 0.08);
       transition: all 0.3s ease;
@@ -207,21 +238,45 @@ $fullImgUrl     = $siteUrl . $imgUrl;
     }
 
     .page-title-ssp {
-      background: linear-gradient(135deg, var(--ssp-navy) 0%, var(--ssp-navy-dark) 100%);
+      background: linear-gradient(135deg, #0C086B 0%, #070443 100%);
       color: #FFFFFF;
       padding: 60px 0;
     }
 
     .ssp-card-box {
-      border: 1px solid #E2E8F0;
+      border: 1px solid var(--ssp-card-border);
       border-radius: 16px;
-      background: #FFFFFF;
+      background: var(--ssp-card-bg);
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
+    .form-control {
+      background-color: var(--ssp-input-bg);
+      border-color: var(--ssp-input-border);
+      color: var(--ssp-text-main);
+    }
+
+    .form-control:focus {
+      background-color: var(--ssp-input-bg);
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-orange);
+    }
+
+    .form-label {
+      color: var(--ssp-text-main);
+    }
+
+    .content.text-muted {
+      color: var(--ssp-text-muted) !important;
+    }
+
     .ssp-footer {
-      background-color: var(--ssp-navy-dark);
+      background-color: #070443;
       color: #94A3B8;
+    }
+
+    [data-theme="dark"] .ssp-footer {
+      background-color: #060911;
     }
 
     .ssp-footer-brand {
@@ -285,8 +340,8 @@ $fullImgUrl     = $siteUrl . $imgUrl;
                 <h4 class="m-0 fw-bold" style="color: var(--ssp-navy);">Price</h4>
                 <span class="h3 m-0 fw-bold" style="color: var(--ssp-orange);">UGX <?= number_format(floatval($displayPrice ?? 0)) ?></span>
               </div>
-              <p class="text-muted small"><i class="bi bi-info-circle me-1"></i> Type: <strong><?= htmlspecialchars($productType) ?></strong></p>
-              <hr class="my-3">
+              <p class="small" style="color: var(--ssp-text-muted);"><i class="bi bi-info-circle me-1"></i> Type: <strong><?= htmlspecialchars($productType) ?></strong></p>
+              <hr class="my-3" style="border-color: var(--ssp-card-border);">
               
               <form action="booking.php" method="post">
                 <input type="hidden" name="product_id" value="<?= htmlspecialchars($productId) ?>">

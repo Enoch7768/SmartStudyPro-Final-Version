@@ -50,6 +50,15 @@ $siteUrl        = "https://smartstudypro.com";
 <html lang="en">
 
 <head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ssp-theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -76,15 +85,38 @@ $siteUrl        = "https://smartstudypro.com";
       --ssp-navy-dark: #070443;
       --ssp-orange: #FF7A00;
       --ssp-orange-hover: #E06B00;
+      --ssp-bg-main: #FFFFFF;
       --ssp-bg-soft: #F8FAFC;
+      --ssp-card-bg: #FFFFFF;
+      --ssp-card-border: #E2E8F0;
+      --ssp-border-color: #E2E8F0;
       --ssp-text-main: #1E293B;
       --ssp-text-muted: #64748B;
+      --ssp-input-bg: #FFFFFF;
+      --ssp-header-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    [data-theme="dark"] {
+      --ssp-navy: #C7D2FE;
+      --ssp-navy-dark: #0B0F17;
+      --ssp-orange: #FF8A1D;
+      --ssp-orange-hover: #FF9E3B;
+      --ssp-bg-main: #0B0F17;
+      --ssp-bg-soft: #1E293B;
+      --ssp-card-bg: #151C2C;
+      --ssp-card-border: #2E3A52;
+      --ssp-border-color: #334155;
+      --ssp-text-main: #F8FAFC;
+      --ssp-text-muted: #CBD5E1;
+      --ssp-input-bg: #0F172A;
+      --ssp-header-bg: rgba(11, 15, 23, 0.95);
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
       background-color: var(--ssp-bg-soft);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1, h2, h3, h4, h5, .brand-font {
@@ -92,10 +124,14 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .ssp-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--ssp-header-bg);
       backdrop-filter: blur(12px);
       border-bottom: 2px solid rgba(12, 8, 107, 0.08);
       transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .ssp-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
     }
 
     .navmenu ul {
@@ -121,6 +157,10 @@ $siteUrl        = "https://smartstudypro.com";
       display: inline-block;
       white-space: nowrap;
       transition: color 0.2s ease;
+    }
+
+    [data-theme="dark"] .navmenu ul li a {
+      color: #F1F5F9;
     }
 
     .navmenu ul li a:hover,
@@ -157,22 +197,57 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .ssp-auth-card {
-      background: #FFFFFF;
+      background: var(--ssp-card-bg);
       border-radius: 20px;
-      border: 1px solid #E2E8F0;
-      box-shadow: 0 10px 25px -5px rgba(12, 8, 107, 0.08);
+      border: 1px solid var(--ssp-card-border);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
       width: 100%;
       max-width: 440px;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .form-control {
+      background-color: var(--ssp-input-bg);
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-border-color);
     }
 
     .form-control:focus {
       border-color: var(--ssp-navy);
       box-shadow: 0 0 0 0.25rem rgba(12, 8, 107, 0.15);
+      background-color: var(--ssp-input-bg);
+      color: var(--ssp-text-main);
+    }
+
+    [data-theme="dark"] .form-control {
+      background-color: var(--ssp-input-bg);
+      color: #F8FAFC;
+      border-color: var(--ssp-border-color);
+    }
+
+    [data-theme="dark"] .form-control::placeholder {
+      color: #94A3B8;
+    }
+
+    .ssp-form-label {
+      color: var(--ssp-navy);
+    }
+
+    [data-theme="dark"] .ssp-form-label {
+      color: #F1F5F9 !important;
+    }
+
+    .text-muted {
+      color: var(--ssp-text-muted) !important;
     }
 
     .ssp-footer {
-      background-color: var(--ssp-navy-dark);
+      background-color: #070443;
       color: #94A3B8;
+    }
+
+    [data-theme="dark"] .ssp-footer {
+      background-color: #060911;
     }
 
     .ssp-footer-brand {
@@ -215,7 +290,7 @@ $siteUrl        = "https://smartstudypro.com";
       <div class="ssp-auth-card p-4 p-md-5">
         <div class="text-center mb-4">
           <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo" height="64" class="mb-3">
-          <h3 class="fw-bold mb-1" style="color: var(--ssp-navy);">Create Your Account</h3>
+          <h3 class="fw-bold mb-1 ssp-form-label">Create Your Account</h3>
           <p class="text-muted small mb-0">Join SmartStudyPro to start your learning journey</p>
         </div>
 
@@ -227,22 +302,22 @@ $siteUrl        = "https://smartstudypro.com";
 
         <form method="POST">
           <div class="mb-3">
-            <label class="form-label small fw-semibold" style="color: var(--ssp-navy);">Full Name</label>
+            <label class="form-label small fw-semibold ssp-form-label">Full Name</label>
             <input type="text" name="name" class="form-control rounded-3 py-2" placeholder="John Doe" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" required>
           </div>
 
           <div class="mb-3">
-            <label class="form-label small fw-semibold" style="color: var(--ssp-navy);">Email Address</label>
+            <label class="form-label small fw-semibold ssp-form-label">Email Address</label>
             <input type="email" name="email" class="form-control rounded-3 py-2" placeholder="name@example.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
           </div>
           
           <div class="mb-3">
-            <label class="form-label small fw-semibold" style="color: var(--ssp-navy);">Password</label>
+            <label class="form-label small fw-semibold ssp-form-label">Password</label>
             <input type="password" name="password" class="form-control rounded-3 py-2" placeholder="••••••••" minlength="8" required>
           </div>
 
           <div class="mb-4">
-            <label class="form-label small fw-semibold" style="color: var(--ssp-navy);">Confirm Password</label>
+            <label class="form-label small fw-semibold ssp-form-label">Confirm Password</label>
             <input type="password" name="confirm_password" class="form-control rounded-3 py-2" placeholder="••••••••" minlength="8" required>
           </div>
           

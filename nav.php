@@ -1,10 +1,15 @@
 <style>
-  /* Standalone Navigation Styles */
+  /* Standalone Navigation & High Contrast Theme Variables */
   .ssp-header {
-    background: rgba(255, 255, 255, 0.98);
+    background: var(--ssp-header-bg, rgba(255, 255, 255, 0.98));
     backdrop-filter: blur(12px);
-    border-bottom: 2px solid rgba(12, 8, 107, 0.08);
-    transition: all 0.3s ease;
+    border-bottom: 2px solid rgba(12, 8, 107, 0.12);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  [data-theme="dark"] .ssp-header {
+    background: rgba(11, 15, 23, 0.98);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
   }
 
   .navmenu ul {
@@ -20,8 +25,8 @@
   }
 
   .navmenu ul li a {
-    color: var(--ssp-navy);
-    font-weight: 600;
+    color: var(--ssp-navy, #0C086B);
+    font-weight: 700;
     font-size: 0.95rem;
     text-decoration: none !important;
     display: inline-block;
@@ -31,8 +36,8 @@
 
   .navmenu ul li a:hover,
   .navmenu ul li a.active {
-    color: var(--ssp-orange) !important;
-    font-weight: 700;
+    color: var(--ssp-orange, #E66A00) !important;
+    font-weight: 800;
   }
 
   /* Desktop Navigation (XL screens and above) */
@@ -65,10 +70,10 @@
       right: 15px;
       left: 15px;
       padding: 20px 24px !important;
-      background: #FFFFFF;
+      background: var(--ssp-card-bg, #FFFFFF);
       border-radius: 16px;
-      box-shadow: 0 12px 32px rgba(12, 8, 107, 0.16);
-      border: 1px solid rgba(12, 8, 107, 0.08);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--ssp-card-border, #CBD5E1);
       z-index: 9999;
       flex-direction: column !important;
       align-items: stretch !important;
@@ -96,18 +101,18 @@
       position: relative !important;
       z-index: 10005 !important;
       pointer-events: auto !important;
-      color: var(--ssp-navy);
+      color: var(--ssp-navy, #0C086B);
       transition: transform 0.25s ease, color 0.25s ease;
     }
 
     body.mobile-nav-active .mobile-nav-toggle {
       transform: rotate(90deg);
-      color: var(--ssp-orange);
+      color: var(--ssp-orange, #E66A00);
     }
   }
 
   .header-icon-link {
-    color: var(--ssp-navy);
+    color: var(--ssp-navy, #0C086B);
     padding: 6px 10px;
     border-radius: 8px;
     transition: background-color 0.2s ease, color 0.2s ease;
@@ -116,11 +121,14 @@
     justify-content: center;
     position: relative;
     z-index: 10005;
+    background: transparent;
+    border: none;
+    cursor: pointer;
   }
 
   .header-icon-link:hover {
-    color: var(--ssp-orange);
-    background-color: var(--ssp-bg-soft);
+    color: var(--ssp-orange, #E66A00);
+    background-color: var(--ssp-bg-soft, #F1F5F9);
   }
 </style>
 
@@ -143,6 +151,11 @@
     </nav>
 
     <div class="d-flex align-items-center gap-2 gap-sm-3">
+      <!-- Dark / Light Mode Toggle Button -->
+      <button type="button" id="theme-toggle" class="header-icon-link fs-5" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+        <i id="theme-toggle-icon" class="bi bi-moon-fill"></i>
+      </button>
+
       <a href="cart.php" class="header-icon-link fs-5 text-decoration-none" title="Shopping Cart">
         <i class="bi bi-bag"></i>
       </a>
@@ -156,3 +169,41 @@
 
   </div>
 </header>
+
+<!-- Dynamic Theme Toggle Handler -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('theme-toggle');
+    const toggleIcon = document.getElementById('theme-toggle-icon');
+
+    if (!toggleBtn || !toggleIcon) return;
+
+    function updateIcon(isDark) {
+      if (isDark) {
+        toggleIcon.classList.remove('bi-moon-fill');
+        toggleIcon.classList.add('bi-sun-fill');
+      } else {
+        toggleIcon.classList.remove('bi-sun-fill');
+        toggleIcon.classList.add('bi-moon-fill');
+      }
+    }
+
+    // Sync icon state on load
+    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+    updateIcon(isDarkMode);
+
+    // Toggle theme state on click
+    toggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      if (currentTheme === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('ssp-theme', 'light');
+        updateIcon(false);
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('ssp-theme', 'dark');
+        updateIcon(true);
+      }
+    });
+  });
+</script>

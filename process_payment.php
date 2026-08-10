@@ -1,6 +1,6 @@
 <?php
 require_once 'auth.php';
-require_login(); // Must be signed in to pay — redirects to login.php otherwise
+require_login();
 
 date_default_timezone_set('Africa/Kampala');
 
@@ -24,8 +24,6 @@ try {
 
     $transactionTime = date('Y-m-d H:i:s');
 
-    // Compute the authoritative total from the DB rather than trusting the
-    // client-submitted 'total' field
     $stmt = $db->prepare("SELECT COALESCE(SUM(CAST(REPLACE(REPLACE(price,'UGX',''),',','') AS REAL)),0) AS total FROM bookings WHERE paid=0 AND (user_id=:user_id OR account_id=:account_id)");
     $stmt->execute([':user_id' => $user_id, ':account_id' => $accountId]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -60,6 +58,15 @@ try {
 <html lang="en">
 
 <head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ssp-theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Receipt - SmartStudyPro</title>
@@ -83,15 +90,42 @@ try {
       --ssp-navy-dark: #070443;
       --ssp-orange: #FF7A00;
       --ssp-orange-hover: #E06B00;
+      --ssp-bg-main: #FFFFFF;
       --ssp-bg-soft: #F8FAFC;
+      --ssp-card-bg: #FFFFFF;
+      --ssp-card-border: #E2E8F0;
+      --ssp-border-color: #E2E8F0;
       --ssp-text-main: #1E293B;
       --ssp-text-muted: #64748B;
+      --ssp-input-bg: #FFFFFF;
+      --ssp-header-bg: rgba(255, 255, 255, 0.95);
+      --ssp-badge-bg: #F8FAFC;
+      --ssp-badge-text: #64748B;
+    }
+
+    [data-theme="dark"] {
+      --ssp-navy: #C7D2FE;
+      --ssp-navy-dark: #0B0F17;
+      --ssp-orange: #FF8A1D;
+      --ssp-orange-hover: #FF9E3B;
+      --ssp-bg-main: #0B0F17;
+      --ssp-bg-soft: #1E293B;
+      --ssp-card-bg: #151C2C;
+      --ssp-card-border: #2E3A52;
+      --ssp-border-color: #334155;
+      --ssp-text-main: #F8FAFC;
+      --ssp-text-muted: #CBD5E1;
+      --ssp-input-bg: #0F172A;
+      --ssp-header-bg: rgba(11, 15, 23, 0.95);
+      --ssp-badge-bg: #1E293B;
+      --ssp-badge-text: #CBD5E1;
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
-      background-color: #FFFFFF;
+      background-color: var(--ssp-bg-main);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1, h2, h3, h4, h5, .brand-font {
@@ -99,10 +133,14 @@ try {
     }
 
     .ssp-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--ssp-header-bg);
       backdrop-filter: blur(12px);
       border-bottom: 2px solid rgba(12, 8, 107, 0.08);
       transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .ssp-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
     }
 
     .navmenu ul {
@@ -130,6 +168,10 @@ try {
       transition: color 0.2s ease;
     }
 
+    [data-theme="dark"] .navmenu ul li a {
+      color: #F1F5F9;
+    }
+
     .navmenu ul li a:hover,
     .navmenu ul li a.active {
       color: var(--ssp-orange) !important;
@@ -143,6 +185,15 @@ try {
     .dropdown-menu .dropdown-item:hover {
       background-color: var(--ssp-bg-soft);
       color: var(--ssp-orange);
+    }
+    
+    [data-theme="dark"] .dropdown-menu {
+      background-color: var(--ssp-card-bg);
+      border-color: var(--ssp-card-border);
+    }
+    
+    [data-theme="dark"] .dropdown-item {
+      color: var(--ssp-text-main);
     }
 
     .btn-ssp-primary {
@@ -180,12 +231,55 @@ try {
     }
 
     .receipt-wrapper { max-width: 800px; margin: 0 auto; }
-    .receipt-card { background: #fff; border-radius: 16px; border: 1px solid #E2E8F0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .receipt-header { background: var(--ssp-navy); color: white; padding: 40px; }
+    
+    .receipt-card { 
+      background: var(--ssp-card-bg); 
+      border-radius: 16px; 
+      border: 1px solid var(--ssp-card-border); 
+      overflow: hidden; 
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .receipt-header { background: #0C086B; color: white; padding: 40px; }
+    [data-theme="dark"] .receipt-header { background: #070443; }
+
+    .text-muted {
+      color: var(--ssp-text-muted) !important;
+    }
+
+    .ssp-badge-service {
+      background-color: var(--ssp-badge-bg);
+      color: var(--ssp-badge-text);
+      border: 1px solid var(--ssp-card-border);
+    }
+
+    /* Table Fixes for Bootstrap Dark Mode */
+    .table {
+      --bs-table-bg: transparent;
+      --bs-table-color: var(--ssp-text-main);
+      --bs-table-border-color: var(--ssp-card-border);
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-card-border);
+    }
+
+    .table td, .table tr {
+      background-color: var(--ssp-card-bg) !important;
+      color: var(--ssp-text-main);
+    }
+
+    .table th {
+      background-color: var(--ssp-bg-soft) !important;
+      color: var(--ssp-text-muted);
+    }
 
     .ssp-footer {
-      background-color: var(--ssp-navy-dark);
+      background-color: #070443;
       color: #94A3B8;
+    }
+
+    [data-theme="dark"] .ssp-footer {
+      background-color: #060911;
     }
 
     .ssp-footer-brand {
@@ -216,6 +310,25 @@ try {
       color: #FFFFFF;
     }
 
+    .border-bottom {
+      border-color: var(--ssp-card-border) !important;
+    }
+
+    .btn-outline-secondary {
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-card-border);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--ssp-bg-soft);
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-card-border);
+    }
+
+    [data-theme="dark"] .text-dark {
+      color: var(--ssp-text-main) !important;
+    }
+
     @media print { 
       .no-print { display: none !important; } 
       .receipt-card { box-shadow: none; border: 1px solid #ccc; } 
@@ -243,8 +356,8 @@ try {
         <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3"></i>
       </nav>
 
-
-        <div class="dropdown">
+      <div class="d-flex align-items-center">
+        <div class="dropdown me-2">
           <a href="#" class="text-dark fs-5 text-decoration-none dropdown-toggle-no-caret" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Account">
             <i class="bi bi-person-circle"></i>
           </a>
@@ -255,7 +368,7 @@ try {
           </ul>
         </div>
 
-        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none ms-2" href="courses.php">Explore Courses</a>
+        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none" href="courses.php">Explore Courses</a>
       </div>
 
     </div>
@@ -313,7 +426,7 @@ try {
                             <i class="bi bi-cloud-arrow-down-fill me-1"></i> Download
                           </a>
                         <?php else: ?>
-                          <span class="badge bg-light text-secondary border px-3">Physical/Service</span>
+                          <span class="badge ssp-badge-service px-3">Physical/Service</span>
                         <?php endif; ?>
                       </td>
                     </tr>

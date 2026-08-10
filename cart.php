@@ -33,6 +33,15 @@ $siteUrl        = "https://smartstudypro.com";
 <html lang="en">
 
 <head>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('ssp-theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -59,15 +68,36 @@ $siteUrl        = "https://smartstudypro.com";
       --ssp-navy-dark: #070443;
       --ssp-orange: #FF7A00;
       --ssp-orange-hover: #E06B00;
+      --ssp-bg-main: #FFFFFF;
       --ssp-bg-soft: #F8FAFC;
+      --ssp-card-bg: #FFFFFF;
+      --ssp-card-border: #E2E8F0;
       --ssp-text-main: #1E293B;
       --ssp-text-muted: #64748B;
+      --ssp-table-header: #F1F5F9;
+      --ssp-header-bg: rgba(255, 255, 255, 0.95);
+    }
+
+    [data-theme="dark"] {
+      --ssp-navy: #C7D2FE;
+      --ssp-navy-dark: #0B0F17;
+      --ssp-orange: #FF8A1D;
+      --ssp-orange-hover: #FF9E3B;
+      --ssp-bg-main: #0B0F17;
+      --ssp-bg-soft: #1E293B;
+      --ssp-card-bg: #151C2C;
+      --ssp-card-border: #2E3A52;
+      --ssp-text-main: #F8FAFC;
+      --ssp-text-muted: #94A3B8;
+      --ssp-table-header: #1E293B;
+      --ssp-header-bg: rgba(11, 15, 23, 0.95);
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
-      background-color: #FFFFFF;
+      background-color: var(--ssp-bg-main);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1, h2, h3, h4, h5, .brand-font {
@@ -75,10 +105,14 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .ssp-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: var(--ssp-header-bg);
       backdrop-filter: blur(12px);
       border-bottom: 2px solid rgba(12, 8, 107, 0.08);
       transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .ssp-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
     }
 
     .navmenu ul {
@@ -106,6 +140,10 @@ $siteUrl        = "https://smartstudypro.com";
       transition: color 0.2s ease;
     }
 
+    [data-theme="dark"] .navmenu ul li a {
+      color: #F1F5F9;
+    }
+
     .navmenu ul li a:hover,
     .navmenu ul li a.active {
       color: var(--ssp-orange) !important;
@@ -119,6 +157,15 @@ $siteUrl        = "https://smartstudypro.com";
     .dropdown-menu .dropdown-item:hover {
       background-color: var(--ssp-bg-soft);
       color: var(--ssp-orange);
+    }
+
+    [data-theme="dark"] .dropdown-menu {
+      background-color: var(--ssp-card-bg);
+      border-color: var(--ssp-card-border);
+    }
+    
+    [data-theme="dark"] .dropdown-item {
+      color: var(--ssp-text-main);
     }
 
     .btn-ssp-primary {
@@ -140,37 +187,76 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .page-title-ssp {
-      background: linear-gradient(135deg, var(--ssp-navy) 0%, var(--ssp-navy-dark) 100%);
+      background: linear-gradient(135deg, #0C086B 0%, #070443 100%);
       color: #FFFFFF;
       padding: 60px 0;
     }
 
-    .ssp-card-box {
-      border: 1px solid #E2E8F0;
-      border-radius: 16px;
-      background: #FFFFFF;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    [data-theme="dark"] .page-title-ssp {
+      background: linear-gradient(135deg, #0B0F17 0%, #151C2C 100%);
     }
 
+    .ssp-card-box {
+      border: 1px solid var(--ssp-card-border);
+      border-radius: 16px;
+      background: var(--ssp-card-bg);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* Table dark mode fixes */
     .ssp-table {
       border-collapse: separate;
       border-spacing: 0;
+      color: var(--ssp-text-main) !important;
+      background-color: transparent !important;
+    }
+
+    .ssp-table th,
+    .ssp-table td {
+      background-color: transparent !important;
+      color: var(--ssp-text-main) !important;
+      border-color: var(--ssp-card-border) !important;
     }
 
     .ssp-table th {
-      background-color: #F1F5F9;
-      color: var(--ssp-navy);
+      background-color: var(--ssp-table-header) !important;
+      color: var(--ssp-navy) !important;
       font-weight: 700;
-      border-bottom: 2px solid #E2E8F0;
+      border-bottom: 2px solid var(--ssp-card-border) !important;
     }
 
-    .ssp-table td {
-      vertical-align: middle;
+    .table-hover tbody tr:hover td,
+    .table-hover tbody tr:hover th {
+      background-color: rgba(255, 122, 0, 0.08) !important;
+    }
+
+    tfoot tr td {
+      background-color: var(--ssp-table-header) !important;
+    }
+
+    .text-muted {
+      color: var(--ssp-text-muted) !important;
+    }
+
+    .btn-outline-secondary {
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-card-border);
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: var(--ssp-bg-soft);
+      color: var(--ssp-text-main);
+      border-color: var(--ssp-card-border);
     }
 
     .ssp-footer {
-      background-color: var(--ssp-navy-dark);
+      background-color: #070443;
       color: #94A3B8;
+    }
+
+    [data-theme="dark"] .ssp-footer {
+      background-color: #060911;
     }
 
     .ssp-footer-brand {
@@ -200,6 +286,10 @@ $siteUrl        = "https://smartstudypro.com";
       background: var(--ssp-orange);
       color: #FFFFFF;
     }
+
+    [data-theme="dark"] .text-dark {
+      color: var(--ssp-text-main) !important;
+    }
   </style>
 </head>
 
@@ -216,7 +306,7 @@ $siteUrl        = "https://smartstudypro.com";
       </div>
     </div>
 
-    <section class="section py-5" style="background-color: var(--ssp-bg-soft);">
+    <section class="section py-5" style="background-color: var(--ssp-bg-main);">
       <div class="container" data-aos="fade-up">
         
         <?php if(empty($bookings)): ?>
@@ -258,7 +348,7 @@ $siteUrl        = "https://smartstudypro.com";
                   <?php endforeach; ?>
                 </tbody>
                 <tfoot>
-                  <tr class="table-light">
+                  <tr>
                     <td colspan="2" class="py-3 px-3 fw-bold text-end" style="color: var(--ssp-navy);">Grand Total:</td>
                     <td colspan="2" class="py-3 px-3 fw-bold fs-5" style="color: var(--ssp-orange);">UGX <?= number_format($total, 2) ?></td>
                   </tr>
@@ -266,7 +356,7 @@ $siteUrl        = "https://smartstudypro.com";
               </table>
             </div>
 
-            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mt-4 pt-3 border-top">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mt-4 pt-3 border-top" style="border-color: var(--ssp-card-border) !important;">
               <a href="courses.php" class="btn btn-outline-secondary rounded-3 text-decoration-none px-4 py-2">
                 <i class="bi bi-arrow-left me-1"></i> Continue Browsing
               </a>

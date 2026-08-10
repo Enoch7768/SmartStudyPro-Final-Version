@@ -81,29 +81,57 @@ $siteUrl        = "https://smartstudypro.com";
   <style>
     :root {
       --ssp-navy: #0C086B;
-      --ssp-navy-dark: #070443;
-      --ssp-orange: #FF7A00;
-      --ssp-orange-hover: #E06B00;
-      --ssp-bg-soft: #F8FAFC;
-      --ssp-text-main: #1E293B;
-      --ssp-text-muted: #64748B;
+      --ssp-navy-dark: #050338;
+      --ssp-orange: #E66A00;
+      --ssp-orange-hover: #C65B00;
+      --ssp-bg-soft: #F1F5F9;
+      --ssp-text-main: #0F172A;
+      --ssp-text-muted: #334155;
+      --ssp-bg-page: #FFFFFF;
+      --ssp-header-bg: rgba(255, 255, 255, 0.98);
+      --ssp-card-bg: #FFFFFF;
+      --ssp-card-border: #CBD5E1;
+      --ssp-badge-bg: #E0E7FF;
+      --ssp-badge-text: #0C086B;
+    }
+
+    /* Enhanced Dark Mode Theme Variables (High Contrast) */
+    [data-theme="dark"] {
+      --ssp-navy: #C7D2FE;
+      --ssp-navy-dark: #03021D;
+      --ssp-orange: #FF8A1A;
+      --ssp-orange-hover: #FF9B3B;
+      --ssp-bg-soft: #0F172A;
+      --ssp-text-main: #F8FAFC;
+      --ssp-text-muted: #E2E8F0;
+      --ssp-bg-page: #0B0F17;
+      --ssp-header-bg: rgba(11, 15, 23, 0.98);
+      --ssp-card-bg: #111827;
+      --ssp-card-border: #475569;
+      --ssp-badge-bg: #1E1B4B;
+      --ssp-badge-text: #E0E7FF;
     }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--ssp-text-main);
-      background-color: #FFFFFF;
+      background-color: var(--ssp-bg-page);
       overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1, h2, h3, h4, h5, .brand-font {
       font-family: 'Outfit', sans-serif;
     }
 
+    .text-muted {
+      color: var(--ssp-text-muted) !important;
+    }
+
     .ssp-header {
-      background: rgba(255, 255, 255, 0.98);
+      background: var(--ssp-header-bg);
       backdrop-filter: blur(12px);
-      border-bottom: 2px solid rgba(12, 8, 107, 0.08);
+      border-bottom: 2px solid rgba(12, 8, 107, 0.12);
       transition: all 0.3s ease;
     }
 
@@ -122,7 +150,7 @@ $siteUrl        = "https://smartstudypro.com";
 
     .navmenu ul li a {
       color: var(--ssp-navy);
-      font-weight: 600;
+      font-weight: 700;
       font-size: 0.95rem;
       text-decoration: none !important;
       display: inline-block;
@@ -133,7 +161,7 @@ $siteUrl        = "https://smartstudypro.com";
     .navmenu ul li a:hover,
     .navmenu ul li a.active {
       color: var(--ssp-orange) !important;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     /* Desktop Navigation (XL screens and above) */
@@ -166,10 +194,10 @@ $siteUrl        = "https://smartstudypro.com";
         right: 15px;
         left: 15px;
         padding: 24px !important;
-        background: #FFFFFF;
+        background: var(--ssp-card-bg);
         border-radius: 16px;
-        box-shadow: 0 12px 32px rgba(12, 8, 107, 0.16);
-        border: 1px solid rgba(12, 8, 107, 0.08);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        border: 1px solid var(--ssp-card-border);
         z-index: 9999;
       }
 
@@ -201,6 +229,9 @@ $siteUrl        = "https://smartstudypro.com";
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
     }
 
     .header-icon-link:hover {
@@ -215,7 +246,7 @@ $siteUrl        = "https://smartstudypro.com";
       border-radius: 10px;
       padding: 10px 24px;
       border: none;
-      box-shadow: 0 4px 14px rgba(255, 122, 0, 0.35);
+      box-shadow: 0 4px 14px rgba(230, 106, 0, 0.35);
       transition: all 0.25s ease;
       display: inline-block;
       text-align: center;
@@ -225,19 +256,24 @@ $siteUrl        = "https://smartstudypro.com";
       background-color: var(--ssp-orange-hover);
       color: #FFFFFF;
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.45);
+      box-shadow: 0 6px 20px rgba(230, 106, 0, 0.45);
     }
 
     .btn-ssp-navy {
-      background-color: var(--ssp-navy);
+      background-color: #0C086B;
       color: #FFFFFF;
-      font-weight: 600;
+      font-weight: 700;
       border-radius: 10px;
       padding: 10px 24px;
       border: none;
       transition: all 0.25s ease;
       display: inline-block;
       text-align: center;
+    }
+
+    [data-theme="dark"] .btn-ssp-navy {
+      background-color: #3730A3;
+      color: #FFFFFF;
     }
 
     .btn-ssp-navy:hover {
@@ -258,7 +294,7 @@ $siteUrl        = "https://smartstudypro.com";
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(12, 8, 107, 0.92) 0%, rgba(7, 4, 67, 0.88) 100%);
+      background: linear-gradient(135deg, rgba(7, 4, 67, 0.95) 0%, rgba(3, 2, 29, 0.92) 100%);
       z-index: 1;
     }
 
@@ -269,15 +305,15 @@ $siteUrl        = "https://smartstudypro.com";
 
     .hero-tagline {
       display: inline-block;
-      color: var(--ssp-orange);
-      font-weight: 700;
+      color: #FFB066;
+      font-weight: 800;
       letter-spacing: 1px;
       text-transform: uppercase;
       font-size: 0.875rem;
-      background: rgba(255, 122, 0, 0.12);
+      background: rgba(255, 122, 0, 0.2);
       padding: 6px 16px;
       border-radius: 30px;
-      border: 1px solid rgba(255, 122, 0, 0.3);
+      border: 1px solid rgba(255, 122, 0, 0.5);
       max-width: 100%;
       word-wrap: break-word;
     }
@@ -295,29 +331,29 @@ $siteUrl        = "https://smartstudypro.com";
     }
 
     .pixel-decor .px-1 { background-color: var(--ssp-orange); }
-    .pixel-decor .px-2 { background-color: #3B82F6; }
+    .pixel-decor .px-2 { background-color: #60A5FA; }
     .pixel-decor .px-3 { background-color: #FFFFFF; }
 
     .ssp-course-card {
-      border: 1px solid #E2E8F0;
+      border: 1.5px solid var(--ssp-card-border);
       border-radius: 16px;
       overflow: hidden;
-      background: #FFFFFF;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      background: var(--ssp-card-bg);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .ssp-course-card:hover {
       transform: translateY(-8px);
-      border-color: rgba(255, 122, 0, 0.4);
-      box-shadow: 0 20px 25px -5px rgba(12, 8, 107, 0.1);
+      border-color: var(--ssp-orange);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
     }
 
     .ssp-card-badge {
-      background: #EFF6FF;
-      color: var(--ssp-navy);
+      background: var(--ssp-badge-bg);
+      color: var(--ssp-badge-text);
       font-size: 0.75rem;
-      font-weight: 700;
+      font-weight: 800;
       padding: 4px 12px;
       border-radius: 20px;
       text-transform: uppercase;
@@ -331,7 +367,7 @@ $siteUrl        = "https://smartstudypro.com";
 
     .ssp-footer {
       background-color: var(--ssp-navy-dark);
-      color: #94A3B8;
+      color: #CBD5E1;
     }
 
     .ssp-footer-brand {
@@ -351,7 +387,7 @@ $siteUrl        = "https://smartstudypro.com";
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.12);
       color: #FFFFFF;
       transition: all 0.2s ease;
       text-decoration: none;
@@ -389,6 +425,14 @@ $siteUrl        = "https://smartstudypro.com";
       }
     }
   </style>
+  <script>
+    // Immediate inline theme detection to prevent screen flicker
+    const savedTheme = localStorage.getItem('ssp-theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  </script>
 </head>
 
 <body class="index-page">
@@ -412,6 +456,11 @@ $siteUrl        = "https://smartstudypro.com";
       </nav>
 
       <div class="d-flex align-items-center gap-2 gap-sm-3">
+        <!-- Dark Mode Toggle Button -->
+        <button type="button" id="theme-toggle" class="header-icon-link fs-5" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+          <i id="theme-toggle-icon" class="bi bi-moon-fill"></i>
+        </button>
+
         <a href="cart.php" class="header-icon-link fs-5 text-decoration-none" title="Shopping Cart">
           <i class="bi bi-bag"></i>
         </a>
@@ -453,13 +502,13 @@ $siteUrl        = "https://smartstudypro.com";
               <?= $home['Hero-Title'] ?? $home['Title'] ?? 'Learning Today,<br class="d-none d-sm-inline">Leading Tomorrow' ?>
             </h1>
 
-            <p class="lead text-light opacity-90 mb-4" data-aos="fade-up" data-aos-delay="200">
+            <p class="lead text-white opacity-100 mb-4 fw-normal" data-aos="fade-up" data-aos-delay="200">
               <?= $home['Hero-Subtitle'] ?? $home['Description'] ?? 'Empowering students with innovative learning solutions, professional tutoring, and academic excellence in Uganda.' ?>
             </p>
 
             <div class="d-flex flex-column flex-sm-row flex-wrap gap-3 justify-content-center justify-content-lg-start" data-aos="fade-up" data-aos-delay="300">
               <a href="courses.php" class="btn-ssp-primary text-decoration-none">Start Learning Today</a>
-              <a href="about.php" class="btn btn-outline-light rounded-3 px-4 py-2 fw-semibold text-decoration-none">Discover SmartStudyPro</a>
+              <a href="about.php" class="btn btn-outline-light rounded-3 px-4 py-2 fw-bold text-decoration-none">Discover SmartStudyPro</a>
             </div>
 
           </div>
@@ -479,13 +528,13 @@ $siteUrl        = "https://smartstudypro.com";
           <div class="col-lg-6 order-2 order-lg-1">
             <span class="text-uppercase fw-bold text-primary fs-7 tracking-wider">About SmartStudyPro</span>
             <h2 class="fw-bold mt-1 mb-3" style="color: var(--ssp-navy);">Empowering Education Through Smart & Flexible Learning</h2>
-            <p class="text-muted">
+            <p class="text-muted fs-6">
               SmartStudyPro is a complete online educational platform engineered to simplify learning, resource access, and academic booking across Uganda.
             </p>
 
             <div class="my-4">
               <div class="d-flex gap-3 mb-3">
-                <div class="text-warning fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
+                <div class="fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
                 <div>
                   <h6 class="fw-bold mb-1" style="color: var(--ssp-navy);">Distraction-Free Platform</h6>
                   <p class="text-muted small mb-0">Clean, intuitive layout structured specifically to keep students focused on academic success.</p>
@@ -493,7 +542,7 @@ $siteUrl        = "https://smartstudypro.com";
               </div>
 
               <div class="d-flex gap-3 mb-3">
-                <div class="text-warning fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
+                <div class="fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
                 <div>
                   <h6 class="fw-bold mb-1" style="color: var(--ssp-navy);">Unified Learning Ecosystem</h6>
                   <p class="text-muted small mb-0">Seamless access to course content, holiday guidance packages, and specialized ICT lessons.</p>
@@ -501,7 +550,7 @@ $siteUrl        = "https://smartstudypro.com";
               </div>
 
               <div class="d-flex gap-3">
-                <div class="text-warning fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
+                <div class="fs-4 flex-shrink-0"><i class="bi bi-patch-check-fill" style="color: var(--ssp-orange);"></i></div>
                 <div>
                   <h6 class="fw-bold mb-1" style="color: var(--ssp-navy);">Reliable & Secured Infrastructure</h6>
                   <p class="text-muted small mb-0">Built on modern, fast web standards to ensure student data safety and fast dynamic loading.</p>
@@ -517,9 +566,9 @@ $siteUrl        = "https://smartstudypro.com";
 
     <section id="courses" class="courses section py-4 py-md-5" style="background-color: var(--ssp-bg-soft);">
       <div class="container text-center mb-4 mb-md-5" data-aos="fade-up">
-        <span class="badge px-3 py-2 mb-2" style="background-color: rgba(12,8,107,0.1); color: var(--ssp-navy);">Featured Content</span>
+        <span class="badge px-3 py-2 mb-2" style="background-color: var(--ssp-badge-bg); color: var(--ssp-badge-text);">Featured Content</span>
         <h2 class="fw-bold" style="color: var(--ssp-navy);">Explore Popular Courses</h2>
-        <p class="text-muted">Explore structured learning programs designed to boost academic growth.</p>
+        <p class="text-muted fs-6">Explore structured learning programs designed to boost academic growth.</p>
       </div>
 
       <div class="container">
@@ -554,7 +603,7 @@ $siteUrl        = "https://smartstudypro.com";
                       <?= htmlspecialchars(substr(strip_tags($course['Description'] ?? $course['description'] ?? ''), 0, 110)) ?>...
                     </p>
 
-                    <a href="course-details.php?id=<?= $course['_id'] ?>" class="btn btn-outline-primary w-100 mt-auto rounded-3 text-decoration-none" style="color: var(--ssp-navy); border-color: var(--ssp-navy);">
+                    <a href="course-details.php?id=<?= $course['_id'] ?>" class="btn btn-outline-primary w-100 mt-auto rounded-3 fw-bold text-decoration-none" style="color: var(--ssp-navy); border-color: var(--ssp-navy);">
                       View Details
                     </a>
                   </div>
@@ -580,12 +629,12 @@ $siteUrl        = "https://smartstudypro.com";
           <a href="index.php" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
             SmartStudy<span>Pro</span>
           </a>
-          <p class="small text-light opacity-75 mb-3">Study Made Simple, Success Made Sure.</p>
+          <p class="small text-white opacity-90 mb-3">Study Made Simple, Success Made Sure.</p>
           
           <div class="small mb-3">
-            <p class="mb-1"><i class="bi bi-geo-alt-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($address) ?></p>
-            <p class="mb-1"><i class="bi bi-telephone-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($phone) ?></p>
-            <p class="mb-1"><i class="bi bi-envelope-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($email) ?></p>
+            <p class="mb-1 text-white"><i class="bi bi-geo-alt-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($address) ?></p>
+            <p class="mb-1 text-white"><i class="bi bi-telephone-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($phone) ?></p>
+            <p class="mb-1 text-white"><i class="bi bi-envelope-fill me-2" style="color: var(--ssp-orange);"></i><?= htmlspecialchars($email) ?></p>
           </div>
 
           <div class="d-flex gap-2">
@@ -599,17 +648,17 @@ $siteUrl        = "https://smartstudypro.com";
         <div class="col-12 col-sm-6 col-md-6 col-lg-3">
           <h5 class="text-white fw-bold mb-3">Quick Navigation</h5>
           <ul class="list-unstyled small">
-            <li class="mb-2"><a href="index.php" class="text-decoration-none text-light opacity-75">Home</a></li>
-            <li class="mb-2"><a href="about.php" class="text-decoration-none text-light opacity-75">About Us</a></li>
-            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-light opacity-75">Courses</a></li>
-            <li class="mb-2"><a href="products.php" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
-            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
+            <li class="mb-2"><a href="index.php" class="text-decoration-none text-white opacity-90">Home</a></li>
+            <li class="mb-2"><a href="about.php" class="text-decoration-none text-white opacity-90">About Us</a></li>
+            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-white opacity-90">Courses</a></li>
+            <li class="mb-2"><a href="products.php" class="text-decoration-none text-white opacity-90">Products & Materials</a></li>
+            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-white opacity-90">Contact Us</a></li>
           </ul>
         </div>
 
         <div class="col-12 col-sm-6 col-md-12 col-lg-5">
           <h5 class="text-white fw-bold mb-3">Core Educational Offerings</h5>
-          <ul class="list-unstyled small opacity-75">
+          <ul class="list-unstyled small text-white opacity-90">
             <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Private & Customized Tutoring</li>
             <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Holiday Package & Guided Learning</li>
             <li class="mb-2"><i class="bi bi-chevron-right text-warning me-1"></i> Homework & Assignment Support</li>
@@ -621,7 +670,7 @@ $siteUrl        = "https://smartstudypro.com";
       </div>
     </div>
 
-    <div class="container text-center border-top border-secondary pt-3 mt-3 opacity-75 small">
+    <div class="container text-center border-top border-secondary pt-3 mt-3 text-white opacity-90 small">
       <p class="mb-0">&copy; <?= date('Y') ?> <strong>SmartStudyPro</strong>. All Rights Reserved. Empowering Education in Uganda.</p>
     </div>
   </footer>
@@ -632,6 +681,42 @@ $siteUrl        = "https://smartstudypro.com";
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/js/main.js"></script>
+
+  <!-- Dark Mode Toggle Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleBtn = document.getElementById('theme-toggle');
+      const toggleIcon = document.getElementById('theme-toggle-icon');
+
+      function updateIcon(isDark) {
+        if (isDark) {
+          toggleIcon.classList.remove('bi-moon-fill');
+          toggleIcon.classList.add('bi-sun-fill');
+        } else {
+          toggleIcon.classList.remove('bi-sun-fill');
+          toggleIcon.classList.add('bi-moon-fill');
+        }
+      }
+
+      // Sync icon state on load
+      const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+      updateIcon(isDarkMode);
+
+      // Handle user click toggle
+      toggleBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.setItem('ssp-theme', 'light');
+          updateIcon(false);
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          localStorage.setItem('ssp-theme', 'dark');
+          updateIcon(true);
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>
