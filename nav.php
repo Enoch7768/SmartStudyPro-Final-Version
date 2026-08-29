@@ -1,5 +1,4 @@
 <style>
-  /* Standalone Navigation & High Contrast Theme Variables */
   .ssp-header {
     background: var(--ssp-header-bg, rgba(255, 255, 255, 0.98));
     backdrop-filter: blur(12px);
@@ -39,8 +38,6 @@
     color: var(--ssp-orange, #E66A00) !important;
     font-weight: 800;
   }
-
-  /* Desktop Navigation (XL screens and above) */
   @media (min-width: 1200px) {
     .navmenu ul {
       display: flex !important;
@@ -49,7 +46,6 @@
     }
   }
 
-  /* Keyframes for Mobile Menu Open Animation */
   @keyframes mobileNavSlideDown {
     0% {
       opacity: 0;
@@ -61,10 +57,9 @@
     }
   }
 
-  /* Mobile / Tablet Navigation Drawer Fixed Layout */
   @media (max-width: 1199.98px) {
     .navmenu ul {
-      display: none !important; /* Hidden by default */
+      display: none !important;
       position: fixed;
       top: 70px;
       right: 15px;
@@ -151,7 +146,6 @@
     </nav>
 
     <div class="d-flex align-items-center gap-2 gap-sm-3">
-      <!-- Dark / Light Mode Toggle Button -->
       <button type="button" id="theme-toggle" class="header-icon-link fs-5" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
         <i id="theme-toggle-icon" class="bi bi-moon-fill"></i>
       </button>
@@ -170,7 +164,6 @@
   </div>
 </header>
 
-<!-- Dynamic Theme Toggle Handler -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('theme-toggle');
@@ -188,11 +181,9 @@
       }
     }
 
-    // Sync icon state on load
     const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
     updateIcon(isDarkMode);
 
-    // Toggle theme state on click
     toggleBtn.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme');
       if (currentTheme === 'dark') {

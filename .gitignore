@@ -19,7 +19,6 @@ Thumbs.db
 *.njsproj
 *.sln
 
-# --- Build & Output ---
 dist/
 build/
 out/
@@ -28,12 +27,12 @@ bin/
 obj/
 coverage/
 
-# --- Logs & Temps ---
 *.log
 logs/
 *.tmp
 temp/
 tmp/
 
-# --- Project Specific Bloat ---
 /useless/
+uploads/
+database/
