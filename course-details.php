@@ -8,18 +8,14 @@ $courseId = $_GET['id'] ?? $_GET['_id'] ?? null;
 if (function_exists('cockpit')) {
     if ($courseId) {
         try {
-            // Method 1: Standard Cockpit v2 findOne
             $course = cockpit('content')->findOne('Courses', ['_id' => $courseId]);
             
-            // Method 2: Cockpit v2 items array filter fallback
             if (!$course) {
                 $items = cockpit('content')->items('Courses', ['filter' => ['_id' => $courseId]]);
                 if (!empty($items)) {
                     $course = $items[0];
                 }
             }
-
-            // Method 3: Loose match fallback
             if (!$course) {
                 $allCourses = cockpit('content')->items('Courses');
                 foreach ($allCourses as $c) {
@@ -54,7 +50,6 @@ $seoTitle       = $course['SEO-Title'] ?? ($displayTitle . " | Course at SmartSt
 $seoDescription = $course['SEO-Description'] ?? (strip_tags($course['Description'] ?? $displaySubtitle));
 $siteUrl        = "https://smartstudypro.com";
 
-// Image for Social Media (OG Image)
 $cImgData = $course['Image'] ?? $course['image'] ?? null;
 $ogImage  = !empty($cImgData['path']) 
             ? $siteUrl . '/schoolprojectt/SmartStudyProV2.3/cms/storage/uploads' . $cImgData['path'] 
