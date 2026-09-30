@@ -485,6 +485,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
       </nav>
 
       <main class="main-video-area">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4"><div><span class="small text-muted">Your learning path</span><div id="courseProgressText" class="fw-bold" style="color:var(--ssp-navy)">0% complete</div></div><div class="progress" style="width:220px;height:8px"><div id="courseProgressBar" class="progress-bar" style="width:0%;background:var(--ssp-orange)"></div></div></div>
         <?php if ($active_video_path && $active_lesson_data): ?>
           <div class="video-container mb-4">
             <?php 
@@ -499,12 +500,22 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
           </div>
 
           <div class="p-4 rounded-4 shadow-sm mb-4 lesson-notes-card">
+              <div class="d-flex justify-content-between align-items-center gap-3 mb-3"><h4 class="fw-bold mb-0">
               <h4 class="fw-bold mb-3">
                 <?= htmlspecialchars($active_lesson_data['Title '] ?? $active_lesson_data['Title'] ?? 'Lesson Details') ?>
               </h4>
+              <button type="button" class="btn-ssp-primary btn-sm rounded-pill" onclick="openCourseTutor()"><i class="bi bi-stars me-1"></i> Ask SmartStudy AI</button></div>
               <div class="text-secondary" style="line-height: 1.7;">
                   <?= $active_lesson_data['Content'] ?? $active_lesson_data['content'] ?? 'No notes available for this lesson.' ?>
               </div>
+          </div>
+
+          <div id="courseTutor" class="lesson-notes-card p-4 rounded-4 shadow-sm mb-4 d-none">
+            <div class="d-flex align-items-center gap-2 mb-2"><i class="bi bi-stars" style="color:var(--ssp-orange)"></i><h5 class="fw-bold mb-0">SmartStudy AI Tutor</h5></div>
+            <textarea id="courseAiQuestion" class="form-control mb-2" rows="3" placeholder="Ask anything about this lesson..."></textarea>
+            <button type="button" class="btn-ssp-primary rounded-pill" onclick="askCourseTutor()">Ask</button>
+            <div id="courseAiStatus" class="small text-muted mt-2"></div>
+            <div id="courseAiAnswer" class="mt-3" style="white-space:pre-wrap;line-height:1.7"></div>
           </div>
 
           <?php 
@@ -590,6 +601,12 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
         updateThemeUI(nextState);
       });
     }
+
+    function openCourseTutor(){ document.getElementById("courseTutor")?.classList.remove("d-none"); document.getElementById("courseAiQuestion")?.focus(); }
+    async function askCourseTutor(){ const q=document.getElementById("courseAiQuestion").value.trim(); if(!q)return; const s=document.getElementById("courseAiStatus"); const a=document.getElementById("courseAiAnswer"); s.textContent="Thinking…"; a.textContent=""; try { const r=await fetch("course-ai.php",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({course_id:<?= $course_id ?>,lesson_id:<?= json_encode($active_lesson_data["_id"] ?? "") ?>,question:q})}); const d=await r.json(); if(!r.ok) throw new Error(d.error||"Tutor unavailable."); a.textContent=d.answer; s.textContent="Answered using this course lesson."; } catch(e){s.textContent=e.message;} }
+
+    function updateCourseProgress(){ const links=[...document.querySelectorAll(".lesson-link")]; if(!links.length)return; const key="ssp-progress-"+<?= $course_id ?>; const done=JSON.parse(localStorage.getItem(key)||"[]"); const pct=Math.round((done.length/links.length)*100); const bar=document.getElementById("courseProgressBar"); const text=document.getElementById("courseProgressText"); if(bar)bar.style.width=pct+"%"; if(text)text.textContent=pct+"% complete"; links.forEach(l=>{l.addEventListener("click",()=>{const href=l.getAttribute("href"); if(!done.includes(href)){done.push(href);localStorage.setItem(key,JSON.stringify(done));}})}); }
+    updateCourseProgress();
 
     // Quiz Handler
     function gradeQuiz() {
