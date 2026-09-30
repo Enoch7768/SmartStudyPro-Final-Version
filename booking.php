@@ -13,7 +13,10 @@ if(!isset($_COOKIE['user_id'])) {
 $success = false;
 $error = null;
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $error = 'Your session expired. Please refresh and try again.';
+    }
     $name     = trim($_POST['name']    ?? '');
     $email    = trim($_POST['email']   ?? '');
     $phone    = trim($_POST['phone']   ?? 'N/A');
@@ -66,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $db_dir = __DIR__ . "/database";
         $db_file = $db_dir . "/bookings.db";
         
-        if (!file_exists($db_dir)) mkdir($db_dir, 0777, true);
+        if (!is_dir($db_dir)) mkdir($db_dir, 0750, true);
 
         $db = new PDO("sqlite:$db_file");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
