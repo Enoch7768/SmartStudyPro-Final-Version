@@ -9,7 +9,9 @@ session_set_cookie_params([
 session_start();
 
 
-$admin_password_hash = password_hash("test", PASSWORD_DEFAULT); 
+require_once __DIR__ . '/config.php';
+
+$admin_password_hash = admin_password_hash(); 
 
 if (isset($_GET['logout'])) {
     $_SESSION = [];
@@ -24,7 +26,11 @@ if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
 if (!isset($_SESSION['login_locked_until'])) $_SESSION['login_locked_until'] = 0;
 
 if (isset($_POST['login'])) {
-    if (time() < $_SESSION['login_locked_until']) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $login_error = "Your session expired. Please refresh and try again.";
+    } elseif ($admin_password_hash === null) {
+        $login_error = "Admin authentication is not configured.";
+    } elseif (time() < $_SESSION['login_locked_until']) {
         $login_error = "Too many attempts. Please try again in a minute.";
     } elseif (password_verify($_POST['password'] ?? '', $admin_password_hash)) {
         session_regenerate_id(true);
@@ -49,7 +55,8 @@ if (isset($_SESSION['admin_logged_in'])) {
         $stmt = $db->query("SELECT * FROM bookings ORDER BY created_at DESC");
         $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
-        $db_error = $e->getMessage();
+        error_log("admin.php database error: " . $e->getMessage());
+        $db_error = "The dashboard could not load its data right now.";
     }
 }
 ?>
@@ -75,6 +82,7 @@ if (isset($_SESSION['admin_logged_in'])) {
             <h4 class="fw-bold mt-3">Admin Login</h4>
         </div>
         <form method="POST">
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
           <div class="mb-3">
             <label class="form-label">Password</label>
             <input type="password" name="password" class="form-control rounded-pill" required>
