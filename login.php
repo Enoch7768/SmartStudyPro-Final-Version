@@ -9,7 +9,10 @@ if (is_logged_in()) {
 $redirect = $_GET['redirect'] ?? 'profile.php';
 $error = null;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf_token($_POST['csrf_token'] ?? null) && isset($_POST['login'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $error = 'Your session expired. Please refresh and try again.';
+    }
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
@@ -22,7 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf_token($_POST['csrf_toke
 
         if ($user && !empty($user['password_hash']) && password_verify($password, $user['password_hash'])) {
             login_user($user);
-            header("Location: " . ($_POST['redirect'] ?: 'profile.php'));
+            $target = (string) ($_POST['redirect'] ?? 'profile.php');
+            if ($target === '' || $target[0] !== '/' || str_starts_with($target, '//') || preg_match('/^[a-z][a-z0-9+.-]*:/i', $target)) {
+                $target = 'profile.php';
+            }
+            header("Location: " . $target);
             exit;
         }
         $error = "Invalid email or password.";
