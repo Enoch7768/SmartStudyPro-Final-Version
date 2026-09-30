@@ -58,14 +58,25 @@ if (isset($_SESSION['admin_logged_in']) && isset($_POST['reset_cockpit'])) {
             $cockpit_message = 'Cockpit is not currently connected.';
         } else {
             try {
+                $cockpitAdminEmail = strtolower(trim((string) app_config('COCKPIT_ADMIN_EMAIL', '')));
+                if ($cockpitAdminEmail === '') {
+                    throw new RuntimeException('COCKPIT_ADMIN_EMAIL is not configured.');
+                }
                 $cockpitApp = cockpit();
-                $cmsUser = $cockpitApp->dataStorage->findOne('system/users', []);
+                $cmsUser = $cockpitApp->dataStorage->findOne('system/users', [
+                    'email' => $cockpitAdminEmail
+                ]);
                 if (!$cmsUser) {
-                    throw new RuntimeException('No Cockpit administrator account was found.');
+                    $cmsUser = $cockpitApp->dataStorage->findOne('system/users', [
+                        'user' => $cockpitAdminEmail
+                    ]);
+                }
+                if (!$cmsUser) {
+                    throw new RuntimeException('The configured Cockpit administrator account was not found.');
                 }
                 $cmsUser['password'] = password_hash($resetPassword, PASSWORD_DEFAULT);
                 $cockpitApp->dataStorage->save('system/users', $cmsUser);
-                $cockpit_message = 'Cockpit administrator access has been reset to the configured environment password.';
+                $cockpit_message = 'Cockpit administrator access has been reset using the configured environment account.';
             } catch (Throwable $e) {
                 error_log('Cockpit reset error: ' . $e->getMessage());
                 $cockpit_message = 'Cockpit could not be reset right now.';
