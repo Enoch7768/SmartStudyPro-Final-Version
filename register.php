@@ -12,32 +12,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
         $error = 'Your session expired. Please refresh and try again.';
     } else {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirm = $_POST['confirm_password'] ?? '';
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $confirm = $_POST['confirm_password'] ?? '';
 
-    if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Please provide a valid name and email address.";
-    } elseif (strlen($password) < 8) {
-        $error = "Password must be at least 8 characters.";
-    } elseif ($password !== $confirm) {
-        $error = "Passwords do not match.";
-    } else {
-        try {
-            $stmt = auth_db()->prepare("INSERT INTO users (name, email, password_hash) VALUES (:name, :email, :hash)");
-            $stmt->execute([
-                ':name'  => $name,
-                ':email' => $email,
-                ':hash'  => password_hash($password, PASSWORD_DEFAULT),
-            ]);
-            $userId = auth_db()->lastInsertId();
-            login_user(['id' => $userId]);
-            header("Location: profile.php");
-            exit;
-        }
-    } catch (Exception $e) {
-            $error = "That email is already registered, or something went wrong. Please try signing in instead.";
+        if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "Please provide a valid name and email address.";
+        } elseif (strlen($password) < 8) {
+            $error = "Password must be at least 8 characters.";
+        } elseif ($password !== $confirm) {
+            $error = "Passwords do not match.";
+        } else {
+            try {
+                $stmt = auth_db()->prepare("INSERT INTO users (name, email, password_hash) VALUES (:name, :email, :hash)");
+                $stmt->execute([
+                    ':name'  => $name,
+                    ':email' => $email,
+                    ':hash'  => password_hash($password, PASSWORD_DEFAULT),
+                ]);
+                $userId = auth_db()->lastInsertId();
+                login_user(['id' => $userId]);
+                header("Location: profile.php");
+                exit;
+            } catch (Exception $e) {
+                $error = "That email is already registered, or something went wrong. Please try signing in instead.";
+            }
         }
     }
 }
