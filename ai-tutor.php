@@ -44,24 +44,112 @@ if (!$file || !resource_extension_allowed($file)) {
 }
 
 $size = filesize($file);
-if ($size > 15 * 1024 * 1024) {
-    http_response_code(413);
-    echo json_encode(['error' => 'This resource is larger than the direct AI analysis limit.']);
-    exit;
-}
-
-$data = base64_encode((string) file_get_contents($file));
 $mime = resource_mime($file);
 
 $prompt = "You are the SmartStudyPro AI tutor. Answer the learner's question using the supplied learning resource as the primary source. Explain clearly at the learner's level, teach rather than merely give the answer, and say when the resource does not contain enough information. Do not invent facts. Resource: " . ($booking['service'] ?? 'Learning Resource') . ". Learner question: " . $question;
 
+$parts = [['text' => $prompt]];
+
+if ($size <= 15 * 1024 * 1024) {
+    $parts[] = ['inline_data' => [
+        'mime_type' => $mime,
+        'data' => base64_encode((string) file_get_contents($file))
+    ]];
+} else {
+    if ($size > 100 * 1024 * 1024) {
+        http_response_code(413);
+        echo json_encode(['error' => 'This resource is too large for the current AI tutor pipeline.']);
+        exit;
+    }
+
+    $startHeaders = [
+        'X-Goog-Upload-Protocol: resumable',
+        'X-Goog-Upload-Command: start',
+        'X-Goog-Upload-Header-Content-Length: ' . $size,
+        'X-Goog-Upload-Header-Content-Type: ' . $mime,
+        'Content-Type: application/json'
+    ];
+    $start = curl_init('https://generativelanguage.googleapis.com/upload/v1beta/files?key=' . urlencode($apiKey));
+    curl_setopt_array($start, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HEADER => true,
+        CURLOPT_HTTPHEADER => $startHeaders,
+        CURLOPT_POSTFIELDS => json_encode(['file' => ['display_name' => basename($file)]])
+    ]);
+    $startResponse = curl_exec($start);
+    $startStatus = curl_getinfo($start, CURLINFO_HTTP_CODE);
+    curl_close($start);
+
+    if ($startResponse === false || $startStatus < 200 || $startStatus >= 300 || !preg_match('/x-goog-upload-url:\s*(.+)/i', $startResponse, $match)) {
+        http_response_code(502);
+        echo json_encode(['error' => 'The AI tutor could not upload the learning resource for analysis.']);
+        exit;
+    }
+
+    $uploadUrl = trim($match[1]);
+    $handle = fopen($file, 'rb');
+    $upload = curl_init($uploadUrl);
+    curl_setopt_array($upload, [
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'Content-Length: ' . $size,
+            'X-Goog-Upload-Offset: 0',
+            'X-Goog-Upload-Command: upload, finalize'
+        ],
+        CURLOPT_UPLOAD => true,
+        CURLOPT_INFILE => $handle,
+        CURLOPT_INFILESIZE => $size,
+        CURLOPT_TIMEOUT => 180
+    ]);
+    $uploadResponse = curl_exec($upload);
+    $uploadStatus = curl_getinfo($upload, CURLINFO_HTTP_CODE);
+    curl_close($upload);
+    fclose($handle);
+
+    if ($uploadResponse === false || $uploadStatus < 200 || $uploadStatus >= 300) {
+        http_response_code(502);
+        echo json_encode(['error' => 'The AI tutor could not finish processing the learning resource.']);
+        exit;
+    }
+
+    $uploaded = json_decode($uploadResponse, true);
+    $fileName = $uploaded['file']['name'] ?? $uploaded['name'] ?? null;
+    if (!$fileName) {
+        http_response_code(502);
+        echo json_encode(['error' => 'The AI tutor did not receive a valid resource reference.']);
+        exit;
+    }
+
+    $fileState = 'PROCESSING';
+    $fileData = null;
+    for ($attempt = 0; $attempt < 30; $attempt++) {
+        $check = curl_init('https://generativelanguage.googleapis.com/v1beta/' . $fileName . '?key=' . urlencode($apiKey));
+        curl_setopt_array($check, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 15]);
+        $checkResponse = curl_exec($check);
+        curl_close($check);
+        $fileData = json_decode((string) $checkResponse, true);
+        $fileState = $fileData['state'] ?? $fileData['file']['state'] ?? 'PROCESSING';
+        if ($fileState === 'ACTIVE') break;
+        if ($fileState === 'FAILED') break;
+        sleep(2);
+    }
+
+    $uri = $fileData['uri'] ?? $fileData['file']['uri'] ?? null;
+    if ($fileState !== 'ACTIVE' || !$uri) {
+        http_response_code(502);
+        echo json_encode(['error' => 'The AI tutor could not finish processing this resource.']);
+        exit;
+    }
+
+    $parts[] = ['file_data' => ['mime_type' => $mime, 'file_uri' => $uri]];
+}
+
 $payload = [
     'contents' => [[
         'role' => 'user',
-        'parts' => [
-            ['text' => $prompt],
-            ['inline_data' => ['mime_type' => $mime, 'data' => $data]]
-        ]
+        'parts' => $parts
     ]],
     'generationConfig' => [
         'temperature' => 0.35,
