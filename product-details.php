@@ -341,6 +341,7 @@ $fullImgUrl     = $siteUrl . $imgUrl;
                 <span class="h3 m-0 fw-bold" style="color: var(--ssp-orange);">UGX <?= number_format(floatval($displayPrice ?? 0)) ?></span>
               </div>
               <p class="small" style="color: var(--ssp-text-muted);"><i class="bi bi-info-circle me-1"></i> Type: <strong><?= htmlspecialchars($productType) ?></strong></p>
+              <?php if (strtolower($productType) !== 'physical'): ?><div class="small mb-3" style="color: var(--ssp-text-muted);"><i class="bi bi-shield-lock me-1" style="color: var(--ssp-orange);"></i> Online resources are read inside SmartStudyPro after payment.</div><?php endif; ?>
               <hr class="my-3" style="border-color: var(--ssp-card-border);">
               
               <form action="booking.php" method="post">
@@ -348,6 +349,7 @@ $fullImgUrl     = $siteUrl . $imgUrl;
                 <input type="hidden" name="item_name" value="<?= htmlspecialchars($displayTitle) ?>">
                 <input type="hidden" name="item_price" value="<?= htmlspecialchars($displayPrice) ?>">
                 <input type="hidden" name="product_file" value="<?= htmlspecialchars($filePath) ?>">
+                <input type="hidden" name="product_access" value="reader">
                 
                 <div class="mb-3">
                   <label class="form-label small fw-semibold">Full Name</label>
