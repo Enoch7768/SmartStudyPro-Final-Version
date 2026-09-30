@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/config.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
@@ -18,10 +19,12 @@ function auth_db(): PDO {
     if ($db !== null) return $db;
 
     $dir = __DIR__ . "/database";
-    if (!file_exists($dir)) mkdir($dir, 0777, true);
+    if (!is_dir($dir)) mkdir($dir, 0750, true);
 
     $db = new PDO("sqlite:" . $dir . "/bookings.db");
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db->exec('PRAGMA busy_timeout = 5000');
+    $db->exec('PRAGMA foreign_keys = ON');
 
     $db->exec("CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,11 +67,21 @@ function ensure_bookings_columns(PDO $db): void {
     }
 }
 
-define('APP_SECRET', 'GRn#jI>dSW(qZk,V/#dN]}/O#H$-8wx6CGUn9JN3g{}p</VpTIGy^?u9I-v>b3ixavA{IEC,?{c8%]xjM.|%63');
+function csrf_token(): string {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function verify_csrf_token(?string $token): bool {
+    return is_string($token) && $token !== '' && !empty($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+
 
 function sign_video_token(string $relativePath, int $userId, int $ttlSeconds = 300): array {
     $exp = time() + $ttlSeconds;
-    $sig = hash_hmac('sha256', $relativePath . '|' . $userId . '|' . $exp, APP_SECRET);
+    $sig = hash_hmac('sha256', $relativePath . '|' . $userId . '|' . $exp, app_secret());
     return ['exp' => $exp, 'sig' => $sig];
 }
 
@@ -110,6 +123,10 @@ function login_user(array $user): void {
 
 function logout_user(): void {
     $_SESSION = [];
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'] ?? '', $params['secure'], $params['httponly']);
+    }
     session_destroy();
 }
 
@@ -124,4 +141,6 @@ function ensure_user_verification_columns($db) {
     } catch (Exception $e) {
     }
 }
-define('GOOGLE_CLIENT_ID', '1027530089710-c3phjdkk43btj44v7gaeaoah6ldi1m43.apps.googleusercontent.com');
+if (!defined('GOOGLE_CLIENT_ID')) {
+    define('GOOGLE_CLIENT_ID', app_config('GOOGLE_CLIENT_ID', ''));
+}
