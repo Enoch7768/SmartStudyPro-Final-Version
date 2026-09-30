@@ -47,6 +47,9 @@ if (isset($_POST['login'])) {
 }
 
 $bookings = [];
+$paidCount = 0;
+$pendingCount = 0;
+$totalRevenue = 0.0;
 if (isset($_SESSION['admin_logged_in'])) {
     try {
         $db = new PDO("sqlite:" . __DIR__ . "/database/bookings.db");
@@ -54,6 +57,14 @@ if (isset($_SESSION['admin_logged_in'])) {
         
         $stmt = $db->query("SELECT * FROM bookings ORDER BY created_at DESC");
         $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($bookings as $booking) {
+            if ((int) ($booking['paid'] ?? 0) === 1) {
+                $paidCount++;
+                $totalRevenue += (float) ($booking['price'] ?? 0);
+            } else {
+                $pendingCount++;
+            }
+        }
     } catch (Exception $e) {
         error_log("admin.php database error: " . $e->getMessage());
         $db_error = "The dashboard could not load its data right now.";
@@ -107,9 +118,16 @@ if (isset($_SESSION['admin_logged_in'])) {
         <span class="badge bg-success rounded-pill"><?= count($bookings) ?> Total Entries</span>
       </div>
 
+      <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="small text-muted mb-1">Paid Orders</div><div class="fs-2 fw-bold text-success"><?= $paidCount ?></div></div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="small text-muted mb-1">Pending Orders</div><div class="fs-2 fw-bold text-warning"><?= $pendingCount ?></div></div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="small text-muted mb-1">Paid Revenue</div><div class="fs-2 fw-bold">UGX <?= number_format($totalRevenue) ?></div></div></div></div>
+      </div>
+      <div class="card border-0 shadow-sm rounded-4 mb-4"><div class="card-body p-3"><div class="input-group"><span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span><input id="bookingSearch" type="search" class="form-control border-0 shadow-none" placeholder="Search customers, email, products, phone, or status"></div></div></div>
+
       <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
         <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
+          <table id="bookingsTable" class="table table-hover align-middle mb-0">
             <thead class="bg-light">
               <tr>
                 <th class="px-4">Date</th>
@@ -148,5 +166,13 @@ if (isset($_SESSION['admin_logged_in'])) {
     </main>
   <?php endif; ?>
 
+  <script>
+    document.getElementById('bookingSearch')?.addEventListener('input', function () {
+      const query = this.value.trim().toLowerCase();
+      document.querySelectorAll('#bookingsTable tbody tr').forEach(function (row) {
+        row.style.display = !query || row.textContent.toLowerCase().includes(query) ? '' : 'none';
+      });
+    });
+  </script>
 </body>
 </html>
