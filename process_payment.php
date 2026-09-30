@@ -422,8 +422,8 @@ try {
                             <i class="bi bi-play-circle-fill me-1"></i> Start Learning
                           </a>
                         <?php elseif(!empty($item['file_path'])): ?>
-                          <a href="download.php?file=<?= urlencode($item['file_path']) ?>" class="btn-ssp-navy btn-sm rounded-pill px-3 text-decoration-none">
-                            <i class="bi bi-cloud-arrow-down-fill me-1"></i> Download
+                          <a href="reader.php?id=<?= (int) $item['id'] ?>" class="btn-ssp-navy btn-sm rounded-pill px-3 text-decoration-none">
+                            <i class="bi bi-book-half me-1"></i> Open in SmartStudyPro
                           </a>
                         <?php else: ?>
                           <span class="badge ssp-badge-service px-3">Physical/Service</span>
