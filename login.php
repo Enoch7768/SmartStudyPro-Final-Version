@@ -9,7 +9,7 @@ if (is_logged_in()) {
 $redirect = $_GET['redirect'] ?? 'profile.php';
 $error = null;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf_token($_POST['csrf_token'] ?? null) && isset($_POST['login'])) {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
@@ -309,6 +309,7 @@ $siteUrl        = "https://smartstudypro.com";
         </div>
 
         <form method="POST">
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
           <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirect) ?>">
           
           <div class="mb-3">
