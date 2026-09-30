@@ -8,7 +8,10 @@ if (is_logged_in()) {
 
 $error = null;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf_token($_POST['csrf_token'] ?? null)) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $error = 'Your session expired. Please refresh and try again.';
+    } else {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -32,7 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf_token($_POST['csrf_toke
             login_user(['id' => $userId]);
             header("Location: profile.php");
             exit;
-        } catch (Exception $e) {
+        }
+    } catch (Exception $e) {
             $error = "That email is already registered, or something went wrong. Please try signing in instead.";
         }
     }
