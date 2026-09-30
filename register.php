@@ -8,7 +8,7 @@ if (is_logged_in()) {
 
 $error = null;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && verify_csrf_token($_POST['csrf_token'] ?? null)) {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -301,6 +301,7 @@ $siteUrl        = "https://smartstudypro.com";
         <?php endif; ?>
 
         <form method="POST">
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
           <div class="mb-3">
             <label class="form-label small fw-semibold ssp-form-label">Full Name</label>
             <input type="text" name="name" class="form-control rounded-3 py-2" placeholder="John Doe" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" required>
