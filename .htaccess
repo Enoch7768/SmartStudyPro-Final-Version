@@ -4,6 +4,7 @@ RewriteBase /schoolprojectt/SmartStudyProV2.3/
 Options -MultiViews
 
 RewriteRule ^(?:database|dangerous)(?:/|$) - [F,L,NC]
+RewriteRule ^cms/storage/uploads/.*\.(?:pdf|txt|md|doc|docx|ppt|pptx|xls|xlsx|mp3|wav|m4a|mp4|webm|mov)$ - [F,L,NC]
 RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
 <FilesMatch "^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php|.*\.(?:db|sqlite|sqlite3|log|bak|sql))$">
     Require all denied
