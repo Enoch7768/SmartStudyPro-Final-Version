@@ -80,3 +80,14 @@ function admin_password_hash(): ?string {
 
     return $hash !== null && password_get_info($hash)['algo'] !== 0 ? $hash : null;
 }
+
+
+function protected_learning_root(): string {
+    $configured = app_config('PROTECTED_LEARNING_ROOT');
+
+    if ($configured !== null && $configured !== '') {
+        return rtrim($configured, '/\\');
+    }
+
+    return dirname(__DIR__) . DIRECTORY_SEPARATOR . 'smartstudypro-private-learning';
+}
