@@ -10,6 +10,7 @@ session_start();
 
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/cms-init.php';
 
 $admin_password_hash = admin_password_hash(); 
 
@@ -43,6 +44,33 @@ if (isset($_POST['login'])) {
             $_SESSION['login_attempts'] = 0;
         }
         $login_error = "Invalid Password";
+    }
+}
+
+if (isset($_SESSION['admin_logged_in']) && isset($_POST['reset_cockpit'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $cockpit_message = 'Your session expired. Refresh and try again.';
+    } else {
+        $resetPassword = app_config('COCKPIT_RESET_PASSWORD');
+        if (!$resetPassword || strlen($resetPassword) < 12) {
+            $cockpit_message = 'COCKPIT_RESET_PASSWORD is not configured securely in the environment.';
+        } elseif (!is_cms_connected()) {
+            $cockpit_message = 'Cockpit is not currently connected.';
+        } else {
+            try {
+                $cockpitApp = cockpit();
+                $cmsUser = $cockpitApp->dataStorage->findOne('system/users', []);
+                if (!$cmsUser) {
+                    throw new RuntimeException('No Cockpit administrator account was found.');
+                }
+                $cmsUser['password'] = password_hash($resetPassword, PASSWORD_DEFAULT);
+                $cockpitApp->dataStorage->save('system/users', $cmsUser);
+                $cockpit_message = 'Cockpit administrator access has been reset to the configured environment password.';
+            } catch (Throwable $e) {
+                error_log('Cockpit reset error: ' . $e->getMessage());
+                $cockpit_message = 'Cockpit could not be reset right now.';
+            }
+        }
     }
 }
 
