@@ -87,7 +87,7 @@ function sign_video_token(string $relativePath, int $userId, int $ttlSeconds = 3
 
 function verify_video_token(string $relativePath, int $userId, int $exp, string $sig): bool {
     if ($exp < time()) return false; 
-    $expected = hash_hmac('sha256', $relativePath . '|' . $userId . '|' . $exp, APP_SECRET);
+    $expected = hash_hmac('sha256', $relativePath . '|' . $userId . '|' . $exp, app_secret());
     return hash_equals($expected, $sig);
 }
 
