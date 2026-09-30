@@ -12,7 +12,7 @@ function paid_booking_for_resource(PDO $db, int $userId, int $bookingId): ?array
 
 function private_resource_path(string $storedPath): ?string {
     $storedPath = trim(str_replace(chr(92), '/', $storedPath));
-    $base = realpath(__DIR__ . '/cms/storage/uploads');
+    $base = realpath(protected_learning_root());
     if ($base === false || $storedPath === '' || str_contains($storedPath, chr(0))) {
         return null;
     }
