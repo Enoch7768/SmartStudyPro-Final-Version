@@ -12,27 +12,28 @@ $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
         $error = 'Your session expired. Please refresh and try again.';
-    }
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    if ($email === '' || $password === '') {
-        $error = "Please enter your email and password.";
     } else {
-        $stmt = auth_db()->prepare("SELECT * FROM users WHERE email = :email");
-        $stmt->execute([':email' => $email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
 
-        if ($user && !empty($user['password_hash']) && password_verify($password, $user['password_hash'])) {
-            login_user($user);
-            $target = (string) ($_POST['redirect'] ?? 'profile.php');
-            if ($target === '' || $target[0] !== '/' || str_starts_with($target, '//') || preg_match('/^[a-z][a-z0-9+.-]*:/i', $target)) {
-                $target = 'profile.php';
+        if ($email === '' || $password === '') {
+            $error = "Please enter your email and password.";
+        } else {
+            $stmt = auth_db()->prepare("SELECT * FROM users WHERE email = :email");
+            $stmt->execute([':email' => $email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && !empty($user['password_hash']) && password_verify($password, $user['password_hash'])) {
+                login_user($user);
+                $target = (string) ($_POST['redirect'] ?? 'profile.php');
+                if ($target === '' || $target[0] !== '/' || str_starts_with($target, '//') || preg_match('/^[a-z][a-z0-9+.-]*:/i', $target)) {
+                    $target = 'profile.php';
+                }
+                header("Location: " . $target);
+                exit;
             }
-            header("Location: " . $target);
-            exit;
+            $error = "Invalid email or password.";
         }
-        $error = "Invalid email or password.";
     }
 }
 
