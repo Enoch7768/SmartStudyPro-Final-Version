@@ -17,12 +17,14 @@ function private_resource_path(string $storedPath): ?string {
         return null;
     }
 
-    $candidate = realpath($base . DIRECTORY_SEPARATOR . ltrim($storedPath, '/'));
-    if ($candidate === false || !is_file($candidate)) {
-        return null;
+    $relative = ltrim($storedPath, '/');
+    $candidate = realpath($base . DIRECTORY_SEPARATOR . $relative);
+
+    if ($candidate !== false && is_file($candidate) && strncmp($candidate, $base . DIRECTORY_SEPARATOR, strlen($base) + 1) === 0) {
+        return $candidate;
     }
 
-    return strncmp($candidate, $base . DIRECTORY_SEPARATOR, strlen($base) + 1) === 0 ? $candidate : null;
+    return null;
 }
 
 function resource_mime(string $path): string {
