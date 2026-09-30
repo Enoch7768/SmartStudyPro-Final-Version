@@ -36,10 +36,11 @@ $isText = str_starts_with($mime, 'text/');
 <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
 <link href="Smart_Study_Logo_Fin-removebg-preview.png" rel="icon">
 <style>
+@media print{body{display:none!important}}body{user-select:none}.protected-surface{position:relative;overflow:hidden}.protected-watermark{position:fixed;inset:0;z-index:30;pointer-events:none;display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:180px;transform:rotate(-18deg) scale(1.2);opacity:.055;font-size:18px;font-weight:700;color:var(--navy)}.protected-watermark span{display:flex;align-items:center;justify-content:center;white-space:nowrap}
 :root{--navy:#0C086B;--orange:#FF7A00;--bg:#F8FAFC;--card:#fff;--text:#1E293B;--muted:#64748B;--border:#E2E8F0}
 [data-theme=dark]{--navy:#C7D2FE;--bg:#0B0F17;--card:#151C2C;--text:#F8FAFC;--muted:#94A3B8;--border:#2E3A52}
 body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-.reader-shell{min-height:100vh}.reader-header{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}.reader-stage{min-height:calc(100vh - 76px)}.resource-frame{width:100%;height:calc(100vh - 140px);border:0;background:#fff;border-radius:16px}.resource-image{max-width:100%;max-height:calc(100vh - 180px);object-fit:contain}.resource-video{width:100%;max-height:calc(100vh - 180px)}.resource-audio{width:100%}.ai-panel{background:var(--card);border:1px solid var(--border);border-radius:18px}.ai-answer{white-space:pre-wrap;line-height:1.7}.btn-main{background:var(--orange);border:0;color:#fff;font-weight:700}
+.reader-shell{min-height:100vh}.reader-header{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}.reader-stage{min-height:calc(100vh - 76px)}.resource-frame{width:100%;height:calc(100vh - 140px);border:0;background:#fff;border-radius:16px}.resource-image{max-width:100%;max-height:calc(100vh - 180px);object-fit:contain}.resource-video{width:100%;max-height:calc(100vh - 180px)}.resource-audio{width:100%}.ai-panel{background:var(--card);border:1px solid var(--border);border-radius:18px}.ai-answer{white-space:pre-wrap;line-height:1.7}.capture-blocked .reader-stage{filter:blur(24px)}.capture-blocked .reader-header{filter:blur(10px)}.btn-main{background:var(--orange);border:0;color:#fff;font-weight:700}
 </style>
 <script>
 (function(){const t=localStorage.getItem('ssp-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.setAttribute('data-theme','dark')})();
@@ -57,7 +58,7 @@ body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
 <main class="container-fluid container-xl py-4 reader-stage">
 <div class="row g-4">
 <div class="col-lg-8">
-<div class="p-3 p-md-4 rounded-4" style="background:var(--card);border:1px solid var(--border)">
+<div class="p-3 p-md-4 rounded-4 protected-surface" style="background:var(--card);border:1px solid var(--border)"><div class="protected-watermark" aria-hidden="true"><?php for ($i = 0; $i < 18; $i++): ?><span><?= htmlspecialchars((string) ($user["email"] ?? "SmartStudyPro Member")) ?></span><?php endfor; ?></div>
 <div class="d-flex justify-content-between align-items-center mb-3">
 <h5 class="fw-bold mb-0" style="color:var(--navy)"><i class="bi bi-book-half me-2" style="color:var(--orange)"></i>SmartStudyPro Reader</h5>
 <span class="badge text-bg-light">Paid access</span>
@@ -91,6 +92,7 @@ body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
 </main>
 </div>
 <script>
+document.addEventListener("dragstart",e=>e.preventDefault());document.addEventListener("keydown",e=>{if(e.key==="PrintScreen"||((e.ctrlKey||e.metaKey)&&["p","s","u"].includes(e.key.toLowerCase()))){e.preventDefault();document.body.classList.add("capture-blocked");setTimeout(()=>document.body.classList.remove("capture-blocked"),1200)}});document.addEventListener("visibilitychange",()=>{if(document.hidden)document.body.classList.add("capture-blocked");else document.body.classList.remove("capture-blocked")});
 const ask=document.getElementById('askAi'),q=document.getElementById('aiQuestion'),status=document.getElementById('aiStatus'),answer=document.getElementById('aiAnswer');
 ask.addEventListener('click',async()=>{const question=q.value.trim();if(!question)return;ask.disabled=true;status.textContent='Thinking…';answer.textContent='';try{const r=await fetch('ai-tutor.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({booking_id:<?= $bookingId ?>,question})});const d=await r.json();if(!r.ok)throw new Error(d.error||'The tutor could not answer.');answer.textContent=d.answer;status.textContent='Answered from your learning resource.'}catch(e){status.textContent=e.message}finally{ask.disabled=false}});
 q.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();ask.click()}});
