@@ -61,4 +61,14 @@ if ($user) {
 
 login_user($user);
 
-echo json_encode(['success' => true, 'redirect' => $redirect]);
+$adminEmail = strtolower(trim((string) app_config('ADMIN_EMAIL', '')));
+if ($adminEmail !== '' && strtolower($email) === $adminEmail) {
+    session_regenerate_id(true);
+    $_SESSION['admin_logged_in'] = true;
+    $_SESSION['admin_auth_method'] = 'google';
+}
+
+echo json_encode([
+    'success' => true,
+    'redirect' => $_SESSION['admin_logged_in'] ? 'admin.php' : $redirect
+]);
