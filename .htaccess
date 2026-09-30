@@ -4,7 +4,7 @@ RewriteBase /schoolprojectt/SmartStudyProV2.3/
 Options -MultiViews
 Options -Indexes
 
-RewriteRule ^(?:database|dangerous)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:database|dangerous|scripts)(?:/|$) - [F,L,NC]
 RewriteRule ^download\.php(?:$|\?) - [F,L,NC]
 RewriteRule ^cms/storage/uploads/.*\.(?:pdf|txt|md|doc|docx|ppt|pptx|xls|xlsx|mp3|wav|m4a|mp4|webm|mov)$ - [F,L,NC]
 RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
