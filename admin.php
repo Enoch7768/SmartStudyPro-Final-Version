@@ -151,6 +151,28 @@ if (isset($_SESSION['admin_logged_in'])) {
         <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="small text-muted mb-1">Pending Orders</div><div class="fs-2 fw-bold text-warning"><?= $pendingCount ?></div></div></div></div>
         <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body p-4"><div class="small text-muted mb-1">Paid Revenue</div><div class="fs-2 fw-bold">UGX <?= number_format($totalRevenue) ?></div></div></div></div>
       </div>
+      <?php if (isset($cockpit_message)): ?>
+        <div class="alert alert-info border-0 rounded-4"><?= htmlspecialchars($cockpit_message) ?></div>
+      <?php endif; ?>
+
+      <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div>
+              <div class="fw-bold" style="color:#0C086B;">Cockpit CMS</div>
+              <div class="small text-muted">Manage your courses, lessons, quizzes, products and content from the same administration area.</div>
+            </div>
+            <div class="d-flex gap-2">
+              <a href="cms/" class="btn btn-outline-primary rounded-pill px-3"><i class="bi bi-grid-1x2 me-1"></i> Open Cockpit</a>
+              <form method="POST" class="d-inline" onsubmit="return confirm('Reset Cockpit administrator access using the configured environment password?');">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                <button type="submit" name="reset_cockpit" class="btn btn-outline-danger rounded-pill px-3"><i class="bi bi-arrow-clockwise me-1"></i> Reset Cockpit Access</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="card border-0 shadow-sm rounded-4 mb-4"><div class="card-body p-3"><div class="input-group"><span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span><input id="bookingSearch" type="search" class="form-control border-0 shadow-none" placeholder="Search customers, email, products, phone, or status"></div></div></div>
 
       <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
