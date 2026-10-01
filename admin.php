@@ -18,7 +18,7 @@ $admin_password_hash = admin_password_hash();
 if (isset($_GET['logout'])) {
     $_SESSION = [];
     session_destroy();
-    header("Location: admin.php");
+    header('Location: ' . app_path('/admin'));
     exit;
 }
 
@@ -137,7 +137,7 @@ if (isset($_SESSION['admin_logged_in'])) {
               <div class="fw-bold" style="color:#0C086B;">SmartStudyPro CMS</div>
               <div class="small text-muted">Manage courses, lessons, quizzes, products, pages, media-ready content and site settings from one focused administration area.</div>
             </div>
-            <div><a href="cms.php" class="btn btn-primary rounded-pill px-3"><i class="bi bi-grid-1x2 me-1"></i> Open SmartStudyPro CMS</a></div>
+            <div><a href="<?= htmlspecialchars(app_path('/cms'), ENT_QUOTES, 'UTF-8') ?>" class="btn btn-primary rounded-pill px-3"><i class="bi bi-grid-1x2 me-1"></i> Open SmartStudyPro CMS</a></div>
           </div>
         </div>
       </div>
