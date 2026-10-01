@@ -3,9 +3,7 @@ RewriteEngine On
 Options -MultiViews
 Options -Indexes
 
-RewriteRule ^cms(?:/|$) - [L]
-
-RewriteRule ^(?:database|dangerous|scripts)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:database|dangerous|scripts|uploads/cms)(?:/|$) - [F,L,NC]
 RewriteRule ^download\.php(?:$|\?) - [F,L,NC]
 RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
 <FilesMatch "^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php|.*\.(?:db|sqlite|sqlite3|log|bak|sql))$">
@@ -21,22 +19,29 @@ RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
 
 RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
 RewriteCond %{THE_REQUEST} \/+[^\s]+\/index\.php(?:[?\s]|$) [NC]
-RewriteRule ^index\.php$ ./ [R=301,L]
+RewriteRule ^index\.php$ / [R=301,L]
 
 RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
-RewriteCond %{THE_REQUEST} \/+[^\s]+\/(products|product-details|courses|course-details|cart|checkout|profile|login|register|about)\.php(?:[?\s]|$) [NC]
-RewriteRule ^([^.]+)\.php$ $1 [R=301,L]
+RewriteCond %{THE_REQUEST} \/+[^\s]+\/(about|courses|products|contact|booking|course-details|product-details|cart|checkout|profile|login|register|study|cms|cms-media)\.php(?:[?\s]|$) [NC]
+RewriteRule ^([^.]+)\.php$ /$1 [R=301,L]
 
-RewriteRule ^products/?$ products.php [L,QSA]
-RewriteRule ^product-details/?$ product-details.php [L,QSA]
+RewriteRule ^$ index.php [L,QSA]
+RewriteRule ^about/?$ about.php [L,QSA]
 RewriteRule ^courses/?$ courses.php [L,QSA]
+RewriteRule ^products/?$ products.php [L,QSA]
+RewriteRule ^contact/?$ contact.php [L,QSA]
+RewriteRule ^booking/?$ booking.php [L,QSA]
 RewriteRule ^course-details/?$ course-details.php [L,QSA]
+RewriteRule ^product-details/?$ product-details.php [L,QSA]
 RewriteRule ^cart/?$ cart.php [L,QSA]
 RewriteRule ^checkout/?$ checkout.php [L,QSA]
 RewriteRule ^profile/?$ profile.php [L,QSA]
 RewriteRule ^login/?$ login.php [L,QSA]
 RewriteRule ^register/?$ register.php [L,QSA]
-RewriteRule ^about/?$ about.php [L,QSA]
+RewriteRule ^study/?$ study.php [L,QSA]
+RewriteRule ^cms/?$ cms.php [L,QSA]
+RewriteRule ^cms/media/?$ cms-media.php [L,QSA]
+
 
 ErrorDocument 400 error.php?code=400
 ErrorDocument 401 error.php?code=401
