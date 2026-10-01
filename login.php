@@ -6,7 +6,7 @@ if (is_logged_in()) {
     exit;
 }
 
-$redirect = $_GET['redirect'] ?? 'profile.php';
+$redirect = safe_internal_path($_GET['redirect'] ?? app_path('/profile'), app_path('/profile'));
 $error = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
@@ -25,11 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
             if ($user && !empty($user['password_hash']) && password_verify($password, $user['password_hash'])) {
                 login_user($user);
-                $target = (string) ($_POST['redirect'] ?? 'profile.php');
-                if ($target === '' || $target[0] !== '/' || str_starts_with($target, '//') || preg_match('/^[a-z][a-z0-9+.-]*:/i', $target)) {
-                    $target = 'profile.php';
-                }
-                header("Location: " . $target);
+                $target = safe_internal_path($_POST['redirect'] ?? app_path('/profile'), app_path('/profile'));
+                header('Location: ' . $target);
                 exit;
             }
             $error = "Invalid email or password.";
