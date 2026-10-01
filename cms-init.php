@@ -1,33 +1,14 @@
 <?php
 
 date_default_timezone_set('Africa/Kampala');
-$fallback_url = "/error.php";
 
-try {
-    $cockpit_path = __DIR__ . '/cms/bootstrap.php';
+require_once __DIR__ . '/app/Services/SmartStudyProCms.php';
 
-    if (file_exists($cockpit_path)) {
-        require_once $cockpit_path;
-    } else {
-        header("Location: " . $fallback_url);
-        exit();
-    }
-} catch (Exception $e) {
-    header("Location: " . $fallback_url);
-    exit();
-}
-
-function is_cms_connected() {
-    return function_exists('cockpit');
-}
-
-$cockpit = Cockpit::instance();
-
-if (!function_exists('cockpit')) {
-    function cockpit($module = null) {
-        if ($module) {
-            return Cockpit::instance()->module($module);
-        }
-        return Cockpit::instance();
+function is_cms_connected(): bool {
+    try {
+        SmartStudyProCms::db()->query('SELECT 1');
+        return true;
+    } catch (Throwable $e) {
+        return false;
     }
 }
