@@ -25,7 +25,7 @@ RewriteCond %{THE_REQUEST} \/+[^\s]+\/index\.php(?:[?\s]|$) [NC]
 RewriteRule ^index\.php$ ./ [R=301,L]
 
 RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
-RewriteCond %{THE_REQUEST} \/+[^\s]+\/(about|courses|products|contact|booking|course-details|product-details|cart|checkout|profile|login|register|study|cms|cms-media)\.php(?:[?\s]|$) [NC]
+RewriteCond %{THE_REQUEST} \/+[^\s]+\/(about|courses|products|contact|booking|course-details|product-details|cart|checkout|profile|login|register|study|admin|cms|cms-media)\.php(?:[?\s]|$) [NC]
 RewriteRule ^([^.]+)\.php$ $1 [R=301,L]
 
 RewriteRule ^$ index.php [L,QSA]
