@@ -41,20 +41,9 @@ class Database {
      * @param array  $options
      */
     protected function registerSqliteFunction(string $name, callable $callback, int $argumentCount): void {
-        if (class_exists('Pdo\\Sqlite') && method_exists($this->connection, 'sqliteCreateFunction') === false) {
-            (new \\Pdo\\Sqlite($this->connection))->createFunction($name, $callback, $argumentCount);
+        if ($this->connection instanceof \\Pdo\\Sqlite) {
+            $this->connection->createFunction($name, $callback, $argumentCount);
             return;
-        }
-
-        if (class_exists('Pdo\\Sqlite')) {
-            $reflection = new \\ReflectionMethod('Pdo\\Sqlite', 'createFunction');
-            if ($reflection->isStatic() === false) {
-                try {
-                    (new \\Pdo\\Sqlite($this->connection))->createFunction($name, $callback, $argumentCount);
-                    return;
-                } catch (\\Throwable $e) {
-                }
-            }
         }
 
         $this->connection->sqliteCreateFunction($name, $callback, $argumentCount);
@@ -65,7 +54,11 @@ class Database {
         $dns = "sqlite:{$path}";
 
         $this->path = $path;
-        $this->connection = new PDO($dns, null, null, $options);
+        if (class_exists('Pdo\\Sqlite')) {
+            $this->connection = \Pdo\Sqlite::connect($dns, null, null, $options);
+        } else {
+            $this->connection = new PDO($dns, null, null, $options);
+        }
 
         $database = $this;
 
