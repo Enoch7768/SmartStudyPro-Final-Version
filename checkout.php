@@ -1,5 +1,6 @@
 <?php
 require_once 'auth.php';
+require_once 'config.php';
 require_login();
 
 if (!isset($_COOKIE['user_id'])) die("No user identified.");
@@ -333,7 +334,7 @@ $siteUrl = "https://smartstudypro.com";
         <div class="col-lg-8">
           
           <div class="text-center mb-4">
-            <span class="badge ssp-badge px-3 py-2 mb-2">Secure Checkout</span>
+            <span class="badge ssp-badge px-3 py-2 mb-2"><?= is_demo_payment_mode() ? "Demo Checkout" : "Secure Checkout" ?></span>
             <h1 class="fw-bold" style="color: var(--ssp-navy);">Review & Complete Order</h1>
           </div>
 
@@ -363,7 +364,6 @@ $siteUrl = "https://smartstudypro.com";
               <div class="mb-4">
                 <select name="payment_method" class="form-select form-select-lg rounded-3 fs-6" required>
                   <option value="">-- Choose Payment Method --</option>
-                  <option value="paypal">PayPal</option>
                   <option value="dpo">DPO Pay</option>
                   <option value="pay_at_booking">Pay at Booking</option>
                 </select>
