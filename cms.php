@@ -19,9 +19,13 @@ if (!in_array($collection, $collections, true)) {
 $search = trim((string) ($_GET['q'] ?? ''));
 $sort = trim((string) ($_GET['sort'] ?? 'updated'));
 $direction = strtolower(trim((string) ($_GET['dir'] ?? 'desc'))) === 'asc' ? 'asc' : 'desc';
-$documents = SmartStudyProCms::items($collection, [
-    'sort' => [$sort === 'title' ? 'Title' : 'updated_at' => $direction === 'asc' ? 1 : -1]
-]);
+$documents = SmartStudyProCms::items($collection);
+if ($sort === 'title') {
+    usort($documents, static function (array $a, array $b) use ($direction): int {
+        $cmp = strnatcasecmp((string) ($a['Title'] ?? $a['title'] ?? $a['Name'] ?? $a['name'] ?? $a['_id']), (string) ($b['Title'] ?? $b['title'] ?? $b['Name'] ?? $b['name'] ?? $b['_id']));
+        return $direction === 'asc' ? $cmp : -$cmp;
+    });
+}
 if ($search !== '') {
     $needle = mb_strtolower($search);
     $documents = array_values(array_filter($documents, static function (array $doc) use ($needle): bool {
