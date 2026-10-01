@@ -10,6 +10,8 @@ AddDefaultCharset UTF-8
 
     Options -MultiViews
 
+    RewriteRule ^$ ../cms.php [END,QSA]
+
     RewriteEngine On
     # RewriteBase /
 
