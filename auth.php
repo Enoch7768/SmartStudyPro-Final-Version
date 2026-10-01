@@ -5,7 +5,7 @@ require_once __DIR__ . '/config.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'lifetime' => 0,
-        'path'     => '/',
+        'path'     => app_base_path() . '/',
         'httponly' => true,
         'samesite' => 'Lax',
         'secure'   => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
@@ -110,8 +110,8 @@ function is_logged_in(): bool {
 
 function require_login(): void {
     if (!is_logged_in()) {
-        $redirect = urlencode($_SERVER['REQUEST_URI'] ?? 'profile.php');
-        header("Location: login.php?redirect=" . $redirect);
+        $redirect = rawurlencode(safe_internal_path($_SERVER['REQUEST_URI'] ?? app_path('/profile'), app_path('/profile')));
+        header('Location: ' . app_path('/login') . '?redirect=' . $redirect);
         exit;
     }
 }
