@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$files = [];
+$search = trim((string) ($_GET['q'] ?? ''));\n$files = [];
 $dir = __DIR__ . '/uploads/cms';
 if (is_dir($dir)) {
     foreach (scandir($dir) as $name) {
@@ -65,7 +65,7 @@ if (is_dir($dir)) {
         }
         $path = $dir . '/' . $name;
         if (is_file($path)) {
-            $files[] = ['name' => $name, 'size' => filesize($path), 'url' => 'uploads/cms/' . rawurlencode($name)];
+            if ($search === '' || str_contains(mb_strtolower($name), mb_strtolower($search))) {\n                $mimeType = (new finfo(FILEINFO_MIME_TYPE))->file($path);\n                $files[] = ['name' => $name, 'size' => filesize($path), 'mime' => $mimeType, 'url' => 'uploads/cms/' . rawurlencode($name)];\n            }
         }
     }
 }
@@ -91,17 +91,18 @@ if (is_dir($dir)) {
 <a href="admin.php"><i class="bi bi-arrow-left me-2"></i>Admin Dashboard</a>
 </aside>
 <main class="flex-grow-1 p-4 p-lg-5">
-<div class="d-flex justify-content-between align-items-center mb-4"><div><div class="small text-muted">SmartStudyPro CMS</div><h1 class="h3 fw-bold">Media Library</h1></div></div>
-<?php if(isset($_GET['saved'])): ?><div class="alert alert-success rounded-4 border-0">Media uploaded successfully.</div><?php endif; ?>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4"><div><div class="small text-muted">SmartStudyPro CMS</div><h1 class="h3 fw-bold mb-0">Media Library</h1></div><form method="get" class="d-flex gap-2"><input class="form-control" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search media"><button class="btn btn-outline-primary rounded-pill">Search</button></form></div>
+<?php if(isset($_GET['saved'])): ?><div class="alert alert-success rounded-4 border-0">Media uploaded successfully.</div><?php endif; ?><?php if(isset($_GET['deleted'])): ?><div class="alert alert-success rounded-4 border-0">Media deleted successfully.</div><?php endif; ?>
 <?php if(isset($_GET['error'])): ?><div class="alert alert-danger rounded-4 border-0">The upload could not be completed. Check the file type, server configuration, or available storage.</div><?php endif; ?>
 <div class="card cardx mb-4"><div class="card-body p-4"><form method="post" action="/cms/media" enctype="multipart/form-data" class="d-flex flex-wrap gap-3 align-items-end"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>"><div><label class="form-label fw-semibold">Upload media</label><input class="form-control" type="file" name="file" accept="*/*" required></div><button class="btn btn-primary rounded-pill px-4">Upload</button></form></div></div>
 <div class="row g-4">
 <?php foreach($files as $file): ?>
-<div class="col-sm-6 col-lg-4 col-xl-3"><div class="card cardx h-100"><div class="card-body"><img class="w-100 thumb mb-3" src="<?= htmlspecialchars($file['url']) ?>" alt=""><div class="small fw-semibold text-break"><?= htmlspecialchars($file['name']) ?></div><div class="small text-muted"><?= number_format($file['size']/1024,1) ?> KB</div><div class="small text-muted mt-2 text-break"><?= htmlspecialchars($file['url']) ?></div></div></div></div>
+<div class="col-sm-6 col-lg-4 col-xl-3"><div class="card cardx h-100"><div class="card-body"><?php if(str_starts_with($file['mime'],'image/')): ?><img class="w-100 thumb mb-3" src="<?= htmlspecialchars($file['url']) ?>" alt="<?= htmlspecialchars($file['name']) ?>"><?php elseif(str_starts_with($file['mime'],'video/')): ?><video class="w-100 thumb mb-3" controls preload="metadata"><source src="<?= htmlspecialchars($file['url']) ?>" type="<?= htmlspecialchars($file['mime']) ?>"></video><?php else: ?><div class="thumb mb-3 d-flex align-items-center justify-content-center bg-light"><i class="bi bi-file-earmark-text fs-1 text-primary"></i></div><?php endif; ?><div class="small fw-semibold text-break"><?= htmlspecialchars($file['name']) ?></div><div class="small text-muted"><?= htmlspecialchars($file['mime']) ?> · <?= number_format($file['size']/1024,1) ?> KB</div><div class="d-flex flex-wrap gap-2 mt-3"><a class="btn btn-sm btn-outline-primary rounded-pill" href="<?= htmlspecialchars($file['url']) ?>" target="_blank" rel="noopener">Open</a><button type="button" class="btn btn-sm btn-outline-secondary rounded-pill copy-url" data-url="<?= htmlspecialchars($file['url']) ?>">Copy URL</button><form method="post" action="cms-media-delete.php" class="d-inline" onsubmit="return confirm('Delete this media file?');"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>"><input type="hidden" name="name" value="<?= htmlspecialchars($file['name']) ?>"><button class="btn btn-sm btn-outline-danger rounded-pill">Delete</button></form></div></div></div></div>
 <?php endforeach; ?>
 <?php if(!$files): ?><div class="col-12"><div class="card cardx"><div class="card-body py-5 text-center text-muted">No media uploaded yet.</div></div></div><?php endif; ?>
 </div>
 </main>
 </div>
+<script>document.addEventListener('click',async e=>{const b=e.target.closest('.copy-url');if(!b)return;try{await navigator.clipboard.writeText(new URL(b.dataset.url,location.href).href);const t=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=t,1200)}catch(_){}});</script>
 </body>
 </html>
