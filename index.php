@@ -6,10 +6,10 @@ $courses = [];
 $contact = null;
 
 try {
-    if (function_exists('cockpit')) {
-        $home = cockpit('content')->item('HomePage'); 
-        $courses = cockpit('content')->items('Courses');
-        $contact = cockpit('content')->item('ContactDetails');
+    if (function_exists('cms_items')) {
+        $home = cms_item('HomePage'); 
+        $courses = cms_items('Courses');
+        $contact = cms_item('ContactDetails');
     }
 } catch (Exception $e) {
     $home = null; 
