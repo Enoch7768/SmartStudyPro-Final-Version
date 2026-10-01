@@ -101,3 +101,42 @@ function protected_learning_root(): string {
 
     return dirname(__DIR__) . DIRECTORY_SEPARATOR . 'smartstudypro-private-learning';
 }
+
+
+function app_url(): string {
+    $configured = rtrim((string) app_config('APP_URL', ''), '/');
+    if ($configured !== '') {
+        return $configured;
+    }
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $base = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/.');
+    return $scheme . '://' . $host . ($base === '' ? '' : $base);
+}
+
+function app_base_path(): string {
+    $url = app_url();
+    $path = parse_url($url, PHP_URL_PATH);
+    return $path ? '/' . trim((string) $path, '/') : '';
+}
+
+function app_path(string $path = '/'): string {
+    $path = '/' . ltrim($path, '/');
+    $base = app_base_path();
+    return ($base !== '' ? $base : '') . $path;
+}
+
+function safe_internal_path(?string $path, string $fallback = '/'): string {
+    $path = trim((string) $path);
+    if ($path === '' || str_starts_with($path, '//') || preg_match('/^[a-z][a-z0-9+.-]*:/i', $path)) {
+        return $fallback;
+    }
+    if ($path[0] !== '/') {
+        $path = '/' . $path;
+    }
+    $base = app_base_path();
+    if ($base !== '' && !str_starts_with($path, $base . '/') && $path !== $base) {
+        return $fallback;
+    }
+    return $path;
+}
