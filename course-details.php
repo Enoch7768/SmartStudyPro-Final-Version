@@ -5,19 +5,19 @@ $course = null;
 $contact = null;
 $courseId = $_GET['id'] ?? $_GET['_id'] ?? null;
 
-if (function_exists('cockpit')) {
+if (function_exists('cms_items')) {
     if ($courseId) {
         try {
-            $course = cockpit('content')->findOne('Courses', ['_id' => $courseId]);
+            $course = cms_find_one('Courses', ['_id' => $courseId]);
             
             if (!$course) {
-                $items = cockpit('content')->items('Courses', ['filter' => ['_id' => $courseId]]);
+                $items = cms_items('Courses', ['filter' => ['_id' => $courseId]]);
                 if (!empty($items)) {
                     $course = $items[0];
                 }
             }
             if (!$course) {
-                $allCourses = cockpit('content')->items('Courses');
+                $allCourses = cms_items('Courses');
                 foreach ($allCourses as $c) {
                     if (isset($c['_id']) && $c['_id'] == $courseId) {
                         $course = $c;
@@ -31,8 +31,8 @@ if (function_exists('cockpit')) {
     }
 
     try {
-        $contact = cockpit('content')->findOne('ContactDetails') 
-                ?? cockpit('content')->item('ContactDetails');
+        $contact = cms_find_one('ContactDetails') 
+                ?? cms_item('ContactDetails');
     } catch (Exception $e) {
         $contact = null;
     }
