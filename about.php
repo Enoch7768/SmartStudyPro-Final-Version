@@ -43,7 +43,7 @@ $siteUrl        = "https://smartstudypro.com";
   <meta name="author" content="SmartStudyPro">
 
   <meta property="og:type" content="website">
-  <meta property="og:url" content="<?= $siteUrl ?>/about.php">
+  <meta property="og:url" content="<?= $siteUrl ?>/about">
   <meta property="og:title" content="<?= htmlspecialchars($seoTitle) ?>">
   <meta property="og:description" content="<?= htmlspecialchars($seoDescription) ?>">
   <meta property="og:image" content="<?= $siteUrl . $aboutImg ?>">
@@ -277,7 +277,7 @@ $siteUrl        = "https://smartstudypro.com";
       <div class="container" data-aos="fade">
         <nav aria-label="breadcrumb" class="d-flex justify-content-center">
           <ol class="breadcrumb mb-2">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">About Us</li>
           </ol>
         </nav>
@@ -330,7 +330,7 @@ $siteUrl        = "https://smartstudypro.com";
               </div>
             </div>
 
-            <a href="courses.php" class="btn-ssp-primary text-decoration-none d-inline-block">Browse Our Courses</a>
+            <a href="/courses" class="btn-ssp-primary text-decoration-none d-inline-block">Browse Our Courses</a>
           </div>
 
         </div>
@@ -344,7 +344,7 @@ $siteUrl        = "https://smartstudypro.com";
       <div class="row gy-4">
         
         <div class="col-lg-4 col-md-6">
-          <a href="index.php" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
+          <a href="/" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
             SmartStudy<span>Pro</span>
           </a>
           <p class="small text-white opacity-90 mb-3">Study Made Simple, Success Made Sure.</p>
@@ -366,11 +366,11 @@ $siteUrl        = "https://smartstudypro.com";
         <div class="col-lg-3 col-md-3">
           <h5 class="text-white fw-bold mb-3">Quick Navigation</h5>
           <ul class="list-unstyled small">
-            <li class="mb-2"><a href="index.php" class="text-decoration-none text-white opacity-90">Home</a></li>
-            <li class="mb-2"><a href="about.php" class="text-decoration-none text-white opacity-90">About Us</a></li>
-            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-white opacity-90">Courses</a></li>
-            <li class="mb-2"><a href="products.php" class="text-decoration-none text-white opacity-90">Products & Materials</a></li>
-            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-white opacity-90">Contact Us</a></li>
+            <li class="mb-2"><a href="/" class="text-decoration-none text-white opacity-90">Home</a></li>
+            <li class="mb-2"><a href="/about" class="text-decoration-none text-white opacity-90">About Us</a></li>
+            <li class="mb-2"><a href="/courses" class="text-decoration-none text-white opacity-90">Courses</a></li>
+            <li class="mb-2"><a href="/products" class="text-decoration-none text-white opacity-90">Products & Materials</a></li>
+            <li class="mb-2"><a href="/contact" class="text-decoration-none text-white opacity-90">Contact Us</a></li>
           </ul>
         </div>
 
