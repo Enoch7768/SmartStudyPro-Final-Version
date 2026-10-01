@@ -331,7 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <p class="text-muted px-lg-4">Your selection <strong>"<?= htmlspecialchars($service) ?>"</strong> has been successfully added to your shopping bag.</p>
               <hr class="my-4 mx-5 opacity-25">
               <div class="d-flex flex-wrap gap-3 justify-content-center">
-                <a href="products.php" class="btn btn-outline-secondary rounded-3 px-4 py-2 fw-semibold text-decoration-none">Continue Shopping</a>
+                <a href="products" class="btn btn-outline-secondary rounded-3 px-4 py-2 fw-semibold text-decoration-none">Continue Shopping</a>
                 <a href="cart.php" class="btn-ssp-primary text-decoration-none">View My Cart</a>
               </div>
             </div>
@@ -355,7 +355,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="row gy-4">
         
         <div class="col-lg-4 col-md-6">
-          <a href="index.php" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
+          <a href="./" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
             SmartStudy<span>Pro</span>
           </a>
           <p class="small text-light opacity-75 mb-3">Study Made Simple, Success Made Sure.</p>
@@ -377,11 +377,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="col-lg-3 col-md-3">
           <h5 class="text-white fw-bold mb-3">Quick Navigation</h5>
           <ul class="list-unstyled small">
-            <li class="mb-2"><a href="index.php" class="text-decoration-none text-light opacity-75">Home</a></li>
-            <li class="mb-2"><a href="about.php" class="text-decoration-none text-light opacity-75">About Us</a></li>
-            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-light opacity-75">Courses</a></li>
-            <li class="mb-2"><a href="products.php" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
-            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
+            <li class="mb-2"><a href="./" class="text-decoration-none text-light opacity-75">Home</a></li>
+            <li class="mb-2"><a href="about" class="text-decoration-none text-light opacity-75">About Us</a></li>
+            <li class="mb-2"><a href="courses" class="text-decoration-none text-light opacity-75">Courses</a></li>
+            <li class="mb-2"><a href="products" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
+            <li class="mb-2"><a href="contact" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
           </ul>
         </div>
 
