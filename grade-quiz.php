@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $input = json_decode(file_get_contents('php://input'), true);
 $answers = $input['answers'] ?? []; 
 
-if (!is_array($answers) || empty($answers) || !function_exists('cockpit')) {
+if (!is_array($answers) || empty($answers) || !function_exists('cms_items')) {
     echo json_encode(['error' => 'No answers submitted']);
     exit;
 }
@@ -25,7 +25,7 @@ $total = 0;
 $results = [];
 
 foreach ($answers as $quizId => $selected) {
-    $quiz = cockpit('content')->item('Quizzes', ['_id' => $quizId]);
+    $quiz = cms_item('Quizzes', ['_id' => $quizId]);
     if (!$quiz) continue;
 
     $total++;
