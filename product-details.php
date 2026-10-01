@@ -5,20 +5,20 @@ $product = null;
 $contact = null;
 $productId = $_GET['id'] ?? $_GET['_id'] ?? null;
 
-if (function_exists('cockpit')) {
+if (function_exists('cms_items')) {
     if ($productId) {
         try {
-            $product = cockpit('content')->findOne('Products', ['_id' => $productId]);
+            $product = cms_find_one('Products', ['_id' => $productId]);
 
             if (!$product) {
-                $items = cockpit('content')->items('Products', ['filter' => ['_id' => $productId]]);
+                $items = cms_items('Products', ['filter' => ['_id' => $productId]]);
                 if (!empty($items)) {
                     $product = $items[0];
                 }
             }
 
             if (!$product) {
-                $allProducts = cockpit('content')->items('Products');
+                $allProducts = cms_items('Products');
                 foreach ($allProducts as $p) {
                     if (isset($p['_id']) && $p['_id'] == $productId) {
                         $product = $p;
@@ -32,8 +32,8 @@ if (function_exists('cockpit')) {
     }
 
     try {
-        $contact = cockpit('content')->findOne('ContactDetails') 
-                ?? cockpit('content')->item('ContactDetails');
+        $contact = cms_find_one('ContactDetails') 
+                ?? cms_item('ContactDetails');
     } catch (Exception $e) {
         $contact = null;
     }
