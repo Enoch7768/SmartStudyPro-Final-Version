@@ -18,12 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: cms-media.php?error=upload');
         exit;
     }
-
-    if ((int) $file['size'] > 20 * 1024 * 1024) {
-        header('Location: cms-media.php?error=size');
-        exit;
-    }
-
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime = $finfo->file($file['tmp_name']);
     $allowed = [
@@ -33,6 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'image/gif' => 'gif',
         'video/mp4' => 'mp4',
         'application/pdf' => 'pdf',
+        'application/zip' => 'zip',
+        'application/x-zip-compressed' => 'zip',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+        'application/msword' => 'doc',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+        'application/vnd.ms-excel' => 'xls',
+        'text/plain' => 'txt',
     ];
 
     if (!isset($allowed[$mime])) {
@@ -91,8 +92,8 @@ if (is_dir($dir)) {
 <main class="flex-grow-1 p-4 p-lg-5">
 <div class="d-flex justify-content-between align-items-center mb-4"><div><div class="small text-muted">SmartStudyPro CMS</div><h1 class="h3 fw-bold">Media Library</h1></div></div>
 <?php if(isset($_GET['saved'])): ?><div class="alert alert-success rounded-4 border-0">Media uploaded successfully.</div><?php endif; ?>
-<?php if(isset($_GET['error'])): ?><div class="alert alert-danger rounded-4 border-0">The upload could not be completed. Check the file type and size.</div><?php endif; ?>
-<div class="card cardx mb-4"><div class="card-body p-4"><form method="post" enctype="multipart/form-data" class="d-flex flex-wrap gap-3 align-items-end"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>"><div><label class="form-label fw-semibold">Upload image, video or PDF</label><input class="form-control" type="file" name="file" accept="image/*,video/mp4,application/pdf" required></div><button class="btn btn-primary rounded-pill px-4">Upload</button></form><div class="small text-muted mt-2">Maximum file size: 20 MB.</div></div></div>
+<?php if(isset($_GET['error'])): ?><div class="alert alert-danger rounded-4 border-0">The upload could not be completed. Check the file type, server configuration, or available storage.</div><?php endif; ?>
+<div class="card cardx mb-4"><div class="card-body p-4"><form method="post" enctype="multipart/form-data" class="d-flex flex-wrap gap-3 align-items-end"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>"><div><label class="form-label fw-semibold">Upload media</label><input class="form-control" type="file" name="file" accept="*/*" required></div><button class="btn btn-primary rounded-pill px-4">Upload</button></form></div></div>
 <div class="row g-4">
 <?php foreach($files as $file): ?>
 <div class="col-sm-6 col-lg-4 col-xl-3"><div class="card cardx h-100"><div class="card-body"><img class="w-100 thumb mb-3" src="<?= htmlspecialchars($file['url']) ?>" alt=""><div class="small fw-semibold text-break"><?= htmlspecialchars($file['name']) ?></div><div class="small text-muted"><?= number_format($file['size']/1024,1) ?> KB</div><div class="small text-muted mt-2 text-break"><?= htmlspecialchars($file['url']) ?></div></div></div></div>
