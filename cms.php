@@ -28,7 +28,24 @@ foreach ($source as $key => $value) {
     }
 }
 if (!$fields) {
-    $fields = ['Title' => '', 'Content' => ''];
+    $fields = cms_template($collection);
+}
+
+function cms_template(string $collection): array {
+    return match ($collection) {
+        'HomePage' => ['Title' => '', 'SEO-Title' => '', 'SEO-Description' => '', 'Content' => ''],
+        'AboutPage' => ['Title' => '', 'SEO-Title' => '', 'SEO-Description' => '', 'Content' => ''],
+        'ContactDetails' => ['phone' => '', 'email' => '', 'address' => ''],
+        'Products' => ['Title' => '', 'Category' => '', 'Price' => '', 'Description' => '', 'ProductType' => '', 'Image' => '', 'ProductFile' => '', 'SEO-Title' => '', 'SEO-Description' => ''],
+        'Courses' => ['Title' => '', 'Subtitle' => '', 'Category' => '', 'Price' => '', 'Description' => '', 'Image' => '', 'SEO-Title' => '', 'SEO-Description' => ''],
+        'Chapters' => ['Title' => '', 'COURSE TITLE' => '', 'CHAPTER ID' => '', 'Order' => ''],
+        'Lessons' => ['Title' => '', 'Chapter' => '', 'Order' => '', 'VIDEO FILE' => '', 'Content' => ''],
+        'Quizzes' => ['Lesson' => '', 'Question' => '', 'Options' => '', 'Correct Answer' => ''],
+        'Pages' => ['Title' => '', 'Slug' => '', 'Content' => '', 'SEO-Title' => '', 'SEO-Description' => ''],
+        'Navigation' => ['Title' => '', 'Items' => ''],
+        'SiteSettings' => ['Title' => '', 'Value' => ''],
+        default => ['Title' => '', 'Content' => ''],
+    };
 }
 
 function cms_value(mixed $value): string {
