@@ -13,8 +13,21 @@ if (!is_file($legacyBootstrap)) {
 
 require_once $legacyBootstrap;
 
-if (!function_exists('cockpit')) {
-    fwrite(STDERR, "Legacy CMS could not be loaded.\n");
+if (!class_exists('Cockpit')) {
+    fwrite(STDERR, "Legacy CMS bootstrap loaded, but the Cockpit class is unavailable.\n");
+    exit(1);
+}
+
+try {
+    $legacyApp = Cockpit::instance(__DIR__ . '/../cms');
+    $content = $legacyApp->module('content');
+} catch (Throwable $e) {
+    fwrite(STDERR, "Legacy CMS could not be initialized: " . $e->getMessage() . "\n");
+    exit(1);
+}
+
+if (!$content) {
+    fwrite(STDERR, "Legacy CMS content module could not be loaded.\n");
     exit(1);
 }
 
@@ -35,15 +48,30 @@ $collections = [
 $total = 0;
 
 foreach ($collections as $collection) {
-    $items = cockpit('content')->items($collection);
+    try {
+        $items = $content->items($collection);
+    } catch (Throwable $e) {
+        fwrite(STDERR, $collection . ': failed to read legacy data: ' . $e->getMessage() . "\n");
+        continue;
+    }
+
+    if (!is_array($items)) {
+        $items = [];
+    }
+
+    $migrated = 0;
+
     foreach ($items as $item) {
         if (!is_array($item)) {
             continue;
         }
+
         SmartStudyProCms::save($collection, $item);
+        $migrated++;
         $total++;
     }
-    fwrite(STDOUT, $collection . ': ' . count($items) . " migrated\n");
+
+    fwrite(STDOUT, $collection . ': ' . $migrated . " migrated\n");
 }
 
 fwrite(STDOUT, "Migration complete. " . $total . " documents copied into SmartStudyPro CMS.\n");
