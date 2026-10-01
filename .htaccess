@@ -22,7 +22,7 @@ RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
 
 RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
 RewriteCond %{THE_REQUEST} \/+[^\s]+\/index\.php(?:[?\s]|$) [NC]
-RewriteRule ^index\.php$ / [R=301,L]
+RewriteRule ^index\.php$ ./ [R=301,L]
 
 RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
 RewriteCond %{THE_REQUEST} \/+[^\s]+\/(about|courses|products|contact|booking|course-details|product-details|cart|checkout|profile|login|register|study|cms|cms-media)\.php(?:[?\s]|$) [NC]
@@ -44,7 +44,6 @@ RewriteRule ^register/?$ register.php [L,QSA]
 RewriteRule ^study/?$ study.php [L,QSA]
 RewriteRule ^cms/?$ cms.php [L,QSA]
 RewriteRule ^cms/media/?$ cms-media.php [L,QSA]
-RewriteRule ^cart/?$ cart.php [L,QSA]
 RewriteRule ^logout/?$ logout.php [L,QSA]
 
 
