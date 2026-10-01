@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $file = $_FILES['file'] ?? null;
     if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
-        header('Location: cms-media.php?error=upload');
+        header('Location: /cms/media?error=upload');
         exit;
     }
     $finfo = new finfo(FILEINFO_MIME_TYPE);
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     if (!isset($allowed[$mime])) {
-        header('Location: cms-media.php?error=type');
+        header('Location: /cms/media?error=type');
         exit;
     }
 
@@ -48,11 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $filename = bin2hex(random_bytes(16)) . '.' . $allowed[$mime];
     if (!move_uploaded_file($file['tmp_name'], $dir . '/' . $filename)) {
-        header('Location: cms-media.php?error=save');
+        header('Location: /cms/media?error=save');
         exit;
     }
 
-    header('Location: cms-media.php?saved=1');
+    header('Location: /cms/media?saved=1');
     exit;
 }
 
@@ -79,14 +79,15 @@ if (is_dir($dir)) {
 <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
 <link href="assets/css/main.css" rel="stylesheet">
+<link href="assets/css/responsive.css" rel="stylesheet">
 <style>body{background:#f5f7fb}.shell{min-height:100vh}.side{width:260px;background:#0c086b;color:#fff}.side a{display:block;color:#fff;text-decoration:none;padding:10px 12px;border-radius:12px}.side a:hover{background:rgba(255,255,255,.12)}.cardx{border:0;border-radius:20px;box-shadow:0 12px 40px rgba(12,8,107,.08)}.thumb{height:150px;object-fit:cover;border-radius:14px}</style>
 </head>
 <body>
 <div class="shell d-flex">
 <aside class="side p-3">
 <div class="fw-bold fs-5 mb-4"><i class="bi bi-mortarboard-fill me-2"></i>SmartStudyPro CMS</div>
-<a href="cms.php"><i class="bi bi-grid me-2"></i>Content</a>
-<a href="cms-media.php"><i class="bi bi-images me-2"></i>Media</a>
+<a href="/cms"><i class="bi bi-grid me-2"></i>Content</a>
+<a href="/cms/media"><i class="bi bi-images me-2"></i>Media</a>
 <a href="admin.php"><i class="bi bi-arrow-left me-2"></i>Admin Dashboard</a>
 </aside>
 <main class="flex-grow-1 p-4 p-lg-5">
