@@ -139,7 +139,6 @@ if (isset($_SESSION['admin_logged_in'])) {
           </div>
         </div>
       </div>
-      </div>
 
       <div class="card border-0 shadow-sm rounded-4 mb-4"><div class="card-body p-3"><div class="input-group"><span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span><input id="bookingSearch" type="search" class="form-control border-0 shadow-none" placeholder="Search customers, email, products, phone, or status"></div></div></div>
 
