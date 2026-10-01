@@ -126,6 +126,7 @@
     background-color: var(--ssp-bg-soft, #F1F5F9);
   }
 </style>
+<link href="assets/css/responsive.css" rel="stylesheet">
 
 <header id="header" class="header ssp-header d-flex align-items-center sticky-top py-2" style="z-index: 10000;">
   <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
