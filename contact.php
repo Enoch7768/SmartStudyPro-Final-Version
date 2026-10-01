@@ -4,8 +4,8 @@ require_once __DIR__ . '/cms-init.php';
 $contact = null;
 
 try {
-    if (function_exists('cockpit')) {
-        $contact = cockpit('content')->item('ContactDetails'); 
+    if (function_exists('cms_items')) {
+        $contact = cms_item('ContactDetails'); 
     }
 } catch (Exception $e) {
     $contact = null; 
