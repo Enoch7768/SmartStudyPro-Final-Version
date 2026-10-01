@@ -81,13 +81,14 @@ function cms_value(mixed $value): string {
 <link href="assets/css/main.css" rel="stylesheet">
 <link href="assets/css/responsive.css" rel="stylesheet">
 <style>
-body{background:#f5f7fb}.cms-shell{min-height:100vh}.cms-sidebar{width:260px;background:#0c086b;color:#fff}.cms-brand{font-weight:800}.cms-nav a{color:rgba(255,255,255,.78);text-decoration:none;border-radius:12px;padding:10px 12px;display:block}.cms-nav a:hover,.cms-nav a.active{background:rgba(255,255,255,.12);color:#fff}.cms-main{min-width:0}.cms-card{border:0;border-radius:20px;box-shadow:0 12px 40px rgba(12,8,107,.08)}.cms-table td,.cms-table th{vertical-align:middle}.field-card{border:1px solid #e8ebf2;border-radius:16px}.json-field{min-height:180px;font-family:ui-monospace,monospace}.rich-editor{min-height:220px;overflow:auto}.rich-editor:focus{box-shadow:0 0 0 .2rem rgba(13,110,253,.15)}.cms-sidebar{flex-shrink:0}@media(max-width:900px){.cms-sidebar{width:82px}.cms-sidebar .label,.cms-sidebar .cms-brand span{display:none}.cms-sidebar .cms-nav a{text-align:center}.cms-sidebar .cms-nav i{margin:0!important}}
+:root{--ssp-navy:#0c086b;--ssp-orange:#e66a00;--ssp-blue:#2447d8;--ssp-soft:#f5f7fb;--ssp-border:rgba(12,8,107,.1)}
+body{background:linear-gradient(135deg,#f8faff 0%,#eef3ff 55%,#fff8f1 100%);color:#172033}.cms-shell{min-height:100vh}.cms-sidebar{width:270px;background:linear-gradient(180deg,#0c086b 0%,#17118f 55%,#0c086b 100%);color:#fff;box-shadow:10px 0 35px rgba(12,8,107,.14)}.cms-brand{font-weight:800}.cms-nav a{color:rgba(255,255,255,.78);text-decoration:none;border-radius:12px;padding:10px 12px;display:block}.cms-nav a:hover,.cms-nav a.active{background:rgba(255,255,255,.12);color:#fff}.cms-main{min-width:0}.cms-card{border:1px solid var(--ssp-border);border-radius:22px;background:rgba(255,255,255,.9);box-shadow:0 16px 45px rgba(12,8,107,.09);backdrop-filter:blur(12px)}.cms-table td,.cms-table th{vertical-align:middle}.field-card{border:1px solid #e8ebf2;border-radius:16px}.json-field{min-height:180px;font-family:ui-monospace,monospace}.rich-editor{min-height:220px;overflow:auto}.rich-editor:focus{box-shadow:0 0 0 .2rem rgba(13,110,253,.15)}.cms-sidebar{flex-shrink:0}@media(max-width:900px){.cms-sidebar{width:82px}.cms-sidebar .label,.cms-sidebar .cms-brand span{display:none}.cms-sidebar .cms-nav a{text-align:center}.cms-sidebar .cms-nav i{margin:0!important}}
 </style>
 </head>
 <body>
 <div class="cms-shell d-flex">
 <aside class="cms-sidebar p-3">
-<div class="cms-brand fs-5 mb-4"><i class="bi bi-mortarboard-fill me-2"></i><span>SmartStudyPro CMS</span></div>
+<div class="mb-4"><img src="<?= htmlspecialchars(app_path("/Smart_Study_Logo_Fin-removebg-preview.png"), ENT_QUOTES, "UTF-8") ?>" alt="SmartStudyPro" style="width:150px;max-width:100%;height:auto;display:block"><div class="small text-white-50 mt-2">Content Management</div></div>
 <div class="small text-white-50 mb-2 label">CONTENT</div>
 <nav class="cms-nav d-grid gap-1">
 <?php foreach ($known as $name): ?>
@@ -96,11 +97,11 @@ body{background:#f5f7fb}.cms-shell{min-height:100vh}.cms-sidebar{width:260px;bac
 </nav>
 <div class="small text-white-50 mt-4 mb-2 label">SYSTEM</div>
 <a class="cms-nav text-white text-decoration-none" href="<?= htmlspecialchars(app_path('/cms/media'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-images me-2"></i><span class="label">Media Library</span></a>
-<a class="cms-nav text-white text-decoration-none" href="admin.php"><i class="bi bi-arrow-left me-2"></i><span class="label">Admin Dashboard</span></a>
+<a class="cms-nav text-white text-decoration-none" href="<?= htmlspecialchars(app_path("/admin"), ENT_QUOTES, "UTF-8") ?>"><i class="bi bi-arrow-left me-2"></i><span class="label">Admin Dashboard</span></a>
 </aside>
 <main class="cms-main flex-grow-1 p-3 p-lg-5">
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-<div><div class="text-muted small">SmartStudyPro content management</div><h1 class="h3 fw-bold mb-0"><?= htmlspecialchars($collection) ?></h1></div>
+<div class="d-flex align-items-center gap-3"><div class="d-none d-md-flex align-items-center justify-content-center rounded-4" style="width:52px;height:52px;background:#fff;box-shadow:0 8px 22px rgba(12,8,107,.1)"><img src="<?= htmlspecialchars(app_path("/Smart_Study_Logo_Fin-removebg-preview.png"), ENT_QUOTES, "UTF-8") ?>" alt="" style="max-width:42px;max-height:42px"></div><div><div class="text-muted small">SmartStudyPro content management</div><h1 class="h3 fw-bold mb-0"><?= htmlspecialchars($collection) ?></h1></div></div>
 <div class="d-flex flex-wrap gap-2"><a href="<?= htmlspecialchars(app_path('/cms'), ENT_QUOTES, 'UTF-8') ?>?collection=<?= urlencode($collection) ?>&new=1" class="btn btn-primary rounded-pill px-4"><i class="bi bi-plus-lg me-1"></i>New content</a><a href="<?= htmlspecialchars(app_path('/cms/media'), ENT_QUOTES, 'UTF-8') ?>" class="btn btn-outline-primary rounded-pill px-4"><i class="bi bi-images me-1"></i>Media</a></div>
 </div>
 <?php if (isset($_GET['saved'])): ?><div class="alert alert-success rounded-4 border-0">Content saved successfully.</div><?php endif; ?>
