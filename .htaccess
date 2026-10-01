@@ -1,12 +1,10 @@
 RewriteEngine On
-RewriteBase /schoolprojectt/SmartStudyProV2.3/
 
 Options -MultiViews
 Options -Indexes
 
 RewriteRule ^(?:database|dangerous|scripts)(?:/|$) - [F,L,NC]
 RewriteRule ^download\.php(?:$|\?) - [F,L,NC]
-RewriteRule ^cms/storage/uploads/.*\.(?:pdf|txt|md|doc|docx|ppt|pptx|xls|xlsx|mp3|wav|m4a|mp4|webm|mov)$ - [F,L,NC]
 RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
 <FilesMatch "^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php|.*\.(?:db|sqlite|sqlite3|log|bak|sql))$">
     Require all denied
@@ -19,31 +17,13 @@ RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 </IfModule>
 
-ErrorDocument 400 /schoolprojectt/SmartStudyProV2.3/error.php?code=400
-ErrorDocument 401 /schoolprojectt/SmartStudyProV2.3/error.php?code=401
-ErrorDocument 403 /schoolprojectt/SmartStudyProV2.3/error.php?code=403
-ErrorDocument 404 /schoolprojectt/SmartStudyProV2.3/error.php?code=404
-ErrorDocument 405 /schoolprojectt/SmartStudyProV2.3/error.php?code=405
-ErrorDocument 408 /schoolprojectt/SmartStudyProV2.3/error.php?code=408
-ErrorDocument 409 /schoolprojectt/SmartStudyProV2.3/error.php?code=409
-ErrorDocument 410 /schoolprojectt/SmartStudyProV2.3/error.php?code=410
-ErrorDocument 413 /schoolprojectt/SmartStudyProV2.3/error.php?code=413
-ErrorDocument 415 /schoolprojectt/SmartStudyProV2.3/error.php?code=415
-ErrorDocument 422 /schoolprojectt/SmartStudyProV2.3/error.php?code=422
-ErrorDocument 429 /schoolprojectt/SmartStudyProV2.3/error.php?code=429
-ErrorDocument 500 /schoolprojectt/SmartStudyProV2.3/error.php?code=500
-ErrorDocument 501 /schoolprojectt/SmartStudyProV2.3/error.php?code=501
-ErrorDocument 502 /schoolprojectt/SmartStudyProV2.3/error.php?code=502
-ErrorDocument 503 /schoolprojectt/SmartStudyProV2.3/error.php?code=503
-ErrorDocument 504 /schoolprojectt/SmartStudyProV2.3/error.php?code=504
+RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
+RewriteCond %{THE_REQUEST} \/+[^\s]+\/index\.php(?:[?\s]|$) [NC]
+RewriteRule ^index\.php$ ./ [R=301,L]
 
 RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
-RewriteCond %{THE_REQUEST} \s/+schoolprojectt/SmartStudyProV2\.3/index\.php(?:[?\s]|$) [NC]
-RewriteRule ^index\.php$ /schoolprojectt/SmartStudyProV2.3/ [R=301,L]
-
-RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
-RewriteCond %{THE_REQUEST} \s/+schoolprojectt/SmartStudyProV2\.3/(products|product-details|courses|course-details|cart|checkout|profile|login|register|about)\.php(?:[?\s]|$) [NC]
-RewriteRule ^([^.]+)\.php$ /schoolprojectt/SmartStudyProV2.3/$1 [R=301,L]
+RewriteCond %{THE_REQUEST} \/+[^\s]+\/(products|product-details|courses|course-details|cart|checkout|profile|login|register|about)\.php(?:[?\s]|$) [NC]
+RewriteRule ^([^.]+)\.php$ $1 [R=301,L]
 
 RewriteRule ^products/?$ products.php [L,QSA]
 RewriteRule ^product-details/?$ product-details.php [L,QSA]
@@ -55,3 +35,21 @@ RewriteRule ^profile/?$ profile.php [L,QSA]
 RewriteRule ^login/?$ login.php [L,QSA]
 RewriteRule ^register/?$ register.php [L,QSA]
 RewriteRule ^about/?$ about.php [L,QSA]
+
+ErrorDocument 400 error.php?code=400
+ErrorDocument 401 error.php?code=401
+ErrorDocument 403 error.php?code=403
+ErrorDocument 404 error.php?code=404
+ErrorDocument 405 error.php?code=405
+ErrorDocument 408 error.php?code=408
+ErrorDocument 409 error.php?code=409
+ErrorDocument 410 error.php?code=410
+ErrorDocument 413 error.php?code=413
+ErrorDocument 415 error.php?code=415
+ErrorDocument 422 error.php?code=422
+ErrorDocument 429 error.php?code=429
+ErrorDocument 500 error.php?code=500
+ErrorDocument 501 error.php?code=501
+ErrorDocument 502 error.php?code=502
+ErrorDocument 503 error.php?code=503
+ErrorDocument 504 error.php?code=504
