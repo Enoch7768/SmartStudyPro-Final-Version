@@ -19,7 +19,7 @@ if (!in_array($collection, $collections, true)) {
 $search = trim((string) ($_GET['q'] ?? ''));
 $sort = trim((string) ($_GET['sort'] ?? 'updated'));
 $direction = strtolower(trim((string) ($_GET['dir'] ?? 'desc'))) === 'asc' ? 'asc' : 'desc';
-$documents = SmartStudyProCms::items($collection);
+$documents = $sort === 'updated' ? SmartStudyProCms::items($collection, ['sort' => ['updated_at' => $direction === 'asc' ? 1 : -1]]) : SmartStudyProCms::items($collection);
 if ($sort === 'title') {
     usort($documents, static function (array $a, array $b) use ($direction): int {
         $cmp = strnatcasecmp((string) ($a['Title'] ?? $a['title'] ?? $a['Name'] ?? $a['name'] ?? $a['_id']), (string) ($b['Title'] ?? $b['title'] ?? $b['Name'] ?? $b['name'] ?? $b['_id']));
@@ -126,7 +126,7 @@ body{background:#f5f7fb}.cms-shell{min-height:100vh}.cms-sidebar{width:260px;bac
 <?php if ($isRich): ?>
 <div class="btn-toolbar mb-2 gap-1" data-editor-toolbar="field-<?= htmlspecialchars($key) ?>"><button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="bold"><i class="bi bi-type-bold"></i></button><button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="italic"><i class="bi bi-type-italic"></i></button><button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="insertUnorderedList"><i class="bi bi-list-ul"></i></button><button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="createLink"><i class="bi bi-link-45deg"></i></button></div><div id="field-<?= htmlspecialchars($key) ?>" class="form-control rich-editor" contenteditable="true" data-target="hidden-<?= htmlspecialchars($key) ?>" data-value="<?= htmlspecialchars(cms_value($value), ENT_QUOTES) ?>"></div><input type="hidden" id="hidden-<?= htmlspecialchars($key) ?>" name="fields[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars(cms_value($value)) ?>">
 <?php elseif ($fieldType === 'textarea'): ?><textarea id="field-<?= htmlspecialchars($key) ?>" class="form-control json-field" name="fields[<?= htmlspecialchars($key) ?>]"><?= htmlspecialchars(cms_value($value)) ?></textarea>
-<?php else: ?><div class="input-group"><input id="field-<?= htmlspecialchars($key) ?>" class="form-control" type="<?= $fieldType ?>" name="fields[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars(cms_value($value)) ?>"><?php if ($fieldType === 'url' && (str_contains($lowerKey,'image') || str_contains($lowerKey,'file') || str_contains($lowerKey,'video'))): ?><button type="button" class="btn btn-outline-primary media-picker" data-target="field-<?= htmlspecialchars($key) ?>">Choose media</button><?php endif; ?></div><?php endif; ?>
+<?php else: ?><div class="input-group"><input id="field-<?= htmlspecialchars($key) ?>" class="form-control" type="<?= $fieldType ?>" name="fields[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars(cms_value($value)) ?>"><?php if ($fieldType === 'url' && (str_contains($lowerKey,'image') || str_contains($lowerKey,'file') || str_contains($lowerKey,'video'))): ?><a class="btn btn-outline-primary" href="/cms/media" target="_blank" rel="noopener">Media Library</a><?php endif; ?></div><?php endif; ?>
 <?php if ($isStructured): ?><div class="form-text">Structured data is stored as JSON. Use valid JSON when entering arrays or objects.</div><?php elseif ($isRich): ?><div class="form-text">Use the editor for formatted content. Links and lists are supported.</div><?php endif; ?>
 </div>
 <?php endforeach; ?>
@@ -143,10 +143,7 @@ if(button.dataset.cmd==='createLink'){const url=prompt('Enter URL');if(url)docum
 const target=document.getElementById(editor.dataset.target);target.value=editor.innerHTML;
 })));
 document.querySelectorAll('.rich-editor').forEach(editor=>editor.addEventListener('input',()=>{document.getElementById(editor.dataset.target).value=editor.innerHTML}));
-document.querySelectorAll('.media-picker').forEach(button=>button.addEventListener('click',async()=>{
-const target=document.getElementById(button.dataset.target);
-const url=prompt('Paste the media URL from the Media Library');if(url){target.value=url;target.dispatchEvent(new Event('input',{bubbles:true}))}
-}));
+
 });
 </script>
 <?php endif; ?>
