@@ -86,13 +86,13 @@ if (isset($_SESSION['admin_logged_in'])) {
 <link href="assets/css/responsive.css" rel="stylesheet">
 <link rel="shortcut icon" href="Smart_Study_Logo_Fin-removebg-preview.png" type="image/x-icon">
 <style>
-body{background:#f4f7fb}.admin-shell{min-height:100vh}.admin-side{width:260px;background:#0c086b;color:#fff;flex:0 0 260px}.admin-side a{color:rgba(255,255,255,.82);text-decoration:none;border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:10px}.admin-side a:hover,.admin-side a.active{background:rgba(255,255,255,.13);color:#fff}.admin-main{min-width:0}.admin-card{border:0;border-radius:22px;box-shadow:0 12px 40px rgba(12,8,107,.08)}.admin-action{transition:transform .18s ease,box-shadow .18s ease}.admin-action:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(12,8,107,.12)}.admin-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#eef1ff;color:#0c086b;font-size:1.2rem}@media(max-width:800px){.admin-side{width:76px;flex-basis:76px}.admin-side .brand-text,.admin-side .nav-text{display:none}.admin-side a{justify-content:center}.admin-side .nav-section{display:none}}
+:root{--ssp-navy:#0c086b;--ssp-orange:#e66a00;--ssp-blue:#2447d8}body{background:linear-gradient(135deg,#f8faff 0%,#eef3ff 55%,#fff8f1 100%)}.admin-shell{min-height:100vh}.admin-side{width:270px;background:linear-gradient(180deg,#0c086b 0%,#17118f 55%,#0c086b 100%);color:#fff;flex:0 0 270px;box-shadow:10px 0 35px rgba(12,8,107,.14)}.admin-side a{color:rgba(255,255,255,.82);text-decoration:none;border-radius:14px;padding:11px 13px;display:flex;align-items:center;gap:10px}.admin-side a:hover,.admin-side a.active{background:rgba(255,255,255,.13);color:#fff}.admin-main{min-width:0}.admin-card{border:0;border-radius:22px;box-shadow:0 12px 40px rgba(12,8,107,.08)}.admin-action{transition:transform .18s ease,box-shadow .18s ease}.admin-action:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(12,8,107,.12)}.admin-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:#eef1ff;color:#0c086b;font-size:1.2rem}@media(max-width:800px){.admin-side{width:76px;flex-basis:76px}.admin-side .brand-text,.admin-side .nav-text{display:none}.admin-side a{justify-content:center}.admin-side .nav-section{display:none}}
 </style>
 </head>
 <body>
 <div class="admin-shell d-flex">
 <aside class="admin-side p-3">
-<div class="fw-bold fs-5 mb-4"><i class="bi bi-mortarboard-fill me-2"></i><span class="brand-text">SmartStudyPro</span></div>
+<div class="mb-4"><img src="<?= htmlspecialchars(app_path("/Smart_Study_Logo_Fin-removebg-preview.png"), ENT_QUOTES, "UTF-8") ?>" alt="SmartStudyPro" style="width:150px;max-width:100%;height:auto;display:block"><div class="small text-white-50 mt-2 brand-text">Administration</div></div>
 <div class="small text-white-50 mb-2 nav-section">ADMINISTRATION</div>
 <nav class="d-grid gap-1">
 <a class="active" href="<?= htmlspecialchars(app_path('/admin'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-speedometer2"></i><span class="nav-text">Dashboard</span></a>
@@ -108,7 +108,7 @@ body{background:#f4f7fb}.admin-shell{min-height:100vh}.admin-side{width:260px;ba
 <a href="<?= htmlspecialchars(app_path('/docs/INSTALL.md'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-book"></i><span class="nav-text">Documentation</span></a>
 <a href="<?= htmlspecialchars(app_path('/error.php?code=404'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-exclamation-triangle"></i><span class="nav-text">Error Pages</span></a>
 <a href="<?= htmlspecialchars(app_path('/'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-house"></i><span class="nav-text">View Website</span></a>
-<a href="<?= htmlspecialchars(app_path('/admin?logout=1'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-box-arrow-right"></i><span class="nav-text">Logout</span></a>
+<a href="<?= htmlspecialchars(app_path('/logout'), ENT_QUOTES, 'UTF-8') ?>"><i class="bi bi-box-arrow-right"></i><span class="nav-text">Logout</span></a>
 </nav>
 </aside>
 <main class="admin-main flex-grow-1 p-3 p-lg-5">
