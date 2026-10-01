@@ -1,10 +1,16 @@
 <?php
 require_once 'auth.php';
+require_once 'config.php';
 require_login();
 
 date_default_timezone_set('Africa/Kampala');
 
-if($_SERVER['REQUEST_METHOD'] != 'POST') die("Invalid access");
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') die('Invalid access');
+
+if (!is_demo_payment_mode()) {
+    http_response_code(503);
+    exit('Production payment processing is not configured. Configure the DPO Pay integration before enabling production mode.');
+}
 
 $user_id = $_POST['user_id'] ?? '';
 $payment_method = $_POST['payment_method'] ?? 'Not Specified';
