@@ -56,7 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$search = trim((string) ($_GET['q'] ?? ''));\n$files = [];
+$search = trim((string) ($_GET['q'] ?? ''));
+$files = [];
 $dir = __DIR__ . '/uploads/cms';
 if (is_dir($dir)) {
     foreach (scandir($dir) as $name) {
@@ -65,7 +66,10 @@ if (is_dir($dir)) {
         }
         $path = $dir . '/' . $name;
         if (is_file($path)) {
-            if ($search === '' || str_contains(mb_strtolower($name), mb_strtolower($search))) {\n                $mimeType = (new finfo(FILEINFO_MIME_TYPE))->file($path);\n                $files[] = ['name' => $name, 'size' => filesize($path), 'mime' => $mimeType, 'url' => 'uploads/cms/' . rawurlencode($name)];\n            }
+            if ($search === '' || str_contains(mb_strtolower($name), mb_strtolower($search))) {
+                $mimeType = (new finfo(FILEINFO_MIME_TYPE))->file($path);
+                $files[] = ['name' => $name, 'size' => filesize($path), 'mime' => $mimeType, 'url' => 'uploads/cms/' . rawurlencode($name)];
+            }
         }
     }
 }
