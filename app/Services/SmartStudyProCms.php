@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../config.php';
 
 final class SmartStudyProCms {
+    private const COLLECTIONS = ['HomePage','AboutPage','ContactDetails','Products','Courses','Chapters','Lessons','Quizzes','Pages','Navigation','SiteSettings'];
     private static ?PDO $db = null;
 
     public static function db(): PDO {
@@ -40,7 +41,8 @@ final class SmartStudyProCms {
     }
 
     public static function items(string $collection, array $options = []): array {
-        $rows = self::db()->prepare('SELECT document_id, data_json FROM cms_documents WHERE collection = :collection ORDER BY id ASC');
+        self::assertCollection($collection);
+        $rows = self::db()->prepare('SELECT document_id, data_json, updated_at FROM cms_documents WHERE collection = :collection ORDER BY id ASC');
         $rows->execute([':collection' => $collection]);
         $items = [];
 
@@ -89,6 +91,7 @@ final class SmartStudyProCms {
     }
 
     public static function save(string $collection, array $data): string {
+        self::assertCollection($collection);
         $id = trim((string) ($data['_id'] ?? ''));
         if ($id === '') {
             $id = bin2hex(random_bytes(12));
@@ -109,20 +112,27 @@ final class SmartStudyProCms {
     }
 
     public static function delete(string $collection, string $id): bool {
+        self::assertCollection($collection);
         $stmt = self::db()->prepare('DELETE FROM cms_documents WHERE collection = :collection AND document_id = :document_id');
         $stmt->execute([':collection' => $collection, ':document_id' => $id]);
         return $stmt->rowCount() > 0;
     }
 
     public static function collections(): array {
-        $stmt = self::db()->query('SELECT DISTINCT collection FROM cms_documents ORDER BY collection');
-        return array_values(array_map(static fn(array $row): string => $row['collection'], $stmt->fetchAll()));
+        return self::COLLECTIONS;
     }
 
     public static function count(string $collection): int {
+        self::assertCollection($collection);
         $stmt = self::db()->prepare('SELECT COUNT(*) FROM cms_documents WHERE collection = :collection');
         $stmt->execute([':collection' => $collection]);
         return (int) $stmt->fetchColumn();
+    }
+
+    private static function assertCollection(string $collection): void {
+        if (!in_array($collection, self::COLLECTIONS, true)) {
+            throw new InvalidArgumentException('Unknown CMS collection.');
+        }
     }
 
     private static function matches(array $data, array $filter): bool {
