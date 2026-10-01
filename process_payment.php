@@ -1,6 +1,7 @@
 <?php
 require_once 'auth.php';
 require_once 'config.php';
+require_once __DIR__ . '/app/Services/DpoPayService.php';
 require_login();
 
 date_default_timezone_set('Africa/Kampala');
@@ -8,8 +9,99 @@ date_default_timezone_set('Africa/Kampala');
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') die('Invalid access');
 
 if (!is_demo_payment_mode()) {
-    http_response_code(503);
-    exit('Production payment processing is not configured. Configure the DPO Pay integration before enabling production mode.');
+    if (($_POST['csrf_token'] ?? '') === '' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        http_response_code(403);
+        exit('Invalid request.');
+    }
+
+    if (($_POST['payment_method'] ?? '') !== 'dpo') {
+        http_response_code(400);
+        exit('DPO Pay is the configured production payment method.');
+    }
+
+    try {
+        $db = auth_db();
+        ensure_bookings_columns($db);
+        dpo_ensure_payments_table($db);
+
+        $accountId = (int) current_user()['id'];
+        $stmt = $db->prepare("SELECT * FROM bookings WHERE paid = 0 AND account_id = :account_id ORDER BY id ASC");
+        $stmt->execute([':account_id' => $accountId]);
+        $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$bookings) {
+            throw new RuntimeException('No unpaid bookings found.');
+        }
+
+        $total = 0.0;
+        $ids = [];
+        $services = [];
+
+        foreach ($bookings as $booking) {
+            $price = round((float) preg_replace('/[^0-9.]/', '', (string) $booking['price']), 2);
+
+            if ($price <= 0) {
+                continue;
+            }
+
+            $total += $price;
+            $ids[] = (int) $booking['id'];
+            $services[] = [
+                'type' => (string) app_config('DPO_PAY_SERVICE_ID', '54841'),
+                'description' => mb_substr((string) $booking['service'], 0, 120),
+                'date' => date('Y/m/d H:i'),
+            ];
+        }
+
+        if (!$ids || $total <= 0) {
+            throw new RuntimeException('The checkout contains no payable items.');
+        }
+
+        $user = current_user();
+        $parts = preg_split('/\\s+/', trim((string) $user['name']), 2);
+        $firstName = $parts[0] ?? 'SmartStudyPro';
+        $lastName = $parts[1] ?? 'Customer';
+        $baseUrl = rtrim((string) app_config('APP_URL', ''), '/');
+
+        if ($baseUrl === '' || !preg_match('#^https://#i', $baseUrl)) {
+            throw new RuntimeException('Production DPO Pay requires APP_URL to use HTTPS.');
+        }
+
+        $companyRef = 'SSP-' . date('YmdHis') . '-' . strtoupper(bin2hex(random_bytes(4)));
+
+        $dpo = dpo_create_token([
+            'amount' => $total,
+            'currency' => app_config('DPO_PAY_CURRENCY', 'UGX'),
+            'company_ref' => $companyRef,
+            'redirect_url' => $baseUrl . '/payment-return.php',
+            'back_url' => $baseUrl . '/payment-callback.php',
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'email' => $user['email'],
+            'phone' => '',
+        ], $services);
+
+        $stmt = $db->prepare("INSERT INTO dpo_payments (account_id, company_ref, trans_token, trans_ref, amount, currency, status, booking_ids, result_code, result_explanation, raw_response) VALUES (:account_id, :company_ref, :trans_token, :trans_ref, :amount, :currency, 'pending', :booking_ids, :result_code, :result_explanation, :raw_response)");
+        $stmt->execute([
+            ':account_id' => $accountId,
+            ':company_ref' => $companyRef,
+            ':trans_token' => $dpo['trans_token'],
+            ':trans_ref' => $dpo['trans_ref'],
+            ':amount' => $total,
+            ':currency' => app_config('DPO_PAY_CURRENCY', 'UGX'),
+            ':booking_ids' => json_encode($ids, JSON_THROW_ON_ERROR),
+            ':result_code' => $dpo['result'],
+            ':result_explanation' => $dpo['result_explanation'],
+            ':raw_response' => $dpo['raw'],
+        ]);
+
+        header('Location: ' . dpo_checkout_url($dpo['trans_token']), true, 303);
+        exit;
+    } catch (Throwable $e) {
+        error_log('DPO Pay createToken error: ' . $e->getMessage());
+        http_response_code(502);
+        exit('We could not start the DPO Pay checkout. Please try again.');
+    }
 }
 
 $user_id = $_POST['user_id'] ?? '';
