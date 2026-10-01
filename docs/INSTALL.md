@@ -74,9 +74,9 @@ Restart Apache after changing the environment file.
 
 ## SmartStudyPro CMS
 
-SmartStudyPro includes its own SQLite-backed content management system at `cms.php`. It manages the site's courses, lessons, quizzes, products, pages and settings without a separate CMS account.
+SmartStudyPro includes its own SQLite-backed content management system at `/cms`. The protected administration area is available at `/admin`, and `/cms` uses the same admin session. It manages the site's courses, lessons, quizzes, products, pages, settings and media without a separate CMS account.
 
-For an existing installation, run `php scripts/migrate-cockpit-to-smartstudypro-cms.php` once before removing the legacy CMS files. The migration copies content into `database/cms.db` and does not delete the original content.
+For an existing installation that still contains legacy Cockpit data, run `php scripts/migrate-cockpit-to-smartstudypro-cms.php` once. The migration copies content into `database/cms.db` and does not delete the original content. After verifying the native CMS, the legacy Cockpit runtime can be removed in a separate cleanup step.
 
 ## CMS Images
 
@@ -117,7 +117,7 @@ The migration copies eligible resources to private storage and updates their dat
 | PAYMENT_MODE | demo | production |
 | Google Sign-In | Optional | Configure |
 | Gemini | Optional | Configure |
-| Cockpit | Required for CMS | Required for CMS |
+| Cockpit | Only needed during legacy-content migration | Not required by the native CMS |
 | Protected storage | Required for paid resources | Required for paid resources |
 
 ## Security
@@ -195,3 +195,63 @@ For DPO sandbox testing, use the sandbox credentials issued/documented by DPO an
 ### Important
 
 Do not mark a booking as paid from browser return parameters alone. SmartStudyPro verifies the transaction with DPO before granting paid access. DPO documents `verifyToken` as the transaction status lookup and requires verification when the customer returns. citeturn3view0
+
+
+## Administration
+
+Open:
+
+```text
+http://localhost/SmartStudyPro/admin
+```
+
+The `/admin` route is the administration entry point. `admin.php` remains the implementation behind the clean route.
+
+After signing in, use the SmartStudyPro CMS link to open `/cms`.
+
+## Clean URLs and Apache
+
+SmartStudyPro uses Apache `mod_rewrite` through `.htaccess`. Apache documents that `.htaccess` directives are ignored when `AllowOverride None` is active. citeturn0view0
+
+For a normal XAMPP installation, verify that `httpd.conf` allows overrides for the SmartStudyPro directory:
+
+```apache
+<Directory "C:/xampp/htdocs">
+    AllowOverride All
+    Require all granted
+</Directory>
+```
+
+Also make sure Apache has `mod_rewrite` enabled, then restart Apache.
+
+Expected routes:
+
+```text
+/                 -> Home
+/about            -> About
+/courses          -> Courses
+/products         -> Products
+/contact          -> Contact
+/booking          -> Booking
+/login            -> Login
+/register         -> Register
+/admin            -> Admin
+/cms              -> CMS
+/cms/media        -> Media Library
+```
+
+Unknown routes are sent to the SmartStudyPro branded 404 page.
+
+If the home page works but every clean URL returns Apache's default 404 page, check `AllowOverride` and `mod_rewrite` first. Apache can serve `index.php` as a directory index even when the application's rewrite rules are not being applied. citeturn0view0
+
+## Custom Error Pages
+
+SmartStudyPro provides branded handling for common HTTP errors through `error.php`. Supported pages include 400, 401, 403, 404, 405, 408, 409, 410, 413, 415, 422, 429, 500, 501, 502, 503 and 504.
+
+Each error receives a SmartStudyPro-specific message, HTTP status code, unique support code, safe request path, and server-side diagnostic logging. User-facing pages do not expose exception traces or sensitive server details.
+
+Error logs are stored under:
+
+```text
+storage/logs/errors.log
+```
