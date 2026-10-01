@@ -16,7 +16,18 @@ if (!in_array($collection, $collections, true)) {
     $collection = 'HomePage';
 }
 
-$documents = SmartStudyProCms::items($collection);
+$search = trim((string) ($_GET['q'] ?? ''));
+$sort = trim((string) ($_GET['sort'] ?? 'updated'));
+$direction = strtolower(trim((string) ($_GET['dir'] ?? 'desc'))) === 'asc' ? 'asc' : 'desc';
+$documents = SmartStudyProCms::items($collection, [
+    'sort' => [$sort === 'title' ? 'Title' : 'updated_at' => $direction === 'asc' ? 1 : -1]
+]);
+if ($search !== '') {
+    $needle = mb_strtolower($search);
+    $documents = array_values(array_filter($documents, static function (array $doc) use ($needle): bool {
+        return str_contains(mb_strtolower(json_encode($doc, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)), $needle);
+    }));
+}
 $editingId = trim((string) ($_GET['id'] ?? ''));
 $editing = $editingId !== '' ? SmartStudyProCms::item($collection, ['_id' => $editingId]) : null;
 
@@ -86,16 +97,17 @@ body{background:#f5f7fb}.cms-shell{min-height:100vh}.cms-sidebar{width:260px;bac
 <main class="cms-main flex-grow-1 p-3 p-lg-5">
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
 <div><div class="text-muted small">SmartStudyPro content management</div><h1 class="h3 fw-bold mb-0"><?= htmlspecialchars($collection) ?></h1></div>
-<a href="/cms?collection=<?= urlencode($collection) ?>&new=1" class="btn btn-primary rounded-pill px-4"><i class="bi bi-plus-lg me-1"></i>New content</a>
+<div class="d-flex flex-wrap gap-2"><a href="/cms?collection=<?= urlencode($collection) ?>&new=1" class="btn btn-primary rounded-pill px-4"><i class="bi bi-plus-lg me-1"></i>New content</a><a href="/cms/media" class="btn btn-outline-primary rounded-pill px-4"><i class="bi bi-images me-1"></i>Media</a></div>
 </div>
 <?php if (isset($_GET['saved'])): ?><div class="alert alert-success rounded-4 border-0">Content saved successfully.</div><?php endif; ?>
 <?php if (isset($_GET['deleted'])): ?><div class="alert alert-success rounded-4 border-0">Content deleted successfully.</div><?php endif; ?>
-<div class="card cms-card mb-4"><div class="card-body p-0"><div class="table-responsive"><table class="table cms-table mb-0"><thead><tr><th class="px-4">ID</th><th>Title / Name</th><th>Preview</th><th class="text-end px-4">Actions</th></tr></thead><tbody>
+<div class="card cms-card mb-4"><div class="card-body p-3 p-lg-4"><form method="get" class="row g-2 align-items-end mb-3"><input type="hidden" name="collection" value="<?= htmlspecialchars($collection) ?>"><div class="col-12 col-lg-7"><label class="form-label small fw-semibold">Search content</label><input class="form-control" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search title, description, ID or any field"></div><div class="col-6 col-lg-2"><label class="form-label small fw-semibold">Sort</label><select class="form-select" name="sort"><option value="title" <?= $sort === 'title' ? 'selected' : '' ?>>Title</option><option value="updated" <?= $sort === 'updated' ? 'selected' : '' ?>>Recently updated</option></select></div><div class="col-6 col-lg-2"><label class="form-label small fw-semibold">Order</label><select class="form-select" name="dir"><option value="desc" <?= $direction === 'desc' ? 'selected' : '' ?>>Descending</option><option value="asc" <?= $direction === 'asc' ? 'selected' : '' ?>>Ascending</option></select></div><div class="col-12 col-lg-1"><button class="btn btn-primary w-100">Filter</button></div></form><form method="post" action="cms-bulk.php" id="bulk-form"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>"><input type="hidden" name="collection" value="<?= htmlspecialchars($collection) ?>"><div class="d-flex flex-wrap align-items-center gap-2 mb-3"><label class="d-flex align-items-center gap-2 small fw-semibold"><input type="checkbox" id="select-all" class="form-check-input mt-0"> Select all</label><select name="action" id="bulk-action" class="form-select form-select-sm w-auto"><option value="delete">Delete selected</option></select><button class="btn btn-sm btn-outline-danger rounded-pill" id="bulk-apply" type="submit">Apply</button><span class="small text-muted"><?= count($documents) ?> item<?= count($documents) === 1 ? '' : 's' ?></span></div></form><div class="table-responsive"><table class="table cms-table mb-0"><thead><tr><th class="px-4"><span class="visually-hidden">Select</span></th><th>ID</th><th>Title / Name</th><th>Preview</th><th class="text-end px-4">Actions</th></tr></thead><tbody>
 <?php foreach ($documents as $doc): $title = $doc['Title'] ?? $doc['title'] ?? $doc['Name'] ?? $doc['name'] ?? $doc['_id']; $preview = $doc['Content'] ?? $doc['Description'] ?? $doc['content'] ?? ''; ?>
-<tr><td class="px-4 small text-muted"><?= htmlspecialchars((string)$doc['_id']) ?></td><td class="fw-semibold"><?= htmlspecialchars((string)$title) ?></td><td class="text-muted"><?= htmlspecialchars(mb_strimwidth(strip_tags(cms_value($preview)),0,100,'…')) ?></td><td class="text-end px-4"><a class="btn btn-sm btn-outline-primary rounded-pill" href="/cms?collection=<?= urlencode($collection) ?>&id=<?= urlencode($doc['_id']) ?>">Edit</a><form class="d-inline" method="post" action="cms-delete.php" onsubmit="return confirm('Delete this content?');"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>"><input type="hidden" name="collection" value="<?= htmlspecialchars($collection) ?>"><input type="hidden" name="id" value="<?= htmlspecialchars($doc['_id']) ?>"><button class="btn btn-sm btn-outline-danger rounded-pill">Delete</button></form></td></tr>
+<tr><td class="px-4"><input form="bulk-form" type="checkbox" class="form-check-input bulk-item" name="ids[]" value="<?= htmlspecialchars($doc['_id']) ?>"></td><td class="small text-muted"><?= htmlspecialchars((string)$doc['_id']) ?></td><td class="fw-semibold"><?= htmlspecialchars((string)$title) ?></td><td class="text-muted"><?= htmlspecialchars(mb_strimwidth(strip_tags(cms_value($preview)),0,100,'…')) ?></td><td class="text-end px-4"><a class="btn btn-sm btn-outline-primary rounded-pill" href="/cms?collection=<?= urlencode($collection) ?>&id=<?= urlencode($doc['_id']) ?>">Edit</a><form class="d-inline" method="post" action="cms-delete.php" onsubmit="return confirm('Delete this content?');"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>"><input type="hidden" name="collection" value="<?= htmlspecialchars($collection) ?>"><input type="hidden" name="id" value="<?= htmlspecialchars($doc['_id']) ?>"><button class="btn btn-sm btn-outline-danger rounded-pill">Delete</button></form></td></tr>
 <?php endforeach; ?>
 <?php if (!$documents): ?><tr><td colspan="4" class="text-center py-5 text-muted">No content yet. Create the first item.</td></tr><?php endif; ?>
-</tbody></table></div></div></div>
+</tbody></table></div></div></div><script>document.addEventListener('DOMContentLoaded',()=>{const all=document.getElementById('select-all'),items=[...document.querySelectorAll('.bulk-item')],form=document.getElementById('bulk-form');all?.addEventListener('change',()=>items.forEach(i=>i.checked=all.checked));form?.addEventListener('submit',e=>{if(!items.some(i=>i.checked)){e.preventDefault();return}if(!confirm('Apply this action to the selected content?'))e.preventDefault()});});</script>
+<?php if ($search !== ''): ?><div class="small text-muted mb-3">Showing results for <strong><?= htmlspecialchars($search) ?></strong>.</div><?php endif; ?>
 <?php if (isset($_GET['new']) || $editing): ?>
 <div class="card cms-card"><div class="card-body p-4">
 <form method="post" action="cms-save.php">
@@ -106,7 +118,8 @@ body{background:#f5f7fb}.cms-shell{min-height:100vh}.cms-sidebar{width:260px;bac
 <?php foreach ($fields as $key => $value): ?>
 <div class="col-12 <?= is_array($value) || is_object($value) || in_array($key,['Content','Description','Notes','Options'],true) ? '' : 'col-lg-6' ?>">
 <label class="form-label fw-semibold"><?= htmlspecialchars($key) ?></label>
-<?php if (is_array($value) || is_object($value) || in_array($key,['Content','Description','Notes','Options'],true)): ?><textarea class="form-control json-field" name="fields[<?= htmlspecialchars($key) ?>]"><?= htmlspecialchars(cms_value($value)) ?></textarea><?php else: ?><input class="form-control" name="fields[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars(cms_value($value)) ?>"><?php endif; ?>
+<?php $fieldType = is_array($value) || is_object($value) || in_array($key,['Content','Description','Notes','Options','Items'],true) ? 'textarea' : (str_contains(strtolower($key),'email') ? 'email' : (str_contains(strtolower($key),'price') || strtolower($key)==='order' ? 'number' : (str_contains(strtolower($key),'image') || str_contains(strtolower($key),'file') || str_contains(strtolower($key),'video') ? 'url' : 'text'))); ?>
+<?php if ($fieldType === 'textarea'): ?><textarea class="form-control json-field" name="fields[<?= htmlspecialchars($key) ?>]"><?= htmlspecialchars(cms_value($value)) ?></textarea><?php else: ?><input class="form-control" type="<?= $fieldType ?>" name="fields[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars(cms_value($value)) ?>"><?php endif; ?>
 </div>
 <?php endforeach; ?>
 </div>
