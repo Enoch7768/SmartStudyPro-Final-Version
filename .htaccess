@@ -2,6 +2,7 @@ RewriteEngine On
 
 Options -MultiViews
 Options -Indexes
+DirectorySlash Off
 
 RewriteRule ^(?:database|dangerous|scripts|storage)(?:/|$) - [F,L,NC]
 RewriteRule ^download\.php(?:$|\?) - [F,L,NC]
@@ -42,8 +43,10 @@ RewriteRule ^profile/?$ profile.php [L,QSA]
 RewriteRule ^login/?$ login.php [L,QSA]
 RewriteRule ^register/?$ register.php [L,QSA]
 RewriteRule ^study/?$ study.php [L,QSA]
-RewriteRule ^admin/?$ admin.php [L,QSA]
-RewriteRule ^cms/?$ cms.php [L,QSA]
+RewriteRule ^admin$ admin.php [END,QSA,NC,AllowNoSlash]
+RewriteRule ^admin/$ admin.php [END,QSA,NC]
+RewriteRule ^cms$ cms.php [END,QSA,NC,AllowNoSlash]
+RewriteRule ^cms/$ cms.php [END,QSA,NC]
 RewriteRule ^cms/media/?$ cms-media.php [L,QSA]
 RewriteRule ^logout/?$ logout.php [L,QSA]
 
