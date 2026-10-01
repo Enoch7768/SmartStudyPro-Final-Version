@@ -2,7 +2,7 @@ RewriteEngine On
 
 Options -MultiViews
 Options -Indexes
-DirectorySlash Off
+DirectorySlash On
 
 RewriteRule ^(?:database|dangerous|scripts|storage)(?:/|$) - [F,L,NC]
 RewriteRule ^download\.php(?:$|\?) - [F,L,NC]
