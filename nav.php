@@ -131,17 +131,17 @@
 <header id="header" class="header ssp-header d-flex align-items-center sticky-top py-2" style="z-index: 10000;">
   <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
     
-    <a href="/" class="logo d-flex align-items-center me-auto me-xl-0 text-decoration-none">
+    <a href="./" class="logo d-flex align-items-center me-auto me-xl-0 text-decoration-none">
       <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo" height="48" class="img-fluid" style="max-height: 48px;">
     </a>
 
     <nav id="navmenu" class="navmenu">
       <ul>
         <li><a href="/" class="<?= (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : '' ?>">Home</a></li>
-        <li><a href="/about" class="<?= (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : '' ?>">About Us</a></li>
-        <li><a href="/courses" class="<?= (basename($_SERVER['PHP_SELF']) == 'courses.php') ? 'active' : '' ?>">Courses</a></li>
-        <li><a href="/products" class="<?= (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : '' ?>">Products</a></li>
-        <li><a href="/contact" class="<?= (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : '' ?>">Contact</a></li>
+        <li><a href="about" class="<?= (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : '' ?>">About Us</a></li>
+        <li><a href="courses" class="<?= (basename($_SERVER['PHP_SELF']) == 'courses.php') ? 'active' : '' ?>">Courses</a></li>
+        <li><a href="products" class="<?= (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : '' ?>">Products</a></li>
+        <li><a href="contact" class="<?= (basename($_SERVER['PHP_SELF']) == 'contact.php') ? 'active' : '' ?>">Contact</a></li>
       </ul>
       <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3 ms-sm-4 p-1"></i>
     </nav>
@@ -151,11 +151,11 @@
         <i id="theme-toggle-icon" class="bi bi-moon-fill"></i>
       </button>
 
-      <a href="/cart" class="header-icon-link fs-5 text-decoration-none" title="Shopping Cart">
+      <a href="cart" class="header-icon-link fs-5 text-decoration-none" title="Shopping Cart">
         <i class="bi bi-bag"></i>
       </a>
 
-      <a href="/profile" class="header-icon-link fs-5 text-decoration-none" title="My Profile">
+      <a href="profile" class="header-icon-link fs-5 text-decoration-none" title="My Profile">
         <i class="bi bi-person-circle"></i>
       </a>
 
