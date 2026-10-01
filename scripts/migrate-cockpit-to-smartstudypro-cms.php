@@ -20,14 +20,14 @@ if (!class_exists('Cockpit')) {
 
 try {
     $legacyApp = Cockpit::instance(__DIR__ . '/../cms');
-    $content = $legacyApp->module('content');
+    $storage = $legacyApp->dataStorage;
 } catch (Throwable $e) {
     fwrite(STDERR, "Legacy CMS could not be initialized: " . $e->getMessage() . "\n");
     exit(1);
 }
 
-if (!$content) {
-    fwrite(STDERR, "Legacy CMS content module could not be loaded.\n");
+if (!$storage) {
+    fwrite(STDERR, "Legacy CMS data storage could not be initialized.\n");
     exit(1);
 }
 
@@ -45,18 +45,32 @@ $collections = [
     'SiteSettings',
 ];
 
+$singletons = [
+    'HomePage',
+    'AboutPage',
+    'ContactDetails',
+];
+
 $total = 0;
 
 foreach ($collections as $collection) {
-    try {
-        $items = $content->items($collection);
-    } catch (Throwable $e) {
-        fwrite(STDERR, $collection . ': failed to read legacy data: ' . $e->getMessage() . "\n");
+    $modelPath = __DIR__ . '/../cms/storage/content/' . $collection . '.model.php';
+
+    if (!is_file($modelPath)) {
+        fwrite(STDOUT, $collection . ': skipped (legacy model not found)\n');
         continue;
     }
 
-    if (!is_array($items)) {
-        $items = [];
+    try {
+        if (in_array($collection, $singletons, true)) {
+            $item = $storage->findOne('content/singletons', ['_model' => $collection]);
+            $items = $item ? [$item] : [];
+        } else {
+            $items = $storage->find('content/collections/' . $collection)->toArray();
+        }
+    } catch (Throwable $e) {
+        fwrite(STDERR, $collection . ': failed to read legacy data: ' . $e->getMessage() . "\n");
+        continue;
     }
 
     $migrated = 0;
@@ -64,6 +78,10 @@ foreach ($collections as $collection) {
     foreach ($items as $item) {
         if (!is_array($item)) {
             continue;
+        }
+
+        if (in_array($collection, $singletons, true) && !isset($item['_model'])) {
+            $item['_model'] = $collection;
         }
 
         SmartStudyProCms::save($collection, $item);
