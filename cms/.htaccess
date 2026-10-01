@@ -11,6 +11,7 @@ AddDefaultCharset UTF-8
     Options -MultiViews
 
     RewriteRule ^$ ../cms.php [END,QSA]
+    RewriteRule ^index\.php$ ../cms.php [R=302,L,QSD]
 
     RewriteEngine On
     # RewriteBase /
