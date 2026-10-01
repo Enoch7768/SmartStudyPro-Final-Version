@@ -25,6 +25,7 @@ function auth_db(): PDO {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $db->exec('PRAGMA busy_timeout = 5000');
     $db->exec('PRAGMA foreign_keys = ON');
+    $db->exec("CREATE TABLE IF NOT EXISTS auth_login_attempts (ip TEXT PRIMARY KEY, attempts INTEGER NOT NULL DEFAULT 0, window_started INTEGER NOT NULL DEFAULT 0, blocked_until INTEGER NOT NULL DEFAULT 0)");
 
     $db->exec("CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -89,6 +90,42 @@ function verify_video_token(string $relativePath, int $userId, int $exp, string 
     if ($exp < time()) return false; 
     $expected = hash_hmac('sha256', $relativePath . '|' . $userId . '|' . $exp, app_secret());
     return hash_equals($expected, $sig);
+}
+
+
+
+function client_ip(): string {
+    return substr((string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 0, 64);
+}
+
+function login_is_blocked(): bool {
+    $stmt = auth_db()->prepare('SELECT blocked_until FROM auth_login_attempts WHERE ip = :ip');
+    $stmt->execute([':ip' => client_ip()]);
+    return (int) $stmt->fetchColumn() > time();
+}
+
+function record_login_failure(): void {
+    $db = auth_db();
+    $ip = client_ip();
+    $now = time();
+    $stmt = $db->prepare('SELECT attempts, window_started FROM auth_login_attempts WHERE ip = :ip');
+    $stmt->execute([':ip' => $ip]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $attempts = $row ? (int) $row['attempts'] : 0;
+    $window = $row ? (int) $row['window_started'] : $now;
+    if ($now - $window >= 900) {
+        $attempts = 0;
+        $window = $now;
+    }
+    $attempts++;
+    $blocked = $attempts >= 8 ? $now + 900 : 0;
+    $stmt = $db->prepare('INSERT INTO auth_login_attempts (ip, attempts, window_started, blocked_until) VALUES (:ip, :attempts, :window, :blocked) ON CONFLICT(ip) DO UPDATE SET attempts=excluded.attempts, window_started=excluded.window_started, blocked_until=excluded.blocked_until');
+    $stmt->execute([':ip'=>$ip, ':attempts'=>$attempts, ':window'=>$window, ':blocked'=>$blocked]);
+}
+
+function clear_login_failures(): void {
+    $stmt = auth_db()->prepare('DELETE FROM auth_login_attempts WHERE ip = :ip');
+    $stmt->execute([':ip' => client_ip()]);
 }
 
 function current_user(): ?array {
