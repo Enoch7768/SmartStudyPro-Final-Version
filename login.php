@@ -16,7 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
-        if ($email === '' || $password === '') {
+        if (login_is_blocked()) {
+            $error = 'Too many unsuccessful sign-in attempts. Please wait 15 minutes before trying again.';
+        } elseif ($email === '' || $password === '') {
             $error = "Please enter your email and password.";
         } else {
             $stmt = auth_db()->prepare("SELECT * FROM users WHERE email = :email");
@@ -24,12 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && !empty($user['password_hash']) && password_verify($password, $user['password_hash'])) {
+                if (password_needs_rehash($user['password_hash'], PASSWORD_DEFAULT)) {
+                    $rehash = auth_db()->prepare('UPDATE users SET password_hash = :hash WHERE id = :id');
+                    $rehash->execute([':hash' => password_hash($password, PASSWORD_DEFAULT), ':id' => $user['id']]);
+                }
+                clear_login_failures();
                 login_user($user);
                 $target = safe_internal_path($_POST['redirect'] ?? app_path('/profile'), app_path('/profile'));
                 header('Location: ' . $target);
                 exit;
             }
             $error = "Invalid email or password.";
+            record_login_failure();
         }
     }
 }
