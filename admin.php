@@ -47,44 +47,6 @@ if (isset($_POST['login'])) {
     }
 }
 
-if (isset($_SESSION['admin_logged_in']) && isset($_POST['reset_cockpit'])) {
-    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
-        $cockpit_message = 'Your session expired. Refresh and try again.';
-    } else {
-        $resetPassword = app_config('COCKPIT_RESET_PASSWORD');
-        if (!$resetPassword || strlen($resetPassword) < 12) {
-            $cockpit_message = 'COCKPIT_RESET_PASSWORD is not configured securely in the environment.';
-        } elseif (!is_cms_connected()) {
-            $cockpit_message = 'Cockpit is not currently connected.';
-        } else {
-            try {
-                $cockpitAdminEmail = strtolower(trim((string) app_config('COCKPIT_ADMIN_EMAIL', '')));
-                if ($cockpitAdminEmail === '') {
-                    throw new RuntimeException('COCKPIT_ADMIN_EMAIL is not configured.');
-                }
-                $cockpitApp = cockpit();
-                $cmsUser = $cockpitApp->dataStorage->findOne('system/users', [
-                    'email' => $cockpitAdminEmail
-                ]);
-                if (!$cmsUser) {
-                    $cmsUser = $cockpitApp->dataStorage->findOne('system/users', [
-                        'user' => $cockpitAdminEmail
-                    ]);
-                }
-                if (!$cmsUser) {
-                    throw new RuntimeException('The configured Cockpit administrator account was not found.');
-                }
-                $cmsUser['password'] = password_hash($resetPassword, PASSWORD_DEFAULT);
-                $cockpitApp->dataStorage->save('system/users', $cmsUser);
-                $cockpit_message = 'Cockpit administrator access has been reset using the configured environment account.';
-            } catch (Throwable $e) {
-                error_log('Cockpit reset error: ' . $e->getMessage());
-                $cockpit_message = 'Cockpit could not be reset right now.';
-            }
-        }
-    }
-}
-
 $bookings = [];
 $paidCount = 0;
 $pendingCount = 0;
@@ -170,18 +132,13 @@ if (isset($_SESSION['admin_logged_in'])) {
         <div class="card-body p-4">
           <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
             <div>
-              <div class="fw-bold" style="color:#0C086B;">Cockpit CMS</div>
-              <div class="small text-muted">Manage your courses, lessons, quizzes, products and content from the same administration area.</div>
+              <div class="fw-bold" style="color:#0C086B;">SmartStudyPro CMS</div>
+              <div class="small text-muted">Manage courses, lessons, quizzes, products, pages, media-ready content and site settings from one focused administration area.</div>
             </div>
-            <div class="d-flex gap-2">
-              <a href="cms/" class="btn btn-outline-primary rounded-pill px-3"><i class="bi bi-grid-1x2 me-1"></i> Open Cockpit</a>
-              <form method="POST" class="d-inline" onsubmit="return confirm('Reset Cockpit administrator access using the configured environment password?');">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
-                <button type="submit" name="reset_cockpit" class="btn btn-outline-danger rounded-pill px-3"><i class="bi bi-arrow-clockwise me-1"></i> Reset Cockpit Access</button>
-              </form>
-            </div>
+            <div><a href="cms.php" class="btn btn-primary rounded-pill px-3"><i class="bi bi-grid-1x2 me-1"></i> Open SmartStudyPro CMS</a></div>
           </div>
         </div>
+      </div>
       </div>
 
       <div class="card border-0 shadow-sm rounded-4 mb-4"><div class="card-body p-3"><div class="input-group"><span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span><input id="bookingSearch" type="search" class="form-control border-0 shadow-none" placeholder="Search customers, email, products, phone, or status"></div></div></div>
