@@ -5,9 +5,9 @@ $about = null;
 $contact = null;
 
 try {
-    if (function_exists('cockpit')) {
-        $about = cockpit('content')->item('AboutPage'); 
-        $contact = cockpit('content')->item('ContactDetails');
+    if (function_exists('cms_items')) {
+        $about = cms_item('AboutPage'); 
+        $contact = cms_item('ContactDetails');
     }
 } catch (Exception $e) {
     $about = null; 
