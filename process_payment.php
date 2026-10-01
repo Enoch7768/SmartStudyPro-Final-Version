@@ -449,17 +449,17 @@ try {
   <header id="header" class="header ssp-header d-flex align-items-center sticky-top py-2 no-print">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
       
-      <a href="index.php" class="logo d-flex align-items-center me-auto me-xl-0 text-decoration-none">
+      <a href="./" class="logo d-flex align-items-center me-auto me-xl-0 text-decoration-none">
         <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo" height="48">
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.php">Home</a></li>
-          <li><a href="about.php">About Us</a></li>
-          <li><a href="courses.php">Courses</a></li>
-          <li><a href="products.php">Products</a></li>
-          <li><a href="contact.php">Contact</a></li>
+          <li><a href="./">Home</a></li>
+          <li><a href="about">About Us</a></li>
+          <li><a href="courses">Courses</a></li>
+          <li><a href="products">Products</a></li>
+          <li><a href="contact">Contact</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list fs-2 ms-3"></i>
       </nav>
@@ -470,13 +470,13 @@ try {
             <i class="bi bi-person-circle"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
-            <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
+            <li><a class="dropdown-item py-2" href="profile"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
             <li><a class="dropdown-item py-2" href="cart.php"><i class="bi bi-bag me-2" style="color: var(--ssp-navy);"></i>My Cart</a></li>
             <li><hr class="dropdown-divider"></li>
           </ul>
         </div>
 
-        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none" href="courses.php">Explore Courses</a>
+        <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none" href="courses">Explore Courses</a>
       </div>
 
     </div>
@@ -547,7 +547,7 @@ try {
               <button onclick="window.print()" class="btn btn-outline-secondary rounded-3 px-4 py-2 me-2 fw-semibold">
                 <i class="bi bi-printer me-1"></i> Print Receipt
               </button>
-              <a href="index.php" class="btn-ssp-primary text-decoration-none">Back to Home</a>
+              <a href="./" class="btn-ssp-primary text-decoration-none">Back to Home</a>
             </div>
           </div>
         </div>
@@ -568,7 +568,7 @@ try {
       <div class="row gy-4">
         
         <div class="col-lg-4 col-md-6">
-          <a href="index.php" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
+          <a href="./" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
             SmartStudy<span>Pro</span>
           </a>
           <p class="small text-light opacity-75 mb-3">Study Made Simple, Success Made Sure.</p>
@@ -590,11 +590,11 @@ try {
         <div class="col-lg-3 col-md-3">
           <h5 class="text-white fw-bold mb-3">Quick Navigation</h5>
           <ul class="list-unstyled small">
-            <li class="mb-2"><a href="index.php" class="text-decoration-none text-light opacity-75">Home</a></li>
-            <li class="mb-2"><a href="about.php" class="text-decoration-none text-light opacity-75">About Us</a></li>
-            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-light opacity-75">Courses</a></li>
-            <li class="mb-2"><a href="products.php" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
-            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
+            <li class="mb-2"><a href="./" class="text-decoration-none text-light opacity-75">Home</a></li>
+            <li class="mb-2"><a href="about" class="text-decoration-none text-light opacity-75">About Us</a></li>
+            <li class="mb-2"><a href="courses" class="text-decoration-none text-light opacity-75">Courses</a></li>
+            <li class="mb-2"><a href="products" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
+            <li class="mb-2"><a href="contact" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
           </ul>
         </div>
 
