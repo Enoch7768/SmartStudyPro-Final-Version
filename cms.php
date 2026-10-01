@@ -81,7 +81,7 @@ function cms_value(mixed $value): string {
 <link href="assets/css/main.css" rel="stylesheet">
 <link href="assets/css/responsive.css" rel="stylesheet">
 <style>
-body{background:#f5f7fb}.cms-shell{min-height:100vh}.cms-sidebar{width:260px;background:#0c086b;color:#fff}.cms-brand{font-weight:800}.cms-nav a{color:rgba(255,255,255,.78);text-decoration:none;border-radius:12px;padding:10px 12px;display:block}.cms-nav a:hover,.cms-nav a.active{background:rgba(255,255,255,.12);color:#fff}.cms-main{min-width:0}.cms-card{border:0;border-radius:20px;box-shadow:0 12px 40px rgba(12,8,107,.08)}.cms-table td,.cms-table th{vertical-align:middle}.field-card{border:1px solid #e8ebf2;border-radius:16px}.json-field{min-height:180px;font-family:ui-monospace,monospace}.cms-sidebar{flex-shrink:0}@media(max-width:900px){.cms-sidebar{width:82px}.cms-sidebar .label,.cms-sidebar .cms-brand span{display:none}.cms-sidebar .cms-nav a{text-align:center}.cms-sidebar .cms-nav i{margin:0!important}}
+body{background:#f5f7fb}.cms-shell{min-height:100vh}.cms-sidebar{width:260px;background:#0c086b;color:#fff}.cms-brand{font-weight:800}.cms-nav a{color:rgba(255,255,255,.78);text-decoration:none;border-radius:12px;padding:10px 12px;display:block}.cms-nav a:hover,.cms-nav a.active{background:rgba(255,255,255,.12);color:#fff}.cms-main{min-width:0}.cms-card{border:0;border-radius:20px;box-shadow:0 12px 40px rgba(12,8,107,.08)}.cms-table td,.cms-table th{vertical-align:middle}.field-card{border:1px solid #e8ebf2;border-radius:16px}.json-field{min-height:180px;font-family:ui-monospace,monospace}.rich-editor{min-height:220px;overflow:auto}.rich-editor:focus{box-shadow:0 0 0 .2rem rgba(13,110,253,.15)}.cms-sidebar{flex-shrink:0}@media(max-width:900px){.cms-sidebar{width:82px}.cms-sidebar .label,.cms-sidebar .cms-brand span{display:none}.cms-sidebar .cms-nav a{text-align:center}.cms-sidebar .cms-nav i{margin:0!important}}
 </style>
 </head>
 <body>
@@ -120,16 +120,34 @@ body{background:#f5f7fb}.cms-shell{min-height:100vh}.cms-sidebar{width:260px;bac
 <input type="hidden" name="id" value="<?= htmlspecialchars($editing['_id'] ?? '') ?>">
 <div class="row g-3">
 <?php foreach ($fields as $key => $value): ?>
-<div class="col-12 <?= is_array($value) || is_object($value) || in_array($key,['Content','Description','Notes','Options'],true) ? '' : 'col-lg-6' ?>">
-<label class="form-label fw-semibold"><?= htmlspecialchars($key) ?></label>
-<?php $fieldType = is_array($value) || is_object($value) || in_array($key,['Content','Description','Notes','Options','Items'],true) ? 'textarea' : (str_contains(strtolower($key),'email') ? 'email' : (str_contains(strtolower($key),'price') || strtolower($key)==='order' ? 'number' : (str_contains(strtolower($key),'image') || str_contains(strtolower($key),'file') || str_contains(strtolower($key),'video') ? 'url' : 'text'))); ?>
-<?php if ($fieldType === 'textarea'): ?><textarea class="form-control json-field" name="fields[<?= htmlspecialchars($key) ?>]"><?= htmlspecialchars(cms_value($value)) ?></textarea><?php else: ?><input class="form-control" type="<?= $fieldType ?>" name="fields[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars(cms_value($value)) ?>"><?php endif; ?>
+<?php $lowerKey = strtolower($key); $isRich = in_array($key, ['Content','Description'], true) && !is_array($value) && !is_object($value); $isStructured = is_array($value) || is_object($value) || in_array($key, ['Notes','Options','Items'], true); $fieldType = $isStructured || $isRich ? 'textarea' : (str_contains($lowerKey,'email') ? 'email' : (str_contains($lowerKey,'price') || $lowerKey === 'order' ? 'number' : (str_contains($lowerKey,'image') || str_contains($lowerKey,'file') || str_contains($lowerKey,'video') ? 'url' : 'text'))); ?>
+<div class="col-12 <?= $isStructured || $isRich ? '' : 'col-lg-6' ?>">
+<label class="form-label fw-semibold" for="field-<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($key) ?></label>
+<?php if ($isRich): ?>
+<div class="btn-toolbar mb-2 gap-1" data-editor-toolbar="field-<?= htmlspecialchars($key) ?>"><button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="bold"><i class="bi bi-type-bold"></i></button><button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="italic"><i class="bi bi-type-italic"></i></button><button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="insertUnorderedList"><i class="bi bi-list-ul"></i></button><button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="createLink"><i class="bi bi-link-45deg"></i></button></div><div id="field-<?= htmlspecialchars($key) ?>" class="form-control rich-editor" contenteditable="true" data-target="hidden-<?= htmlspecialchars($key) ?>"><?= cms_value($value) ?></div><input type="hidden" id="hidden-<?= htmlspecialchars($key) ?>" name="fields[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars(cms_value($value)) ?>">
+<?php elseif ($fieldType === 'textarea'): ?><textarea id="field-<?= htmlspecialchars($key) ?>" class="form-control json-field" name="fields[<?= htmlspecialchars($key) ?>]"><?= htmlspecialchars(cms_value($value)) ?></textarea>
+<?php else: ?><div class="input-group"><input id="field-<?= htmlspecialchars($key) ?>" class="form-control" type="<?= $fieldType ?>" name="fields[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars(cms_value($value)) ?>"><?php if ($fieldType === 'url' && (str_contains($lowerKey,'image') || str_contains($lowerKey,'file') || str_contains($lowerKey,'video'))): ?><button type="button" class="btn btn-outline-primary media-picker" data-target="field-<?= htmlspecialchars($key) ?>">Choose media</button><?php endif; ?></div><?php endif; ?>
+<?php if ($isStructured): ?><div class="form-text">Structured data is stored as JSON. Use valid JSON when entering arrays or objects.</div><?php elseif ($isRich): ?><div class="form-text">Use the editor for formatted content. Links and lists are supported.</div><?php endif; ?>
 </div>
 <?php endforeach; ?>
 </div>
 <div class="d-flex justify-content-end gap-2 mt-4"><a href="/cms?collection=<?= urlencode($collection) ?>" class="btn btn-light rounded-pill">Cancel</a><button class="btn btn-primary rounded-pill px-4">Save content</button></div>
 </form>
 </div></div>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+document.querySelectorAll('[data-editor-toolbar]').forEach(toolbar=>toolbar.querySelectorAll('[data-cmd]').forEach(button=>button.addEventListener('click',()=>{
+const editor=document.getElementById(toolbar.dataset.editorToolbar);editor.focus();
+if(button.dataset.cmd==='createLink'){const url=prompt('Enter URL');if(url)document.execCommand('createLink',false,url)}else document.execCommand(button.dataset.cmd,false,null);
+const target=document.getElementById(editor.dataset.target);target.value=editor.innerHTML;
+})));
+document.querySelectorAll('.rich-editor').forEach(editor=>editor.addEventListener('input',()=>{document.getElementById(editor.dataset.target).value=editor.innerHTML}));
+document.querySelectorAll('.media-picker').forEach(button=>button.addEventListener('click',async()=>{
+const target=document.getElementById(button.dataset.target);
+const url=prompt('Paste the media URL from the Media Library');if(url){target.value=url;target.dispatchEvent(new Event('input',{bubbles:true}))}
+}));
+});
+</script>
 <?php endif; ?>
 </main>
 </div>
