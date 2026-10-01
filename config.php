@@ -75,6 +75,16 @@ function app_secret(): string {
     return $secret = $generated;
 }
 
+function payment_mode(): string {
+    $mode = strtolower(trim((string) app_config('PAYMENT_MODE', 'demo')));
+
+    return in_array($mode, ['demo', 'production'], true) ? $mode : 'demo';
+}
+
+function is_demo_payment_mode(): bool {
+    return payment_mode() === 'demo';
+}
+
 function admin_password_hash(): ?string {
     $hash = app_config('ADMIN_PASSWORD_HASH');
 
