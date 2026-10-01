@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+ini_set('display_errors', '1');
+
 require_once __DIR__ . '/../app/Services/SmartStudyProCms.php';
 
 $legacyBootstrap = __DIR__ . '/../cms/bootstrap.php';
