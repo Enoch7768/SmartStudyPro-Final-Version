@@ -15,7 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $file = $_FILES['file'] ?? null;
     if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
-        header('Location: /cms/media?error=upload');
+        $error = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+        $reason = match ($error) {
+            UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'size',
+            UPLOAD_ERR_PARTIAL => 'partial',
+            UPLOAD_ERR_NO_TMP_DIR, UPLOAD_ERR_CANT_WRITE => 'server',
+            default => 'upload',
+        };
+        header('Location: /cms/media?error=' . $reason);
         exit;
     }
     $finfo = new finfo(FILEINFO_MIME_TYPE);
@@ -97,7 +104,7 @@ if (is_dir($dir)) {
 <main class="flex-grow-1 p-4 p-lg-5">
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4"><div><div class="small text-muted">SmartStudyPro CMS</div><h1 class="h3 fw-bold mb-0">Media Library</h1></div><form method="get" class="d-flex gap-2"><input class="form-control" name="q" value="<?= htmlspecialchars($search) ?>" placeholder="Search media"><button class="btn btn-outline-primary rounded-pill">Search</button></form></div>
 <?php if(isset($_GET['saved'])): ?><div class="alert alert-success rounded-4 border-0">Media uploaded successfully.</div><?php endif; ?><?php if(isset($_GET['deleted'])): ?><div class="alert alert-success rounded-4 border-0">Media deleted successfully.</div><?php endif; ?>
-<?php if(isset($_GET['error'])): ?><div class="alert alert-danger rounded-4 border-0">The upload could not be completed. Check the file type, server configuration, or available storage.</div><?php endif; ?>
+<?php if(isset($_GET['error'])): ?><div class="alert alert-danger rounded-4 border-0"><?= match ($_GET['error'] ?? '') { 'size' => 'The server rejected the upload because its PHP upload configuration is limiting the request. SmartStudyPro itself has no media-size cap.', 'partial' => 'The upload was interrupted before it completed. Please try again.', 'server' => 'The server could not write the uploaded file. Check temporary storage and permissions.', 'type' => 'This file type is not supported by the CMS media library.', default => 'The upload could not be completed. Check the file type, server configuration, or available storage.' } ?></div><?php endif; ?>
 <div class="card cardx mb-4"><div class="card-body p-4"><form method="post" action="/cms/media" enctype="multipart/form-data" class="d-flex flex-wrap gap-3 align-items-end"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>"><div><label class="form-label fw-semibold">Upload media</label><input class="form-control" type="file" name="file" accept="*/*" required></div><button class="btn btn-primary rounded-pill px-4">Upload</button></form></div></div>
 <div class="row g-4">
 <?php foreach($files as $file): ?>
