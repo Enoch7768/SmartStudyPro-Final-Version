@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $courseId  = $_POST['course_id']  ?? null;
     $productId = $_POST['product_id'] ?? null;
 
-    if (!isset($error) && $courseId && function_exists('cockpit')) {
-        $course = cockpit('content')->item('Courses', ['_id' => $courseId]);
+    if (!isset($error) && $courseId && function_exists('cms_items')) {
+        $course = cms_item('Courses', ['_id' => $courseId]);
         if ($course) {
             $service  = $course['Title'] ?? $service;
             $price    = number_format((float) ($course['Price'] ?? 0), 2, '.', '');
@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = "The selected course could not be found.";
         }
-    } elseif (!isset($error) && $productId && function_exists('cockpit')) {
-        $product = cockpit('content')->item('Products', ['_id' => $productId]);
+    } elseif (!isset($error) && $productId && function_exists('cms_items')) {
+        $product = cms_item('Products', ['_id' => $productId]);
         if ($product) {
             $service  = $product['Title'] ?? $service;
             $price    = number_format((float) ($product['Price'] ?? 0), 2, '.', '');
