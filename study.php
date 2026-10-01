@@ -401,7 +401,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
 
   <header class="ssp-header d-flex align-items-center justify-content-between px-3 px-md-4 sticky-top">
     <div class="d-flex align-items-center">
-      <a href="index.php" class="me-3">
+      <a href="./" class="me-3">
         <img src="Smart_Study_Logo_Fin-removebg-preview.png" alt="SmartStudyPro Logo" height="42">
       </a>
       <h5 class="mb-0 d-none d-md-block fw-bold ms-2 brand-font" style="color: var(--ssp-navy);">
@@ -415,7 +415,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
         <i class="bi bi-moon-stars-fill" id="themeToggleIcon"></i>
       </button>
 
-      <a href="courses.php" class="btn btn-outline-secondary btn-sm rounded-pill px-3 d-none d-sm-inline-block">
+      <a href="courses" class="btn btn-outline-secondary btn-sm rounded-pill px-3 d-none d-sm-inline-block">
         <i class="bi bi-arrow-left me-1"></i> Back to Courses
       </a>
 
@@ -424,7 +424,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
           <i class="bi bi-person-circle"></i>
         </a>
         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2" aria-labelledby="userMenuDropdown">
-          <li><a class="dropdown-item py-2" href="profile.php"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
+          <li><a class="dropdown-item py-2" href="profile"><i class="bi bi-person me-2" style="color: var(--ssp-navy);"></i>My Profile</a></li>
           <li><a class="dropdown-item py-2" href="cart.php"><i class="bi bi-bag me-2" style="color: var(--ssp-navy);"></i>My Cart</a></li>
           <li><hr class="dropdown-divider"></li>
         </ul>
@@ -438,7 +438,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
         <i class="bi bi-shield-lock-fill text-danger mb-3" style="font-size: 3.5rem;"></i>
         <h3 class="fw-bold mb-2 brand-font"><?= htmlspecialchars($error_message) ?></h3>
         <p class="text-muted mb-4">You must have an active and verified purchase to access this study portal.</p>
-        <a href="courses.php" class="btn-ssp-primary text-decoration-none d-inline-block">Browse Available Courses</a>
+        <a href="courses" class="btn-ssp-primary text-decoration-none d-inline-block">Browse Available Courses</a>
       </div>
     </div>
   <?php else: ?>
