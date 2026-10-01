@@ -1,5 +1,5 @@
 <?php 
-require_once 'cms-init.php'; 
+require_once __DIR__ . '/cms-init.php'; 
 
 $course = null;
 $contact = null;
