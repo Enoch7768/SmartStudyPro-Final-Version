@@ -1,15 +1,15 @@
 <?php
+require_once __DIR__ . '/config.php';
+
 session_set_cookie_params([
     'lifetime' => 0,
-    'path'     => '/',
+    'path'     => app_base_path() . '/',
     'httponly' => true,
     'samesite' => 'Lax',
     'secure'   => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
 ]);
 session_start();
 
-
-require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/cms-init.php';
 
