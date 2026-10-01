@@ -29,8 +29,8 @@ try {
     } else {
         $course_name = trim($booking['service']);
 
-        if (function_exists('cockpit')) {
-            $sample = cockpit('content')->items('Chapters', ['limit' => 1]);
+        if (function_exists('cms_items')) {
+            $sample = cms_items('Chapters', ['limit' => 1]);
             $c_field = 'COURSE TITLE'; 
             if (!empty($sample)) {
                 foreach ($sample[0] as $k => $v) {
@@ -40,7 +40,7 @@ try {
 
             $variations = array_unique([$course_name, strtoupper($course_name), strtolower($course_name), ucwords(strtolower($course_name))]);
             foreach ($variations as $v_name) {
-                $chapters = cockpit('content')->items('Chapters', ['filter' => [$c_field => $v_name], 'sort' => ['CHAPTER ID' => 1]]);
+                $chapters = cms_items('Chapters', ['filter' => [$c_field => $v_name], 'sort' => ['CHAPTER ID' => 1]]);
                 if (!empty($chapters)) break;
             }
         }
@@ -455,7 +455,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
             <?= htmlspecialchars($chapter['Title'] ?? $chapter['title'] ?? 'Section') ?>
           </div>
           <?php 
-            $lessons = cockpit('content')->items('Lessons', ['filter' => ['Chapter' => $chapter['_id']], 'sort' => ['Order' => 1]]);
+            $lessons = cms_items('Lessons', ['filter' => ['Chapter' => $chapter['_id']], 'sort' => ['Order' => 1]]);
             foreach ($lessons as $lesson): 
               $l_title = 'Untitled Lesson';
               if (!empty($lesson['Title'])) $l_title = $lesson['Title'];
@@ -519,7 +519,7 @@ $seoTitle = $course_name ? 'Study Portal - ' . htmlspecialchars($course_name) . 
           </div>
 
           <?php 
-            $quizzes = cockpit('content')->items('Quizzes', ['filter' => ['Lesson' => $active_lesson_data['_id']]]);
+            $quizzes = cms_items('Quizzes', ['filter' => ['Lesson' => $active_lesson_data['_id']]]);
             if (!empty($quizzes)): 
           ?>
           <div class="quiz-section mt-5">
