@@ -314,7 +314,7 @@ $siteUrl        = "https://smartstudypro.com";
             <i class="bi bi-bag-x text-muted" style="font-size: 4rem;"></i>
             <h3 class="fw-bold mt-3 mb-2" style="color: var(--ssp-navy);">Your cart is currently empty</h3>
             <p class="text-muted mb-4">Looks like you haven't added any courses or products to your cart yet.</p>
-            <a href="courses.php" class="btn-ssp-primary text-decoration-none d-inline-block py-2 px-4">Browse Courses</a>
+            <a href="/courses" class="btn-ssp-primary text-decoration-none d-inline-block py-2 px-4">Browse Courses</a>
           </div>
         <?php else: ?>
           <div class="ssp-card-box p-4 p-md-5 overflow-hidden">
@@ -357,10 +357,10 @@ $siteUrl        = "https://smartstudypro.com";
             </div>
 
             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mt-4 pt-3 border-top" style="border-color: var(--ssp-card-border) !important;">
-              <a href="courses.php" class="btn btn-outline-secondary rounded-3 text-decoration-none px-4 py-2">
+              <a href="/courses" class="btn btn-outline-secondary rounded-3 text-decoration-none px-4 py-2">
                 <i class="bi bi-arrow-left me-1"></i> Continue Browsing
               </a>
-              <a href="checkout.php" class="btn-ssp-primary text-decoration-none px-4 py-2 fs-6">
+              <a href="/checkout" class="btn-ssp-primary text-decoration-none px-4 py-2 fs-6">
                 Proceed to Checkout <i class="bi bi-arrow-right ms-1"></i>
               </a>
             </div>
@@ -377,7 +377,7 @@ $siteUrl        = "https://smartstudypro.com";
       <div class="row gy-4">
         
         <div class="col-lg-4 col-md-6">
-          <a href="index.php" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
+          <a href="/" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
             SmartStudy<span>Pro</span>
           </a>
           <p class="small text-light opacity-75 mb-3">Study Made Simple, Success Made Sure.</p>
@@ -399,11 +399,11 @@ $siteUrl        = "https://smartstudypro.com";
         <div class="col-lg-3 col-md-3">
           <h5 class="text-white fw-bold mb-3">Quick Navigation</h5>
           <ul class="list-unstyled small">
-            <li class="mb-2"><a href="index.php" class="text-decoration-none text-light opacity-75">Home</a></li>
-            <li class="mb-2"><a href="about.php" class="text-decoration-none text-light opacity-75">About Us</a></li>
-            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-light opacity-75">Courses</a></li>
-            <li class="mb-2"><a href="products.php" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
-            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
+            <li class="mb-2"><a href="/" class="text-decoration-none text-light opacity-75">Home</a></li>
+            <li class="mb-2"><a href="/about" class="text-decoration-none text-light opacity-75">About Us</a></li>
+            <li class="mb-2"><a href="/courses" class="text-decoration-none text-light opacity-75">Courses</a></li>
+            <li class="mb-2"><a href="/products" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
+            <li class="mb-2"><a href="/contact" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
           </ul>
         </div>
 
