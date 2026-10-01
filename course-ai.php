@@ -40,11 +40,11 @@ if (!$purchase) {
 }
 
 $lesson = null;
-if (function_exists('cockpit') && $lessonId !== '') {
-    $lesson = cockpit('content')->item('Lessons', ['_id' => $lessonId]);
+if (function_exists('cms_items') && $lessonId !== '') {
+    $lesson = cms_item('Lessons', ['_id' => $lessonId]);
 }
-if (!$lesson && function_exists('cockpit')) {
-    $lessons = cockpit('content')->items('Lessons', ['limit' => 1]);
+if (!$lesson && function_exists('cms_items')) {
+    $lessons = cms_items('Lessons', ['limit' => 1]);
     $lesson = $lessons[0] ?? null;
 }
 
