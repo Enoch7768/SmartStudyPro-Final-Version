@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+require_once __DIR__ . '/config.php';
 
 if (!defined('APP_START_TIME')) {
     define('APP_START_TIME', microtime(true));
@@ -248,7 +249,7 @@ if (
     exit;
 }
 
-$homeUrl = '/schoolprojectt/SmartStudyProV2.3/';
+$homeUrl = function_exists('app_path') ? app_path('/') : '/';
 
 $backUrl = !empty($_SERVER['HTTP_REFERER'])
     ? $_SERVER['HTTP_REFERER']
