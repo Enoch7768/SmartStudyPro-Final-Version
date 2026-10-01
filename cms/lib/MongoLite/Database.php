@@ -40,6 +40,26 @@ class Database {
      * @param string $path
      * @param array  $options
      */
+    protected function registerSqliteFunction(string $name, callable $callback, int $argumentCount): void {
+        if (class_exists('Pdo\\Sqlite') && method_exists($this->connection, 'sqliteCreateFunction') === false) {
+            (new \\Pdo\\Sqlite($this->connection))->createFunction($name, $callback, $argumentCount);
+            return;
+        }
+
+        if (class_exists('Pdo\\Sqlite')) {
+            $reflection = new \\ReflectionMethod('Pdo\\Sqlite', 'createFunction');
+            if ($reflection->isStatic() === false) {
+                try {
+                    (new \\Pdo\\Sqlite($this->connection))->createFunction($name, $callback, $argumentCount);
+                    return;
+                } catch (\\Throwable $e) {
+                }
+            }
+        }
+
+        $this->connection->sqliteCreateFunction($name, $callback, $argumentCount);
+    }
+
     public function __construct(string $path = self::DSN_PATH_MEMORY, array $options = []) {
 
         $dns = "sqlite:{$path}";
@@ -49,7 +69,7 @@ class Database {
 
         $database = $this;
 
-        $this->connection->sqliteCreateFunction('document_key', function($key, $document){
+        $this->registerSqliteFunction('document_key', function($key, $document){
 
             $document = \json_decode($document, true);
             $val      = '';
@@ -76,7 +96,7 @@ class Database {
             return \is_array($val) || \is_object($val) ? \json_encode($val) : $val;
         }, 2);
 
-        $this->connection->sqliteCreateFunction('document_criteria', function($funcid, $document) use($database) {
+        $this->registerSqliteFunction('document_criteria', function($funcid, $document) use($database) {
 
             $document = \json_decode($document, true);
 
