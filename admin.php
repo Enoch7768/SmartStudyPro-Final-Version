@@ -83,6 +83,7 @@ if (isset($_SESSION['admin_logged_in'])) {
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="assets/css/main.css" rel="stylesheet">
+<link href="assets/css/responsive.css" rel="stylesheet">
   <link rel="shortcut icon" href="Smart_Study_Logo_Fin-removebg-preview.png" type="image/x-icon">
 </head>
 <body class="bg-light">
