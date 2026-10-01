@@ -5,9 +5,9 @@ $products = [];
 $contact = null;
 
 try {
-    if (function_exists('cockpit')) {
-        $products = cockpit('content')->items('Products');
-        $contact = cockpit('content')->item('ContactDetails');
+    if (function_exists('cms_items')) {
+        $products = cms_items('Products');
+        $contact = cms_item('ContactDetails');
     }
 } catch (Exception $e) {
     $products = [];
