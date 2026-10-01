@@ -51,20 +51,26 @@ final class SmartStudyProCms {
             }
             $data['_id'] = $data['_id'] ?? $row['document_id'];
             if (self::matches($data, $options['filter'] ?? [])) {
-                $items[] = $data;
+                $items[] = ['data' => $data, 'updated_at' => $row['updated_at']];
             }
         }
 
         if (!empty($options['sort']) && is_array($options['sort'])) {
             foreach (array_reverse($options['sort'], true) as $field => $direction) {
                 usort($items, static function (array $a, array $b) use ($field, $direction): int {
-                    $av = $a[$field] ?? null;
-                    $bv = $b[$field] ?? null;
-                    $cmp = is_numeric($av) && is_numeric($bv) ? ((float) $av <=> (float) $bv) : strnatcasecmp((string) $av, (string) $bv);
+                    if ($field === 'updated_at') {
+                        $cmp = strcmp((string) $a['updated_at'], (string) $b['updated_at']);
+                    } else {
+                        $av = $a['data'][$field] ?? null;
+                        $bv = $b['data'][$field] ?? null;
+                        $cmp = is_numeric($av) && is_numeric($bv) ? ((float) $av <=> (float) $bv) : strnatcasecmp((string) $av, (string) $bv);
+                    }
                     return ((int) $direction) < 0 ? -$cmp : $cmp;
                 });
             }
         }
+
+        $items = array_map(static fn(array $item): array => $item['data'], $items);
 
         if (isset($options['limit']) && (int) $options['limit'] > 0) {
             $items = array_slice($items, 0, (int) $options['limit']);
