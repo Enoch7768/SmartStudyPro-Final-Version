@@ -14,6 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !verify_csrf_token($_POST['csrf_tok
 }
 
 $collection = trim((string) ($_POST['collection'] ?? ''));
+$allowedCollections = ['HomePage','AboutPage','ContactDetails','Products','Courses','Chapters','Lessons','Quizzes','Pages','Navigation','SiteSettings', ...SmartStudyProCms::collections()];
+if (!in_array($collection, array_values(array_unique($allowedCollections)), true)) {
+    http_response_code(422);
+    exit('Invalid collection.');
+}
 $id = trim((string) ($_POST['id'] ?? ''));
 $fields = $_POST['fields'] ?? [];
 
