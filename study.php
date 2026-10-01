@@ -1,6 +1,6 @@
 <?php
 
-require_once 'cms-init.php';
+require_once __DIR__ . '/cms-init.php';
 require_once 'auth.php';
 require_login(); 
 
