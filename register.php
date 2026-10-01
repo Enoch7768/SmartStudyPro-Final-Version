@@ -330,7 +330,7 @@ $siteUrl        = "https://smartstudypro.com";
         </form>
 
         <p class="text-center small text-muted mt-4 mb-0">
-          Already have an account? <a href="login.php" class="fw-bold text-decoration-none" style="color: var(--ssp-orange);">Sign in</a>
+          Already have an account? <a href="login" class="fw-bold text-decoration-none" style="color: var(--ssp-orange);">Sign in</a>
         </p>
       </div>
 
@@ -342,7 +342,7 @@ $siteUrl        = "https://smartstudypro.com";
       <div class="row gy-4">
         
         <div class="col-lg-4 col-md-6">
-          <a href="index.php" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
+          <a href="./" class="ssp-footer-brand text-decoration-none mb-3 d-inline-block">
             SmartStudy<span>Pro</span>
           </a>
           <p class="small text-light opacity-75 mb-3">Study Made Simple, Success Made Sure.</p>
@@ -364,11 +364,11 @@ $siteUrl        = "https://smartstudypro.com";
         <div class="col-lg-3 col-md-3">
           <h5 class="text-white fw-bold mb-3">Quick Navigation</h5>
           <ul class="list-unstyled small">
-            <li class="mb-2"><a href="index.php" class="text-decoration-none text-light opacity-75">Home</a></li>
-            <li class="mb-2"><a href="about.php" class="text-decoration-none text-light opacity-75">About Us</a></li>
-            <li class="mb-2"><a href="courses.php" class="text-decoration-none text-light opacity-75">Courses</a></li>
-            <li class="mb-2"><a href="products.php" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
-            <li class="mb-2"><a href="contact.php" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
+            <li class="mb-2"><a href="./" class="text-decoration-none text-light opacity-75">Home</a></li>
+            <li class="mb-2"><a href="about" class="text-decoration-none text-light opacity-75">About Us</a></li>
+            <li class="mb-2"><a href="courses" class="text-decoration-none text-light opacity-75">Courses</a></li>
+            <li class="mb-2"><a href="products" class="text-decoration-none text-light opacity-75">Products & Materials</a></li>
+            <li class="mb-2"><a href="contact" class="text-decoration-none text-light opacity-75">Contact Us</a></li>
           </ul>
         </div>
 
