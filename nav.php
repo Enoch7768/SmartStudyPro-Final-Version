@@ -137,7 +137,7 @@
 
     <nav id="navmenu" class="navmenu">
       <ul>
-        <li><a href="/" class="<?= (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : '' ?>">Home</a></li>
+        <li><a href="./" class="<?= (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : '' ?>">Home</a></li>
         <li><a href="about" class="<?= (basename($_SERVER['PHP_SELF']) == 'about.php') ? 'active' : '' ?>">About Us</a></li>
         <li><a href="courses" class="<?= (basename($_SERVER['PHP_SELF']) == 'courses.php') ? 'active' : '' ?>">Courses</a></li>
         <li><a href="products" class="<?= (basename($_SERVER['PHP_SELF']) == 'products.php') ? 'active' : '' ?>">Products</a></li>
@@ -159,7 +159,7 @@
         <i class="bi bi-person-circle"></i>
       </a>
 
-      <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none ms-1 ms-sm-2" href="/courses">Explore Courses</a>
+      <a class="btn-ssp-primary d-none d-sm-inline-block text-decoration-none ms-1 ms-sm-2" href="courses">Explore Courses</a>
     </div>
 
   </div>
