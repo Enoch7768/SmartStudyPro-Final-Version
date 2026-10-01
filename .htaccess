@@ -3,7 +3,7 @@ RewriteEngine On
 Options -MultiViews
 Options -Indexes
 
-RewriteRule ^(?:database|dangerous|scripts)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:database|dangerous|scripts|storage)(?:/|$) - [F,L,NC]
 RewriteRule ^download\.php(?:$|\?) - [F,L,NC]
 RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
 <FilesMatch "^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php|.*\.(?:db|sqlite|sqlite3|log|bak|sql))$">
@@ -14,7 +14,10 @@ RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
     Header always set X-Content-Type-Options "nosniff"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(self)"
+    Header always set Cross-Origin-Resource-Policy "same-site"
+    Header always set Cross-Origin-Opener-Policy "same-origin-allow-popups"
+    Header always set X-Permitted-Cross-Domain-Policies "none"
 </IfModule>
 
 RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
@@ -23,7 +26,7 @@ RewriteRule ^index\.php$ / [R=301,L]
 
 RewriteCond %{REQUEST_METHOD} ^(?:GET|HEAD)$
 RewriteCond %{THE_REQUEST} \/+[^\s]+\/(about|courses|products|contact|booking|course-details|product-details|cart|checkout|profile|login|register|study|cms|cms-media)\.php(?:[?\s]|$) [NC]
-RewriteRule ^([^.]+)\.php$ /$1 [R=301,L]
+RewriteRule ^([^.]+)\.php$ $1 [R=301,L]
 
 RewriteRule ^$ index.php [L,QSA]
 RewriteRule ^about/?$ about.php [L,QSA]
@@ -41,6 +44,8 @@ RewriteRule ^register/?$ register.php [L,QSA]
 RewriteRule ^study/?$ study.php [L,QSA]
 RewriteRule ^cms/?$ cms.php [L,QSA]
 RewriteRule ^cms/media/?$ cms-media.php [L,QSA]
+RewriteRule ^cart/?$ cart.php [L,QSA]
+RewriteRule ^logout/?$ logout.php [L,QSA]
 
 
 ErrorDocument 400 error.php?code=400
