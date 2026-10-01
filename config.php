@@ -104,14 +104,38 @@ function protected_learning_root(): string {
 
 
 function app_url(): string {
-    $configured = rtrim((string) app_config('APP_URL', ''), '/');
+    $configured = trim((string) app_config('APP_URL', ''));
+
     if ($configured !== '') {
-        return $configured;
+        $normalized = str_replace('\\', '/', $configured);
+
+        if (
+            !preg_match('#^https?://#i', $normalized) ||
+            preg_match('#^https?://[^/]+/(?:[A-Za-z]:)(?:/|$)#', $normalized)
+        ) {
+            $configured = '';
+        } else {
+            return rtrim($normalized, '/');
+        }
     }
+
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $base = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/.');
-    return $scheme . '://' . $host . ($base === '' ? '' : $base);
+    $scriptName = (string) ($_SERVER['SCRIPT_NAME'] ?? '/');
+    $scriptPath = str_replace('\\', '/', $scriptName);
+    $base = dirname($scriptPath);
+
+    if ($base === '.' || $base === DIRECTORY_SEPARATOR) {
+        $base = '';
+    }
+
+    $base = '/' . trim($base, '/.');
+
+    if ($base === '/') {
+        $base = '';
+    }
+
+    return $scheme . '://' . $host . $base;
 }
 
 function app_base_path(): string {
