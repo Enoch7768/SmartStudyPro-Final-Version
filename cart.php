@@ -360,7 +360,7 @@ $siteUrl        = "https://smartstudypro.com";
               <a href="courses" class="btn btn-outline-secondary rounded-3 text-decoration-none px-4 py-2">
                 <i class="bi bi-arrow-left me-1"></i> Continue Browsing
               </a>
-              <a href="/checkout" class="btn-ssp-primary text-decoration-none px-4 py-2 fs-6">
+              <a href="<?= htmlspecialchars(app_path('/checkout'), ENT_QUOTES, 'UTF-8') ?>" class="btn-ssp-primary text-decoration-none px-4 py-2 fs-6">
                 Proceed to Checkout <i class="bi bi-arrow-right ms-1"></i>
               </a>
             </div>
