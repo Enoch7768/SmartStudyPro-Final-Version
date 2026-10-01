@@ -41,7 +41,7 @@ class Database {
      * @param array  $options
      */
     protected function registerSqliteFunction(string $name, callable $callback, int $argumentCount): void {
-        if ($this->connection instanceof \\Pdo\\Sqlite) {
+        if ($this->connection instanceof \Pdo\Sqlite) {
             $this->connection->createFunction($name, $callback, $argumentCount);
             return;
         }
