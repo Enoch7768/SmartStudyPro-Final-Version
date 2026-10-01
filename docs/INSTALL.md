@@ -72,16 +72,11 @@ GEMINI_API_KEY=
 
 Restart Apache after changing the environment file.
 
-## Cockpit
+## SmartStudyPro CMS
 
-Cockpit remains a separate application and authentication system. SmartStudyPro does not currently provide Cockpit SSO.
+SmartStudyPro includes its own SQLite-backed content management system at `cms.php`. It manages the site's courses, lessons, quizzes, products, pages and settings without a separate CMS account.
 
-Set the Cockpit reset values if you want the SmartStudyPro admin area to reset the configured Cockpit administrator:
-
-\`\`\`env
-COCKPIT_ADMIN_EMAIL=
-COCKPIT_RESET_PASSWORD=
-\`\`\`
+For an existing installation, run `php scripts/migrate-cockpit-to-smartstudypro-cms.php` once before removing the legacy CMS files. The migration copies content into `database/cms.db` and does not delete the original content.
 
 ## CMS Images
 
