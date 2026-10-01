@@ -33,75 +33,75 @@ function errorStatusMessage(int $status): array
     return match ($status) {
         400 => [
             'title' => 'Bad Request',
-            'message' => 'The request could not be processed. Please check the information and try again.',
+            'message' => 'SmartStudyPro received a request that did not quite make the lesson plan. Check the information and try again.',
         ],
         401 => [
             'title' => 'Authentication Required',
-            'message' => 'You need to sign in before you can access this resource.',
+            'message' => 'This lesson needs a signed-in student. Please sign in and try again.',
         ],
         403 => [
             'title' => 'Access Denied',
-            'message' => 'You do not have permission to access this resource.',
+            'message' => 'This lesson is locked for now. Nice try though. 😄',
         ],
         404 => [
             'title' => 'Page Not Found',
-            'message' => 'The page you are looking for does not exist or may have been moved.',
+            'message' => 'Looks like this page skipped class. It may have moved, or it may never have existed.',
         ],
         405 => [
             'title' => 'Method Not Allowed',
-            'message' => 'This request method is not supported for this resource.',
+            'message' => 'That button is not accepting this kind of answer today.',
         ],
         408 => [
             'title' => 'Request Timeout',
-            'message' => 'The request took too long to complete. Please try again.',
+            'message' => 'The page took a little too long to finish its homework. Please try again.',
         ],
         409 => [
             'title' => 'Conflict',
-            'message' => 'The request could not be completed because it conflicts with existing data.',
+            'message' => 'SmartStudyPro found a conflict in the lesson plan. Please try again.',
         ],
         410 => [
             'title' => 'No Longer Available',
-            'message' => 'This resource is no longer available.',
+            'message' => 'This resource has graduated and is no longer available.',
         ],
         413 => [
             'title' => 'Request Too Large',
-            'message' => 'The information sent to the server is too large to process.',
+            'message' => 'That submission brought a little too much homework. Please reduce it and try again.',
         ],
         415 => [
             'title' => 'Unsupported Format',
-            'message' => 'The submitted information uses a format that is not supported.',
+            'message' => 'SmartStudyPro does not recognize that format yet.',
         ],
         422 => [
             'title' => 'Unable to Process',
-            'message' => 'The information provided could not be processed.',
+            'message' => 'We received the answer, but could not make sense of it.',
         ],
         429 => [
             'title' => 'Too Many Requests',
-            'message' => 'Too many requests were made in a short period. Please wait a moment and try again.',
+            'message' => 'Easy there, scholar. Too many requests arrived at once. Take a short study break.',
         ],
         500 => [
             'title' => 'Something Went Wrong',
-            'message' => 'An unexpected server error occurred. Our team can investigate it using the support code below.',
+            'message' => 'Something went wrong behind the classroom door. The support code below can help us trace it.',
         ],
         501 => [
             'title' => 'Not Implemented',
-            'message' => 'The requested operation is not currently supported.',
+            'message' => 'That feature has not joined the timetable yet.',
         ],
         502 => [
             'title' => 'Bad Gateway',
-            'message' => 'The server received an invalid response from an upstream service.',
+            'message' => 'One of our upstream services gave SmartStudyPro a confusing answer.',
         ],
         503 => [
             'title' => 'Service Unavailable',
-            'message' => 'The service is temporarily unavailable. Please try again shortly.',
+            'message' => 'SmartStudyPro is taking a short study break. Please try again shortly.',
         ],
         504 => [
             'title' => 'Gateway Timeout',
-            'message' => 'An upstream service took too long to respond.',
+            'message' => 'The server did not finish its homework in time. Please try again.',
         ],
         default => [
             'title' => 'Unexpected Error',
-            'message' => 'Something unexpected happened. Our team can investigate it using the support code below.',
+            'message' => 'Something unexpected happened. The support code below helps us investigate it.',
         ],
     };
 }
