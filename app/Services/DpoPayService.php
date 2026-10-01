@@ -74,7 +74,7 @@ function dpo_create_token(array $transaction, array $services): array {
         'TransactionSource' => 'Website',
     ] as $name => $value) {
         if ($value !== '') {
-            $tx->addChild($name, htmlspecialchars((string) $value, ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+            $tx->addChild($name, (string) $value);
         }
     }
 
@@ -83,7 +83,7 @@ function dpo_create_token(array $transaction, array $services): array {
     foreach ($services as $service) {
         $node = $servicesNode->addChild('Service');
         $node->addChild('ServiceType', $service['type']);
-        $node->addChild('ServiceDescription', htmlspecialchars($service['description'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+        $node->addChild('ServiceDescription', $service['description']);
         $node->addChild('ServiceDate', $service['date']);
     }
 
