@@ -79,6 +79,7 @@ body{background:#f5f7fb}.cms-shell{min-height:100vh}.cms-sidebar{width:260px;bac
 <?php endforeach; ?>
 </nav>
 <div class="small text-white-50 mt-4 mb-2 label">SYSTEM</div>
+<a class="cms-nav text-white text-decoration-none" href="cms-media.php"><i class="bi bi-images me-2"></i><span class="label">Media Library</span></a>
 <a class="cms-nav text-white text-decoration-none" href="admin.php"><i class="bi bi-arrow-left me-2"></i><span class="label">Admin Dashboard</span></a>
 </aside>
 <main class="cms-main flex-grow-1 p-3 p-lg-5">
