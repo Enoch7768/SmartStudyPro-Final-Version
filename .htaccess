@@ -3,6 +3,8 @@ RewriteEngine On
 Options -MultiViews
 Options -Indexes
 
+RewriteRule ^cms(?:/|$) - [L]
+
 RewriteRule ^(?:database|dangerous|scripts)(?:/|$) - [F,L,NC]
 RewriteRule ^download\.php(?:$|\?) - [F,L,NC]
 RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
