@@ -8,6 +8,16 @@ date_default_timezone_set('Africa/Kampala');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') die('Invalid access');
 
+if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+    http_response_code(403);
+    exit('Invalid request.');
+}
+
+if (($_POST['payment_method'] ?? '') !== 'dpo') {
+    http_response_code(400);
+    exit('DPO Pay is the configured payment method.');
+}
+
 if (!is_demo_payment_mode()) {
     if (($_POST['csrf_token'] ?? '') === '' || !verify_csrf_token($_POST['csrf_token'] ?? '')) {
         http_response_code(403);
