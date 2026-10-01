@@ -358,14 +358,13 @@ $siteUrl = "https://smartstudypro.com";
 
             <h4 class="fw-bold mb-3" style="color: var(--ssp-navy);">Select Payment Method</h4>
             <form action="process_payment.php" method="post">
+              <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
               <input type="hidden" name="user_id" value="<?= $user_id ?>">
               <input type="hidden" name="total" value="<?= $total ?>">
               
               <div class="mb-4">
                 <select name="payment_method" class="form-select form-select-lg rounded-3 fs-6" required>
-                  <option value="">-- Choose Payment Method --</option>
                   <option value="dpo">DPO Pay</option>
-                  <option value="pay_at_booking">Pay at Booking</option>
                 </select>
               </div>
 
