@@ -3,7 +3,7 @@ RewriteEngine On
 Options -MultiViews
 Options -Indexes
 
-RewriteRule ^(?:database|dangerous|scripts|uploads/cms)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:database|dangerous|scripts)(?:/|$) - [F,L,NC]
 RewriteRule ^download\.php(?:$|\?) - [F,L,NC]
 RewriteRule ^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php)$ - [F,L,NC]
 <FilesMatch "^(?:\.env(?:\..*)?|composer\.(?:json|lock)|config\.php|.*\.(?:db|sqlite|sqlite3|log|bak|sql))$">
